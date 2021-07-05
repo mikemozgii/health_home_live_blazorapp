@@ -1,0 +1,41 @@
+{
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    },
+    "saveAndRunExt": {
+        "commands": [
+        //   {
+        //     "match": ".*",
+        //     "cmd": "dotnet 'build' 'c:\\Users\\khokh\\source\\repos\\HHL\\HHL\\HHL.WebApp\\HHL.WebApp.csproj'",
+        //     "useShortcut": false,
+        //     "silent": false
+        //   },
+        //   {
+        //     "match": ".*",
+        //     "cmd": "dotnet 'run' '--project' 'c:\\Users\\khokh\\source\\repos\\HHL\\HHL\\HHL.WebApp\\HHL.WebApp.csproj'",
+        //     "useShortcut": false,
+        //     "silent": false
+        //   },
+          {
+            "match": ".*",
+            "isShellCommand": false,
+            "cmd": "workbench.action.debug.restart"
+          },
+        //   {
+        //     "match": "\\.razor",
+        //     "cmd": "workbench.action.debug.restart'",
+        //     "useShortcut": false,
+        //     "silent": false
+        //   },
+        //   {
+        //     "match": "\\.cs",
+        //     "cmd": "workbench.action.debug.restart'",
+        //     "useShortcut": false,
+        //     "silent": false
+        //   }
+        ]
+      }
+}

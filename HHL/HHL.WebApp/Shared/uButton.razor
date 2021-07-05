@@ -1,0 +1,178 @@
+
+
+
+@if (Type == "NavButton")
+{
+
+    <uNavLink class="@FinalClass" onclick="@CustomOnClick" href="@Href" style="@CustomStyle" disabled="@isDisabled">@if (ChildContent == null) { @Title } else { @ChildContent } </uNavLink>
+
+}
+    else if (Type == "Span")
+    {
+
+        if (CustomOnClick.HasDelegate)
+        {
+        <span id="@Id" class="@FinalClass" onclick="@CustomOnClick" style="@CustomStyle" disabled="@isDisabled">@if (ChildContent == null) { @Title } else { @ChildContent }</span>
+    }
+    else if (CustomOnClickv2.HasDelegate)
+    {
+        <span id="@Id" class="@FinalClass" onclick="@CustomOnClickv2" style="@CustomStyle" disabled="@isDisabled">@if (ChildContent == null) { @Title } else { @ChildContent }</span>
+    }
+    else
+    {
+        <span id="@Id" class="@FinalClass" style="@CustomStyle" disabled="@isDisabled">@if (ChildContent == null) { @Title } else { @ChildContent }</span>
+    }
+
+}
+else if (Type == "Submit")
+{
+
+    <button id="@Id" type="submit" class="@FinalClass" style="@CustomStyle" disabled="@isDisabled">@if (ChildContent == null) { @Title } else { @ChildContent }</button>
+
+}
+else
+{
+
+    if (CustomOnClick.HasDelegate)
+    {
+        <button id="@Id" class="@FinalClass" onclick="@CustomOnClick" style="@CustomStyle" disabled="@isDisabled">@if (ChildContent == null) { @Title } else { @ChildContent }</button>
+    }
+    else if (CustomOnClickv2.HasDelegate)
+    {
+        <button id="@Id" class="@FinalClass" onclick="@CustomOnClickv2" style="@CustomStyle" disabled="@isDisabled">@if (ChildContent == null) { @Title } else { @ChildContent }</button>
+    }
+    else if (OnClick.HasDelegate)
+    {
+        <button id="@Id" class="@FinalClass" OnClick="@OnClick" style="@CustomStyle" disabled="@isDisabled">@if (ChildContent == null) { @Title } else { @ChildContent }</button>
+    }
+    else
+    {
+        <button id="@Id" class="@FinalClass" style="@CustomStyle" disabled="@isDisabled">@if (ChildContent == null) { @Title } else { @ChildContent }</button>
+    }
+
+}
+
+
+@functions {
+    [Parameter]
+    private string Title { get; set; }
+
+    [Parameter]
+    private bool isDisabled { get; set; }
+
+    [Parameter]
+    private bool isSoft { get; set; }
+
+    [Parameter]
+    private bool isIcon { get; set; }
+
+    [Parameter]
+    private string Id { get; set; }
+
+    [Parameter]
+    private bool IsTransition { get; set; } = true;
+
+    [Parameter]
+    private bool IsRoundedCircle { get; set; }
+
+    [Parameter]
+    private string Size { get; set; }
+
+    [Parameter]
+    private string CustomStyle { get; set; }
+
+    [Parameter]
+    private string CustomClass { get; set; }
+
+    [Parameter]
+    private string Type { get; set; }
+
+    [Parameter]
+    private string Color { get; set; } = "primary";
+
+    [Parameter]
+    private string Href { get; set; }
+
+    [Parameter]
+    private EventCallback CustomOnClick { get; set; }
+
+    [Parameter] EventCallback OnClick { get; set; }
+
+    [Parameter]
+    private EventCallback<UIMouseEventArgs> CustomOnClickv2 { get; set; }
+
+   
+    [Parameter] EventCallback<UIMouseEventArgs> CustomOnClickv3 { get; set; }
+
+    private RenderFragment CustomRender { get; set; }
+
+    [Parameter]
+    private RenderFragment ChildContent { get; set; }
+
+    string FinalClass { get; set; }
+    string FinalId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var tIsIcon = "";
+        if (isIcon)
+        {
+            tIsIcon = "btn-icon";
+        }
+
+        var tIsSoft = "";
+        if (isSoft)
+        {
+            tIsSoft = "-soft";
+        }
+
+        var tIsRoundedCircle = "";
+        if (IsRoundedCircle)
+        {
+            tIsRoundedCircle = "rounded-circle";
+        }
+
+        var tIsTransition = "";
+        if (IsTransition)
+        {
+            tIsTransition = "transition-3d-hover";
+        }
+
+
+        if (!string.IsNullOrWhiteSpace(Color))
+        {
+            Color = $"-{Color}";
+        }
+
+        if (string.IsNullOrWhiteSpace(Id))
+        {
+            Id = Guid.NewGuid().ToString();
+        }
+
+
+        FinalClass = $"btn {tIsIcon} {Size} btn{tIsSoft}{Color} {tIsRoundedCircle}  {tIsTransition} {CustomClass}";
+
+
+
+        //CustomRender = CreateComponent();
+
+    }
+
+    //private RenderFragment CreateComponent() => builder =>
+    //{
+    //    if (CustomOnClickv3.HasDelegate)
+    //    {
+    //        builder.AddAttribute(1, "onclick", "Someone's best friend!");
+    //    }
+
+    //};
+
+
+    //public void OnCustomClickInvoke()
+    //{
+
+    //    CustomOnClick.InvokeAsync();
+    //}
+
+
+}

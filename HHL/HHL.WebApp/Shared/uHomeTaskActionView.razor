@@ -1,0 +1,21 @@
+@inject InstantDatahandler InstantDatahandler;
+
+
+
+@{ 
+
+    var action = InstantDatahandler.All_HomeTaskServiceTypes.First(q => q.Id == Id);
+
+}
+
+ <uFontAwesomeIcon Color="blue" Thickness="s" Size="@IconSize" Icon="@(action.Icon)" CustomClass="mr-2" />@action.Name
+
+
+
+
+ @functions {
+                  [Parameter]
+                  private int Id { get; set; }
+                  [Parameter]
+                  private string IconSize { get; set; }="12px" ;
+                  }

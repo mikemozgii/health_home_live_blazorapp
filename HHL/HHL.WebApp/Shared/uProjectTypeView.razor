@@ -1,0 +1,36 @@
+
+
+
+
+@if (ProjectTypeId == 1)
+{
+    <span class="font-blue">    <uFontAwesomeIcon Color="blue" Thickness="s" Size="@IconSize" Icon="home-lg-alt" CustomClass="mr-2" />Home</span>
+
+}
+else if (ProjectTypeId == 2)
+{
+<span class="font-green">    <uFontAwesomeIcon Color="green" Thickness="s" Size="@IconSize" Icon="leaf" CustomClass="mr-2" />Health</span>
+}
+else if (ProjectTypeId == 3)
+{
+    <span class="font-red">    <uFontAwesomeIcon Color="red" Thickness="s" Size="@IconSize" Icon="child" CustomClass="mr-2" />Life</span>
+}
+
+
+
+
+
+
+@functions {
+
+
+    [Parameter]
+    private int ProjectTypeId { get; set; }
+
+    [Parameter]
+    private string IconSize { get; set; } = "12px";
+
+
+
+
+}

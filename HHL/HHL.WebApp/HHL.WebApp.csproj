@@ -1,0 +1,86 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+    <_RazorComponentInclude>Components\**\*.cshtml</_RazorComponentInclude>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="compilerconfig.json" />
+    <Content Remove="web.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Shared\InputCustomBase.cs" />
+    <Content Include="Shared\InputCustomCheckbox.cs" />
+    <Content Include="Shared\InputCustomDate.cs" />
+    <Content Include="Shared\InputCustomDateTimeLocal.cs" />
+    <Content Include="Shared\InputCustomNumber.cs" />
+    <Content Include="Shared\InputCustomSelect.cs" />
+    <Content Include="Shared\InputCustomText.cs" />
+    <Content Include="Shared\InputCustomTextArea.cs" />
+    <Content Include="Shared\InputCustomTime.cs" />
+    <Content Include="Shared\InputPassword.cs" />
+    <Content Include="Shared\RenderTreeBuilder.cs" />
+    <Content Include="Shared\uNavLink.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="compilerconfig.json" />
+    <None Include="web.config" />
+    <Watch Include="**\*.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Watch Remove="Pages\Client\ChangePassword.razor" />
+    <Watch Remove="Pages\Client\EditAddresses.razor" />
+    <Watch Remove="Pages\Client\EditContacts.razor" />
+    <Watch Remove="Pages\Client\EditPaymentMethods.razor" />
+    <Watch Remove="Pages\Client\EditPersonal.razor" />
+    <Watch Remove="Pages\Client\EditPlans.razor" />
+    <Watch Remove="Pages\Client\EditSettings.razor" />
+    <Watch Remove="Pages\Client\Projects.razor" />
+    <Watch Remove="Pages\Contact.razor" />
+    <Watch Remove="Pages\Contractor\EditContractorPaymentMethods.razor" />
+    <Watch Remove="Pages\Contractor\EditContractorPlans.razor" />
+    <Watch Remove="Pages\Contractor\EditLegalInfo.razor" />
+    <Watch Remove="Pages\Contractor\EditProfileInfo.razor" />
+    <Watch Remove="Pages\Contractor\EditServiceLocations.razor" />
+    <Watch Remove="Pages\Contractor\EditServices.razor" />
+    <Watch Remove="Pages\Contractor\EditWeeklySchedule.razor" />
+    <Watch Remove="Pages\Services\HomeAddNewProject.razor" />
+    <Watch Remove="Shared\Client\sClientEditInfoTopNavPanel.razor" />
+    <Watch Remove="Shared\Client\sClientProjectsTopNavPanel.razor" />
+    <Watch Remove="Shared\Client\uTest.razor" />
+    <Watch Remove="Shared\Contractor\sContracotEditInfoTopNavPanel.razor" />
+    <Watch Remove="Shared\Table\uTable.razor" />
+    <Watch Remove="Shared\uBuldingTypeView.razor" />
+    <Watch Remove="Shared\uHomeTaskActionView.razor" />
+    <Watch Remove="Shared\uModal.razor" />
+    <Watch Remove="Shared\uPriorityView.razor" />
+    <Watch Remove="Shared\uProjectTypeView.razor" />
+    <Watch Remove="Shared\uTrueFalse.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Dapper" Version="1.60.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Antiforgery" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0-preview8.19405.7" />
+    <PackageReference Include="morelinq" Version="3.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3-beta1" />
+    <PackageReference Include="Npgsql" Version="4.1.0-preview1" />
+    <PackageReference Include="RazorLight" Version="2.0.0-beta1" />
+    <PackageReference Include="Scrutor" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HHL.Core\HHL.Core.csproj" />
+    <ProjectReference Include="..\HHL.FileReader\HHL.FileReader.csproj" />
+  </ItemGroup>
+
+</Project>

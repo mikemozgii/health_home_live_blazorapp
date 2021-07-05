@@ -1,0 +1,56 @@
+
+@page "/home/{BuldingType}/task/{TaskType}/task-service-selection";
+@page "/home/{BuldingType}/task/{TaskType}/task-service-selection/project/{ProjectId}";
+
+
+@inject InstantDatahandler InstantDatahandler;
+<uContainer AllignCols="center" CustomClassContainer="py-120" IsDefault="true" CustomStyleContainer="" CustomStyleRow="">
+
+    @foreach (var taskServiceType in TaskServiceTypes)
+    {
+        <uCol Grow="1" Customstyle="text-align:center;" CustomClass="mb-15">
+
+            <uButton Type="NavButton" Color="silverish" IsSoft="true" Href="@(string.IsNullOrWhiteSpace(ProjectId) ?  $"/home/{BuldingType}/task/{TaskType.ToUrl()}/{taskServiceType.HomeTaskServiceTypeName.ToUrl()}" : $"/home/{BuldingType}/task/{TaskType.ToUrl()}/{taskServiceType.HomeTaskServiceTypeName.ToUrl()}/project/{ProjectId}")">
+
+                <div class="wrap_selection">
+
+                    <div class="wrap_selection_header">
+                        <uFontAwesomeIcon Thickness="s" Size="48px" Icon="@taskServiceType.HomeTaskServiceTypeIcon" />
+                    </div>
+                    <div class="wrap_selection_title my-25"><h2 class="font-weight-normal-bold">@taskServiceType.HomeTaskServiceTypeName</h2></div>
+                </div>
+
+
+            </uButton>
+
+        </uCol>
+    }
+
+
+</uContainer>
+
+@functions {
+
+    [Parameter]
+    private string TaskType { get; set; }
+
+    [Parameter]
+    private string ProjectId { get; set; }
+
+    [Parameter]
+    private string BuldingType { get; set; }
+
+    IEnumerable<v_VmHomeTaskCategory> TaskServiceTypes;
+
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        var tempName = TaskType.FromUrl();
+        TaskServiceTypes = new List<v_VmHomeTaskCategory>();
+        var buldingType = new BuldingTypeHelper().GetId(BuldingType);
+        TaskServiceTypes = InstantDatahandler.All_VmHomeTaskCategories.Where(q => q.HomeBuldingTypeId == buldingType && q.IsActive && String.Equals(q.HomeTaskTypeName, tempName, StringComparison.OrdinalIgnoreCase));
+
+    }
+}

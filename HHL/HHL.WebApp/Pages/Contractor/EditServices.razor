@@ -1,0 +1,438 @@
+@page "/contractor/edit-services"
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+@inject InstantDatahandler InstantDatahandler;
+@inject ContractorSvc ContractorSvc;
+@inject AutoMapper.IMapper _mapper;
+
+<uContainer AllignCols="center" IsDefault="true" IsFullHeight="true">
+
+    <uCol>
+        <uContainer AllignCols="center">
+
+            <uCol CustomClass="pb-35 pt-35">
+
+                <sContracotEditInfoTopNavPanel />
+
+            </uCol>
+
+            <uCol>
+                <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+                    <uCol Grow="1" CustomClass="mx-15">
+
+
+                        @if (!ContractorServices.IsNullOrEmpty())
+                        {
+
+
+
+                            <uTable Items="@ContractorServices.ToList()" Context="ContractorService" TItem="e_Contractor_Service">
+                                <TableHeader>
+                                    <th>Name</th>
+                                    <th>Action</th>
+                                    <th>Bulding</th>
+                                    <th>Custom</th>
+                                    <th>Default</th>
+                                    <th style="padding-bottom:3px; padding-right:0px; text-align:right">
+                                        <uButton Size="btn-xs" IsSoft="true" IsTransition="false" Color="grain" CustomOnClickv2="@(e => AddService(e))">
+                                            <uFontAwesomeIcon Size="11px" Icon="plus" CustomClass="mr-3" /> Add Service
+                                        </uButton>
+                                    </th>
+                                </TableHeader>
+                                <RowTemplate>
+
+                                    @{
+                                        var homeTaskCategory = InstantDatahandler.All_HomeTaskCategories.First(q => q.Id == ContractorService.ServiceId);
+                                        var homeTaskAction = InstantDatahandler.All_HomeTaskServiceTypes.First(q => q.Id == homeTaskCategory.HomeTaskServiceTypeId);
+                                        var homeTaskItem = InstantDatahandler.All_HomeTaskTypes.First(q => q.Id == homeTaskCategory.HomeTaskTypeId);
+                                    }
+                                    <td>@(homeTaskItem.Name)</td>
+                                    <td><uHomeTaskActionView Id="@homeTaskCategory.HomeTaskServiceTypeId" /></td>
+                                    <td><uBuldingTypeView IconSize="14px" Value="@homeTaskCategory.HomeBuldingTypeId" /></td>
+
+                                    @if (ContractorService.IsCustomPrice)
+                                    {
+                                        <td>$ @(((decimal)(ContractorService.PricePerHour)).ToString("#.00")) <span class="font-size-11">/hr</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td>-</td>
+
+                                    }
+
+                                    <td>$ @($"{((decimal)(HHLConfigHdr.PricePerHourSell * homeTaskCategory.PriceMultiplier)).ToString("#.00")}") <span class="font-size-11">/hr</span></td>
+
+                                    <td style="text-align: right">
+                                        <uButton isSoft="true" Size="btn-xs" Color="blue" CustomClass="px-0 py-0 btn-bg-transparent" CustomOnClickv2="@(e => EditService(e, ContractorService.Id))"> <uFontAwesomeIcon Thickness="s" Size="12px" Icon="pencil" CustomClass="mr-10" /></uButton>
+                                        <uButton Size="btn-xs" Color="red" isSoft="true" CustomClass="btn-bg-transparent px-0 py-0" CustomOnClickv2="@(e => DeleteService(e, ContractorService.Id))"> <uFontAwesomeIcon Thickness="s" Size="14px" Icon="trash" /> </uButton>
+                                    </td>
+
+                                </RowTemplate>
+                            </uTable>
+                        }
+
+                        else
+                        {
+
+                            <div style="text-align: center" class="mt-25">
+                                <h2> No Services were found, Please add a <span class="font-weight-semi-bold">Service</span> </h2>
+
+                                <uButton Color="grain" CustomClass="mt-25" CustomOnClickv2="@(e => AddService(e))" IsTransition="false">
+                                    <uFontAwesomeIcon Thickness="s" Size="14px" Icon="plus" CustomClass="mr-5" /> Add a Service
+                                </uButton>
+                            </div>
+                        }
+
+
+                    </uCol>
+
+
+
+                </uContainer>
+
+            </uCol>
+
+
+        </uContainer>
+    </uCol>
+
+</uContainer>
+
+
+<CascadingValue Value="@ModalSeetings">
+    <uModal Id="AddContractorService" Title="Select Services" ContainerStyle="max-width:500px">
+
+        <EditForm Model="@EditContractorServiceFormModel" OnValidSubmit="@HandleEditContractorServiceFormModelSubmit">
+            <DataAnnotationsValidator />
+
+            <uContainer AllignCols="center" CustomClassContainer="">
+
+                @if (EditContractorServiceFormModel.Id.HasValue)
+                {
+                    <uCol>
+
+                        <uContainer>
+
+                            <uCol Grow="1" AlignCol="center">
+
+                                <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Price per Hour" Id="PriceperHour">
+
+                                    <InputCustomNumber IsDisabled="@(!EditContractorServiceFormModel.IsCustomPrice)" bind-Value="@EditContractorServiceFormModel.Price" id="PriceperHour" class="form-control" Step="0.25" />
+
+                                </uFormInput>
+                            </uCol>
+
+                            <uCol Grow="1" AlignCol="center" CustomClass="mx-15">
+                                <uCheckbox IsForm="true" Title="Custom Price" Id="CustomPrice">
+                                    <InputCustomCheckbox bind-Value="@EditContractorServiceFormModel.IsCustomPrice" OnCustomChange="@HandleIsCustomPriceChange" IsCustomChecked="@EditContractorServiceFormModel.IsCustomPrice" class="custom-control-input custom-control-input-notshadowfocus" id="CustomPrice" />
+                                </uCheckbox>
+                            </uCol>
+                        </uContainer>
+
+                    </uCol>
+
+
+                    <uCol CustomClass="mx-15" CustomStyle="text-align:right">
+
+                        <uButton Type="Submbit" Title="Save" />
+
+                    </uCol>
+
+                }
+                else
+                {
+
+                    <uCol CustomClass="mx-15">
+                        <uFormInput IsGroup="true" IsRequired="true" Type="child" Label=" Product Type" Id="ProductTypeId">
+                            <InputCustomSelect bind-Value="@EditContractorServiceFormModel.ProductTypeId" id="ProductTypeId" class="form-control custom-select">
+
+                                @if (EditContractorServiceFormModel.ProductTypeId == null)
+                                {
+                                    <option value="">Select Product Type</option>
+                                }
+
+
+
+                                @foreach (var l in InstantDatahandler.All_ProductTypes)
+                                {
+                                    <option value="@l.Id">@l.Name</option>
+                                }
+
+                            </InputCustomSelect>
+                        </uFormInput>
+                    </uCol>
+
+                    @if (EditContractorServiceFormModel.ProductTypeId == 1)
+                    {
+
+
+
+
+                        <uCol CustomClass="mx-15">
+                            <uFormInput IsGroup="true" IsRequired="true" Type="child" Label=" Bulding Type" Id="BuldingTypeId">
+                                <InputCustomSelect bind-Value="@EditContractorServiceFormModel.BuldingTypeId" id="BuldingTypeId" OnCustomChange="@(e=> HandleCustomBuldingTypeChange(e))" class="form-control custom-select">
+
+                                    @if (EditContractorServiceFormModel.BuldingTypeId == null)
+                                    {
+                                        <option value="">Select Bulding Types</option>
+                                    }
+
+
+                                    @foreach (var l in InstantDatahandler.All_BuldingTypes)
+                                    {
+                                        <option value="@l.Id">@l.Name</option>
+                                    }
+
+                                </InputCustomSelect>
+                            </uFormInput>
+                        </uCol>
+
+                        @if (EditContractorServiceFormModel.BuldingTypeId != null)
+                        {
+
+                            <uCol>
+                                <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Services" Id="ServiceId">
+                                    <InputCustomSelect bind-Value="@EditContractorServiceFormModel.ServiceId" isDisabled="@(EditContractorServiceFormModel.BuldingTypeId == null)" OnCustomChange="@(e=> HandleCustomServiceChange(e))" id="ServiceId" class="form-control custom-select">
+
+                                        @if (EditContractorServiceFormModel.ServiceId == null)
+                                        {
+                                            <option value="">Select Service</option>
+                                        }
+
+
+
+                                        @foreach (var l in ServiceSelectModels)
+                                        {
+                                            <option value="@l.Id">@l.Name</option>
+                                        }
+
+                                    </InputCustomSelect>
+
+                                </uFormInput>
+                            </uCol>
+                        }
+
+
+                        @if (EditContractorServiceFormModel.ServiceId != null)
+                        {
+
+                            <uCol>
+
+                                <uContainer>
+
+                                    <uCol Grow="1" AlignCol="center">
+
+                                        <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Price per Hour" Id="PriceperHour">
+
+                                            <InputCustomNumber IsDisabled="@(!EditContractorServiceFormModel.IsCustomPrice)" bind-Value="@EditContractorServiceFormModel.Price" id="PriceperHour" class="form-control" Step="0.25" />
+
+                                        </uFormInput>
+                                    </uCol>
+
+                                    <uCol Grow="1" AlignCol="center" CustomClass="mx-15">
+                                        <uCheckbox IsForm="true" Title="Custom Price" Id="CustomPrice">
+                                            <InputCustomCheckbox bind-Value="@EditContractorServiceFormModel.IsCustomPrice" OnCustomChange="@HandleIsCustomPriceChange" IsCustomChecked="@EditContractorServiceFormModel.IsCustomPrice" class="custom-control-input custom-control-input-notshadowfocus" id="CustomPrice" />
+                                        </uCheckbox>
+                                    </uCol>
+                                </uContainer>
+
+                            </uCol>
+
+
+                            <uCol CustomClass="mx-15" CustomStyle="text-align:right">
+
+                                <uButton Type="Submbit" Title="Save" />
+
+                            </uCol>
+                        }
+
+
+
+
+
+
+
+
+                    }
+                    else if (EditContractorServiceFormModel.ProductTypeId == 2)
+                    {
+
+                        <uCol CustomClass="mx-15" IsTextCenter="true">
+
+                            <h6 class="font-red"> Heath services are not available, please check later </h6>
+
+                        </uCol>
+                    }
+                    else if (EditContractorServiceFormModel.ProductTypeId == 3)
+                    {
+
+
+                        <uCol CustomClass="mx-15" IsTextCenter="true">
+
+                            <h6 class="font-red"> Life services are not available, please check later </h6>
+
+                        </uCol>
+
+                    }
+
+                }
+
+
+
+
+            </uContainer>
+
+
+        </EditForm>
+
+
+    </uModal>
+</CascadingValue>
+
+
+@functions {
+
+
+
+    IEnumerable<e_Contractor_Service> ContractorServices = new List<e_Contractor_Service>();
+    //IEnumerable<ProductTypeSelectModel> ProductTypeSelectModel = new List<ProductTypeSelectModel>();
+
+
+    IEnumerable<ServiceSelectModel> ServiceSelectModels = new List<ServiceSelectModel>();
+    ModalSeetings ModalSeetings { get; set; } = new ModalSeetings() { ShowModal = false };
+    EditContractorServiceFormModel EditContractorServiceFormModel { get; set; } = new EditContractorServiceFormModel();
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    async Task LoadData()
+    {
+        ContractorServices = await ContractorSvc.SelectCurrentContractorServices();
+
+
+    }
+
+    async void AddService(UIMouseEventArgs __e)
+    {
+        EditContractorServiceFormModel = new EditContractorServiceFormModel();
+        ModalSeetings.ShowModal = true;
+        StateHasChanged();
+    }
+
+    public async void DeleteService(UIMouseEventArgs e, Guid projectId)
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            var isDeleted = await ContractorSvc.DeleteContractorService(projectId);
+            if (isDeleted)
+            {
+                await LoadData();
+                StateHasChanged();
+            }
+        }
+
+    }
+
+    async void HandleCustomBuldingTypeChange(UIChangeEventArgs __e)
+    {
+        EditContractorServiceFormModel.BuldingTypeId = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? Convert.ToInt32(__e.Value.ToString()) : (int?)default;
+
+        if (EditContractorServiceFormModel?.BuldingTypeId != null)
+        {
+            var existingServices = ContractorServices.Select(q => q.ServiceId).ToArray();
+            ServiceSelectModels = _mapper.Map<IEnumerable<e_HomeTaskCategory>, IEnumerable<ServiceSelectModel>>(InstantDatahandler.All_HomeTaskCategories.Where(q => !existingServices.Contains(q.Id) &&  q.HomeBuldingTypeId == EditContractorServiceFormModel.BuldingTypeId)).OrderBy(q => q.Name);
+            EditContractorServiceFormModel.ServiceId = null;
+        }
+        else
+        {
+            EditContractorServiceFormModel.ServiceId = null;
+        }
+
+
+        StateHasChanged();
+    }
+
+    async void HandleCustomServiceChange(UIChangeEventArgs __e)
+    {
+        EditContractorServiceFormModel.ServiceId = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? Convert.ToInt32(__e.Value.ToString()) : (int?)default;
+
+        EditContractorServiceFormModel.IsCustomPrice = false;
+        EditContractorServiceFormModel.Price = null;
+
+        if (EditContractorServiceFormModel.ServiceId != null)
+        {
+            var homeTaskCategory = InstantDatahandler.All_HomeTaskCategories.First(q => q.Id == EditContractorServiceFormModel.ServiceId);
+            EditContractorServiceFormModel.Price = Convert.ToDecimal((HHLConfigHdr.PricePerHourSell * homeTaskCategory.PriceMultiplier).ToString("#.00"));
+        }
+
+
+
+
+        StateHasChanged();
+    }
+
+
+    async void HandleEditContractorServiceFormModelSubmit()
+
+    {
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+
+            if ((await ContractorSvc.Upsert(EditContractorServiceFormModel)).Success)
+            {
+                await LoadData();
+
+                ModalSeetings.ShowModal = false;
+                StateHasChanged();
+            }
+
+
+        }
+    }
+
+    async void EditService(UIMouseEventArgs __e, Guid Id)
+    {
+
+        var r = ContractorServices.First(q => q.Id == Id);
+
+        EditContractorServiceFormModel = new EditContractorServiceFormModel();
+        EditContractorServiceFormModel.Id = r.Id;
+        EditContractorServiceFormModel.IsCustomPrice = r.IsCustomPrice;
+        EditContractorServiceFormModel.ServiceId = r.ServiceId;
+
+        if (EditContractorServiceFormModel.IsCustomPrice)
+        {
+            EditContractorServiceFormModel.Price = r.PricePerHour;
+        }
+        else
+        {
+            var homeTaskCategory = InstantDatahandler.All_HomeTaskCategories.First(q => q.Id == EditContractorServiceFormModel.ServiceId);
+            EditContractorServiceFormModel.Price = Convert.ToDecimal((HHLConfigHdr.PricePerHourSell * homeTaskCategory.PriceMultiplier).ToString("#.00"));
+        }
+
+
+        StateHasChanged();
+        ModalSeetings.ShowModal = true;
+
+    }
+
+
+    async void HandleIsCustomPriceChange(UIChangeEventArgs __e)
+    {
+        EditContractorServiceFormModel.IsCustomPrice = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? Convert.ToBoolean(__e.Value.ToString()) : false;
+
+
+        if (!EditContractorServiceFormModel.IsCustomPrice)
+        {
+            var homeTaskCategory = InstantDatahandler.All_HomeTaskCategories.First(q => q.Id == EditContractorServiceFormModel.ServiceId);
+            EditContractorServiceFormModel.Price = Convert.ToDecimal((HHLConfigHdr.PricePerHourSell * homeTaskCategory.PriceMultiplier).ToString("#.00"));
+        }
+
+
+        StateHasChanged();
+    }
+
+
+}

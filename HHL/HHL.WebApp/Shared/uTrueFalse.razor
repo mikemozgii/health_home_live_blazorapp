@@ -1,0 +1,46 @@
+@if (IsTd)
+{
+    @if (Value)
+    {
+        <div class="text-center">  <uFontAwesomeIcon Color="green" Thickness="s" Size="@IconSize" Icon="check" /></div>
+
+    }
+    else
+    {
+<div class="text-center">  <uFontAwesomeIcon Color="red" Thickness="s" Size="@IconSize" Icon="times"  /></div>
+    }
+
+}
+else
+{
+    @if (Value)
+    {
+        <uFontAwesomeIcon Color="green" Thickness="s" Size="@IconSize" Icon="check"  />
+
+    }
+    else
+    {
+        <uFontAwesomeIcon Color="red" Thickness="s" Size="@IconSize" Icon="times"  />
+    }
+
+}
+
+
+
+
+
+
+
+@functions {
+
+
+    [Parameter]
+    private bool Value { get; set; }
+
+    [Parameter]
+    private bool IsTd { get; set; }
+
+    [Parameter]
+    private string IconSize { get; set; } = "12px";
+
+}

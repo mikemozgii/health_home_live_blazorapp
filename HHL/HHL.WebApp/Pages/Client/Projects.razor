@@ -1,0 +1,178 @@
+@page  "/client/projects/{text}";
+@inject AutoMapper.IMapper _mapper;
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+@inject ClientSvc ClientSvc;
+@inject InstantDatahandler InstantDatahandler;
+@inject ProjectSvc ProjectSvc;
+@inject Microsoft.AspNetCore.Components.IUriHelper UriHelper;
+
+<uContainer AllignCols="center" IsDefault="true" IsFullHeight="true" >
+
+    <uCol>
+        <uContainer AllignCols="center">
+
+            <uCol CustomClass="pb-35 pt-35">
+
+                <sClientProjectsTopNavPanel  />
+
+            </uCol>
+
+            <uCol>
+                <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+                    <uCol Grow="1" CustomClass="mx-15">
+
+
+                        @if (!ClientProjectModels.IsNullOrEmpty())
+                        {
+                            <uTable Items="@ClientProjectModels.ToList()" Context="ClientProject" TItem="v_VmHomeProject">
+                                <TableHeader>
+                                    <th>Name</th>
+                                    <th>Tasks</th>
+                                    <th>Price</th>
+                                    <th>Priority</th>
+                                    <th>Type</th>
+                                    <th></th>
+                                    @*<th>Status</th>*@
+                                </TableHeader>
+                                <RowTemplate>
+                                    <td>@ClientProject.ProjectName</td>
+                                    <td>@(ClientProject.TaskCount)</td>
+                                    <td>@(ClientProject.TaskPriceTotal == null ? "-" :  $"{((decimal)(ClientProject.TaskPriceTotal)).ToString("#.00")}")</td>
+
+
+                                    <td>
+                                        <uPriorityView PriorityId="ClientProject.ProjectPriorityId" />
+                                    </td>
+                                    <td>
+                                        <uProjectTypeView ProjectTypeId="1"></uProjectTypeView>
+                                    </td>
+
+                                    @if (ClientProject.ProjectStatusId == (int)HomeTaskStatus.New)
+                                    {
+                                        <td style="text-align: right">
+
+                                            <uButton Size="btn-xs" Color="green" isSoft="true" CustomClass="btn-bg-transparent px-0 py-0 mr-10" CustomOnClickv2="@(e => EditProjectHandler(e, ClientProject.ProjectId))"> <uFontAwesomeIcon Thickness="s" Size="14px" Icon="pencil" /> </uButton>
+                                            <uButton Size="btn-xs" Color="red" isSoft="true" CustomClass="btn-bg-transparent px-0 py-0" CustomOnClickv2="@(e => DeleteProjectHandler(e, ClientProject.ProjectId))"> <uFontAwesomeIcon Thickness="s" Size="14px" Icon="trash" /> </uButton>
+                                        </td>
+                                    }
+                                    else if (ClientProject.ProjectStatusId == (int)HomeTaskStatus.WaitingforConfirmation)
+                                    {
+
+                                        <td style="text-align: right">
+
+                                            <uButton Size="btn-xs" Color="green" isSoft="true" CustomClass="btn-bg-transparent px-0 py-0 mr-10" CustomOnClickv2="@(e => EditProjectHandler(e, ClientProject.ProjectId))"> <uFontAwesomeIcon Thickness="s" Size="14px" Icon="pencil" /> </uButton>
+                                        </td>
+                                    }
+
+
+
+                                    @*@if (ClientProject.ProjectStatusId == 1)
+        {
+            <td>
+                <uFontAwesomeIcon Thickness="s" Size="11px" Color="blue" Icon="circle" CustomClass="mr-4" />Unpaid
+            </td>
+        }
+        else if ((ClientProject.ProjectStatusId == 2))
+        {
+            <td>
+                <uFontAwesomeIcon Thickness="s" Size="11px" Color="green" Icon="circle" CustomClass="mr-4" />Paid
+            </td>
+        }*@
+
+
+                                </RowTemplate>
+                            </uTable>
+                        }
+
+                        else
+                        {
+
+                            <div style="text-align: center" class="mt-25">
+                            <h2> No Projects were found, Please add a <span class="font-weight-semi-bold">Project or Task</span> </h2>
+
+                            <uButton Type="NavButton" Color="grain" Href="@UrlNameHdr.TypeSelection" CustomClass="mt-25" IsTransition="false" >
+                                Get Started
+                            </uButton>
+                              </div>
+                        }
+
+
+                    </uCol>
+
+
+
+                </uContainer>
+
+            </uCol>
+
+
+        </uContainer>
+    </uCol>
+
+</uContainer>
+
+
+
+
+
+@functions {
+
+
+    [Parameter]  string Text { get; set; }
+    IEnumerable<v_VmHomeProject> ClientProjectModels = new List<v_VmHomeProject>();
+    //IEnumerable<v_VmHomeProject> ClientTasksModels = new List<v_VmHomeProject>();
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    async Task LoadData()
+    {
+        var response = await ProjectSvc.SelectCurrentVmHomeProjects();
+        if (response.Success && response.HasResults)
+        {
+            //ClientTasksModels = response.Results.OrderBy(q => q.TaskName);
+            if (Text == "unpaid")
+            {
+                ClientProjectModels = response.Results.Where(q=>q.ProjectStatusId == (int)HomeTaskStatus.New) .DistinctBy(q => q.ProjectId);
+            }
+            else if(Text == "waiting-for-confirmation")
+            {
+                ClientProjectModels = response.Results.Where(q=>q.ProjectStatusId == (int)HomeTaskStatus.WaitingforConfirmation) .DistinctBy(q => q.ProjectId);
+            }
+            else if(Text == "in-progress")
+            {
+                ClientProjectModels = response.Results.Where(q=>q.ProjectStatusId == (int)HomeTaskStatus.InProgress) .DistinctBy(q => q.ProjectId);
+            }
+            else if(Text == "completed")
+            {
+                ClientProjectModels = response.Results.Where(q=>q.ProjectStatusId == (int)HomeTaskStatus.Completed) .DistinctBy(q => q.ProjectId);
+            }
+
+
+
+            //BuldingType = response.Results.First().TaskHomeBuldingTypeId == 1 ? "residential" : "commercial";
+        }
+    }
+
+    public async void DeleteProjectHandler(UIMouseEventArgs e, Guid projectId)
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            var isDeleted = await ProjectSvc.DeleteProject(projectId);
+            if (isDeleted)
+            {
+                await LoadData();
+                StateHasChanged();
+            }
+        }
+
+    }
+
+    public async void EditProjectHandler(UIMouseEventArgs e, Guid projectId)
+    {
+        UriHelper.NavigateTo($"{UrlNameHdr.ClientNewProjectOrders}/{projectId}", forceLoad: true);
+    }
+}

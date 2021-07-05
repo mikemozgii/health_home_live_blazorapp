@@ -1,0 +1,401 @@
+@page "/client/edit-address"
+@inject AutoMapper.IMapper _mapper;
+@using System.Linq;
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+@inject ClientSvc ClientSvc;
+@inject InstantDatahandler InstantDatahandler;
+@inject AddressSvc AddressSvc;
+
+<uContainer AllignCols="center" IsDefault="true" IsFullHeight="true" >
+
+    <uCol>
+        <uContainer AllignCols="center">
+
+            <uCol CustomClass="pb-35 pt-35">
+
+                <sClientEditInfoTopNavPanel />
+
+            </uCol>
+
+
+
+            <uCol>
+
+                @if (!ClientAddresses.IsNullOrEmpty())
+                {
+
+                    <uContainer CustomClassContainer="mb-20">
+
+
+                        @foreach (var addres in ClientAddresses)
+                        {
+                            <uCol Width="200px" CustomClass="mx-15 mt-15">
+                                <div class="card px-15 py-15">
+
+
+                                    <div class="font-size-11 font-green">
+
+                                        <uContainer>
+
+                                            <uCol Grow="1">
+
+                                                @if (addres.TypeId == 1)
+                                                {
+                                                    <span class="font-size-11 font-green" style="text-align:right">Primary</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="font-size-11 font-silver" style="text-align:right;">Secondary</span>
+                                                }
+                                            </uCol>
+
+                                            <uCol Grow="1" CustomStyle="text-align:right">
+
+                                                <uButton isSoft="true" Size="btn-xs" Color="blue" CustomClass="px-0 py-0 btn-bg-transparent" CustomOnClickv2="@(e => EditAddress(e, addres.Id))"> <uFontAwesomeIcon Thickness="s" Size="12px" Icon="pencil" CustomClass="mr-5" /></uButton>
+
+                                                @if (addres.TypeId != 1)
+                                                {
+                                                    <uButton isSoft="true" Size="btn-xs"  Color="red" CustomClass="px-0 py-0 ml-5 btn-bg-transparent" CustomOnClickv2="@(e => DeleteAddress(e, addres.Id))"> <uFontAwesomeIcon Thickness="s" Icon="trash" Size="12px" CustomClass="mr-5" /> </uButton>
+                                                    <uButton isSoft="true" Size="btn-xs"  Color="green" CustomClass="px-0 py-0 ml-5 btn-bg-transparent" CustomOnClickv2="@(e => MakePrimary(e, addres.Id))"> <uFontAwesomeIcon Thickness="s" Size="12px" Icon="check" CustomClass="mr-5" /> </uButton>
+                                                }
+                                            </uCol>
+
+                                        </uContainer>
+
+                                    </div>
+
+
+                                    @*@if (addres.TypeId == 1)
+                                    {
+                                        <div class="font-size-11 font-green" style="text-align:right">Primary</div>
+                                    }
+                                    else
+                                    {
+                                        <div class="font-size-11 font-silver" style="text-align:right;">Secondary</div>
+                                    }*@
+
+
+                                    <div class="font-size-13">@addres.Line1</div>
+
+                                    @if (!string.IsNullOrWhiteSpace(addres.Line2))
+                                    {
+                                        <div class="font-silver font-size-13">@addres.Line2</div>
+                                    }
+                                    <div class="font-size-13">@addres.CityName, @addres.RegionName</div>
+                                    <div class="font-size-13">@addres.CountryName, @addres.PostalCode</div>
+
+
+
+                                </div>
+                            </uCol>
+                        }
+
+
+
+                        @if (ClientAddresses.Count() < 10)
+                        {
+
+                            <uCol Width="145px" CustomClass="mx-15 mt-15">
+
+
+
+                                <uButton IsSoft="true" Color="grain" CustomOnClickv2="@(e => AddAddress(e))" CustomStyle="width:100%;height:100%">
+                                    <div>
+                                        <uFontAwesomeIcon Thickness="s" Size="14px" Icon="plus" />
+                                    </div>
+                                    <div class="pb-2">
+                                        Add
+                                    </div>
+
+
+
+                                </uButton>
+
+                            </uCol>
+                        }
+
+
+
+
+
+                    </uContainer>
+                }
+                else
+                {
+                    <div class="text-center">
+
+                        <h2 class="my-25"> Please Add your address</h2>
+
+                        <uButton IsTransition="false" IsSoft="true" Color="grain" CustomOnClickv2="@(e=> AddAddress(e))">
+                            <uFontAwesomeIcon Thickness="s" Size="14px" Icon="plus" CustomClass="mr-5" /> Click to Add Address
+                        </uButton>
+                    </div>
+
+
+                }
+
+
+
+
+            </uCol>
+
+        </uContainer>
+    </uCol>
+
+</uContainer>
+
+
+
+<CascadingValue Value="@ModalSeetings">
+    <uModal Id="MyccdddModal" Title="Add Address" ContainerStyle="max-width:500px">
+
+        <EditForm Model="@AddEditAddressFormModel" OnValidSubmit="@HandleAddEditAddressFormModelSubmit">
+            <DataAnnotationsValidator />
+
+            <uContainer AllignCols="center" CustomClassContainer="">
+
+                <uCol CustomClass="mx-15">
+                    <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="Street Address 1" Id="Line1">
+                        <InputCustomText bind-Value="@AddEditAddressFormModel.Line1" id="Line1" class="form-control" Placeholder="Street and number, P.O. box, c/o." />
+                        <ValidationMessage for="@(()=> AddEditAddressFormModel.Line1)" />
+
+                    </uFormInput>
+                </uCol>
+
+                <uCol CustomClass="mx-15">
+                    <uFormInput IsGroup="true" Type="child" Label="Street Address 2" Id="Line2">
+                        <InputCustomText bind-Value="@AddEditAddressFormModel.Line2" id="Line2" class="form-control" Placeholder="Apartment, suite, unit, building, floor, etc." />
+                        <ValidationMessage for="@(()=> AddEditAddressFormModel.Line2)" />
+
+                    </uFormInput>
+                </uCol>
+
+                <uCol CustomClass="mx-15">
+
+                    <uFormInput IsGroup="true" IsRequired="true" Type="child" Label=" Country" Id="CountryId">
+                        <InputCustomSelect bind-Value="@AddEditAddressFormModel.CountryId" id="CountryId" OnCustomChange="@(e=> HandleCustomCountryChange(e))" class="form-control custom-select">
+                            <option value="">Select Country</option>
+                            @foreach (var l in CountrySelectModels)
+                            {
+                                <option value="@l.Id">@l.Name</option>
+                            }
+
+                        </InputCustomSelect>
+                    </uFormInput>
+                </uCol>
+
+                <uCol>
+                    <uFormInput IsGroup="true" IsRequired="true" Type="child" Label=" State/Province/Region" Id="RegionId">
+                        <InputCustomSelect bind-Value="@AddEditAddressFormModel.RegionId" isDisabled="@(AddEditAddressFormModel.CountryId == null)" OnCustomChange="@(e=> HandleCustomRegionChange(e))" id="RegionId" class="form-control custom-select">
+                            <option value="">Select Region</option>
+
+                            @foreach (var l in RegionSelectModels)
+                            {
+                                <option value="@l.Id">@l.Name</option>
+                            }
+
+                        </InputCustomSelect>
+
+                    </uFormInput>
+                </uCol>
+
+
+                <uCol Grow="1">
+                    <uFormInput IsGroup="true" IsRequired="true" Type="child" Label=" City" Id="CityId">
+                        <InputCustomSelect bind-Value="@AddEditAddressFormModel.CityId" isDisabled="@(AddEditAddressFormModel.RegionId == null)" id="CityId" class="form-control custom-select">
+
+                            <option value="">Select City</option>
+
+                            @foreach (var l in CitySelectModels)
+                            {
+                                <option value="@l.Id">@l.Name</option>
+                            }
+
+                        </InputCustomSelect>
+
+                    </uFormInput>
+                </uCol>
+
+
+                <uCol CustomClass="mx-15">
+                    <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="Postal Code" Id="PostalCode">
+                        <InputCustomText bind-Value="@AddEditAddressFormModel.PostalCode" id="PostalCode" class="form-control" Placeholder="Enter valid Zip code" />
+                    </uFormInput>
+                </uCol>
+
+                <uCol CustomClass="mx-15" CustomStyle="text-align:right">
+
+                    <uButton Type="Submbit" Title="Save" />
+
+                </uCol>
+            </uContainer>
+
+
+        </EditForm>
+
+
+    </uModal>
+</CascadingValue>
+
+@functions {
+
+
+    List<v_Address> ClientAddresses { get; set; } = new List<v_Address>();
+
+    IEnumerable<CountrySelectModel> CountrySelectModels { get; set; } = Enumerable.Empty<CountrySelectModel>();
+    IEnumerable<RegionSelectModel> RegionSelectModels { get; set; } = Enumerable.Empty<RegionSelectModel>();
+    IEnumerable<CitySelectModel> CitySelectModels { get; set; } = Enumerable.Empty<CitySelectModel>();
+    Guid? ClientAddressId;
+
+    AddEditAddressFormModel AddEditAddressFormModel { get; set; } = new AddEditAddressFormModel();
+    ModalSeetings ModalSeetings { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ModalSeetings = new ModalSeetings() { ShowModal = false };
+        await FillClientAddress();
+
+    }
+
+
+    async Task FillClientAddress()
+    {
+        ClientAddresses = (await ClientSvc.SelectClientAddresses()).OrderByDescending(q => q.TypeId == 1).ToList();
+    }
+
+
+    async void AddAddress(UIMouseEventArgs __e)
+    {
+        AddEditAddressFormModel = new AddEditAddressFormModel();
+        AddEditAddressFormModel.EntityId = ClientSvc._HHLQueryExecutionSvc._AccountSession.ClientInfo.ClientId;
+        AddEditAddressFormModel.FieldNameId = 4;
+        CountrySelectModels = _mapper.Map<IEnumerable<e_Country>, IEnumerable<CountrySelectModel>>(InstantDatahandler.All_Countries).OrderBy(q => q.Name != "United States");
+        ModalSeetings.ShowModal = true;
+    }
+
+    async void DeleteAddress(UIMouseEventArgs __e, Guid addressId)
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            if ((await AddressSvc.Delete(addressId)).Success)
+            {
+                var r = ClientAddresses.First(q => q.Id == addressId);
+                ClientAddresses.Remove(r);
+                StateHasChanged();
+            }
+
+
+        }
+
+    }
+
+    async void MakePrimary(UIMouseEventArgs __e, Guid Id)
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+
+            if (await ClientSvc.MakeClientAddressPrimary(Id))
+            {
+                await FillClientAddress();
+                StateHasChanged();
+            }
+
+        }
+    }
+
+
+    async void EditAddress(UIMouseEventArgs __e, Guid Id)
+    {
+
+        var r = ClientAddresses.First(q => q.Id == Id);
+
+        AddEditAddressFormModel = new AddEditAddressFormModel();
+        AddEditAddressFormModel.Id = r.Id;
+        AddEditAddressFormModel.Line1 = r.Line1;
+        AddEditAddressFormModel.Line2 = r.Line2;
+        AddEditAddressFormModel.PostalCode = r.PostalCode;
+        AddEditAddressFormModel.CountryId = r.CountryId;
+        AddEditAddressFormModel.RegionId = r.RegionId;
+        AddEditAddressFormModel.CityId = r.CityId;
+        AddEditAddressFormModel.EntityId = ClientSvc._HHLQueryExecutionSvc._AccountSession.ClientInfo.ClientId;
+        AddEditAddressFormModel.FieldNameId = 4;
+
+        CountrySelectModels = _mapper.Map<IEnumerable<e_Country>, IEnumerable<CountrySelectModel>>(InstantDatahandler.All_Countries).OrderBy(q => q.Name != "United States");
+        if (AddEditAddressFormModel.CountryId != null)
+        {
+            RegionSelectModels = _mapper.Map<IEnumerable<e_Region>, IEnumerable<RegionSelectModel>>(InstantDatahandler.All_Regions.Where(q => q.CountryId == AddEditAddressFormModel.CountryId)).OrderBy(q => q.Name);
+            if (AddEditAddressFormModel.RegionId != null)
+            {
+                CitySelectModels = _mapper.Map<IEnumerable<e_City>, IEnumerable<CitySelectModel>>(InstantDatahandler.All_Cities.Where(q => q.RegionId == AddEditAddressFormModel.RegionId)).OrderBy(q => q.Name);
+            }
+        }
+
+
+
+        ModalSeetings.ShowModal = true;
+        StateHasChanged();
+    }
+
+
+    async void HandleAddEditAddressFormModelSubmit()
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+
+            if (ClientAddresses.IsNullOrEmpty() || ClientAddresses.FirstOrDefault(q => q.TypeId == 1) == null)
+            {
+                AddEditAddressFormModel.TypeId = 1;
+            }
+
+            if ((await AddressSvc.Upsert(AddEditAddressFormModel)).Success)
+            {
+                await FillClientAddress();
+
+                ModalSeetings.ShowModal = false;
+                StateHasChanged();
+            }
+
+
+        }
+
+    }
+
+
+    async void HandleCustomCountryChange(UIChangeEventArgs __e)
+    {
+        AddEditAddressFormModel.CountryId = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? new Guid(__e.Value.ToString()) : (Guid?)default;
+
+        if (AddEditAddressFormModel?.CountryId != null)
+        {
+            RegionSelectModels = _mapper.Map<IEnumerable<e_Region>, IEnumerable<RegionSelectModel>>(InstantDatahandler.All_Regions.Where(q => q.CountryId == AddEditAddressFormModel.CountryId)).OrderBy(q => q.Name);
+            AddEditAddressFormModel.CityId = null;
+        }
+        else
+        {
+            AddEditAddressFormModel.RegionId = null;
+            AddEditAddressFormModel.CityId = null;
+        }
+
+        StateHasChanged();
+    }
+
+    async void HandleCustomRegionChange(UIChangeEventArgs __e)
+    {
+        AddEditAddressFormModel.RegionId = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? new Guid(__e.Value.ToString()) : (Guid?)default;
+
+        if (AddEditAddressFormModel?.RegionId != null)
+        {
+            CitySelectModels = _mapper.Map<IEnumerable<e_City>, IEnumerable<CitySelectModel>>(InstantDatahandler.All_Cities.Where(q => q.RegionId == AddEditAddressFormModel.RegionId)).OrderBy(q => q.Name);
+        }
+        else
+        {
+            AddEditAddressFormModel.CityId = null;
+        }
+
+        StateHasChanged();
+    }
+
+}

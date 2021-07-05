@@ -1,0 +1,43 @@
+
+
+
+
+@if (PriorityId == 0)
+{
+    <span class="font-red font-weight-semi-bold">    <uFontAwesomeIcon Color="red" Thickness="s" Size="@IconSize" Icon="bell" CustomClass="mr-2" />    Emergency  </span>
+
+}
+else if (PriorityId == 1)
+{
+<span class="font-red ">    <uFontAwesomeIcon Color="red" Thickness="s" Size="@IconSize" Icon="exclamation" CustomClass="mr-2" />    Critical  </span>
+}
+else if (PriorityId == 2)
+{
+    <span class="font-orange">    <uFontAwesomeIcon Color="orange" Thickness="s" Size="@IconSize" Icon="arrow-up" CustomClass="mr-2" />    High  </span>
+}
+else if (PriorityId == 3)
+{
+<span class="font-blue">    <uFontAwesomeIcon Color="blue" Thickness="s" Size="@IconSize" Icon="arrows-v" CustomClass="mr-2" />    Meidum  </span>
+}
+else if (PriorityId == 4)
+{
+<span class="font-green">    <uFontAwesomeIcon Color="green" Thickness="s" Size="@IconSize" Icon="arrow-down" CustomClass="mr-2" />    Low  </span>
+}
+
+
+
+
+
+@functions {
+
+
+    [Parameter]
+    private int PriorityId { get; set; }
+
+    [Parameter]
+    private string IconSize { get; set; } = "12px";
+
+
+
+
+}

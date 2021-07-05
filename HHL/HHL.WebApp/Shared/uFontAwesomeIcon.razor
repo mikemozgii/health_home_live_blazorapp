@@ -1,0 +1,50 @@
+
+
+@if (CustomOnClick.HasDelegate)
+{
+    <i class="@($"faz fa{Thickness} fa-{Icon} {Color} {CustomClass}")" style="font-size: @Size; @CustomStyle" onclick="@CustomOnClick"></i>
+}
+else
+{
+    <i class="@($"faz fa{Thickness} fa-{Icon} {Color} {CustomClass}")" style="font-size: @Size; @CustomStyle" ></i>
+}
+
+
+
+
+
+@functions {
+    [Parameter]
+    private string Thickness { get; set; } = "r";
+
+    [Parameter]
+    private string Icon { get; set; }
+
+    [Parameter]
+    private string CustomClass { get; set; }
+
+    [Parameter]
+    private string CustomStyle { get; set; }
+
+    [Parameter]
+    private string Size { get; set; } = "14px";
+
+    [Parameter]
+    private EventCallback CustomOnClick { get; set; }
+
+    [Parameter]
+    private string Color { get; set; }
+    
+    string FinalClass { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+
+        var tIsTransition = "";
+
+        if (!string.IsNullOrWhiteSpace(Color))
+        {
+            Color = $"font-{Color}";
+        }
+
+    }
+}

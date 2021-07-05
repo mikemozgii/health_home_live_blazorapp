@@ -1,0 +1,84 @@
+@page "/home/{text}/job-type-selection"
+@inject InstantDatahandler InstantDatahandler;
+<uContainer AllignCols="center" CustomClassContainer="" IsDefault="true" CustomStyleContainer="" CustomStyleRow="height: calc(100vh - 10px); align-items: center;margin-top:-100px">
+
+    <uCol Grow="1" Customstyle="text-align:center;">
+
+
+        <uButton Type="NavButton" Color="silverish" IsSoft="true" Href="@($"/home/{Text}/task/task-type-selection")">
+
+            <div class="wrap_selection">
+
+                <div class="wrap_selection_header">
+
+                    <uFontAwesomeIcon Thickness="s" Size="48px" Icon="tasks" />
+
+                </div>
+                <div class="wrap_selection_title my-25"><h2 class="font-weight-normal-bold">Task</h2></div>
+
+                <div class="wrap_selection_description ml-55">
+
+                    <div class="wrap_selection_description_item">&#8226; Flooring Install</div>
+
+                    <div class="wrap_selection_description_item">&#8226; Water Heater Repair</div>
+
+                    <div class="wrap_selection_description_item">&#8226; Well Pimp Service</div>
+
+                    <div class="wrap_selection_description_item">&#8226; Snow Removal</div>
+
+                    <div class="wrap_selection_description_item">&#8226; and More...</div>
+
+                </div>
+
+            </div>
+
+
+        </uButton>
+
+    </uCol>
+
+    <uCol Grow="1" Customstyle="text-align:center;">
+
+        <uButton Type="NavButton" Color="grain" IsSoft="true" Href="@($"/home/{Text}/add-new-project")">
+
+            <div class="wrap_selection">
+
+                <div class="wrap_selection_header">
+
+                    <uFontAwesomeIcon Thickness="s" Size="48px" Icon="project-diagram" />
+
+                </div>
+                <div class="wrap_selection_title my-25"><h2 class="font-weight-normal-bold">Project</h2></div>
+
+                <div class="wrap_selection_description ml-25">
+
+                    <div class="wrap_selection_description_item">&#8226; Project Management</div>
+
+                    <div class="wrap_selection_description_item">&#8226; Bulding Renovation & Additions</div>
+
+                    <div class="wrap_selection_description_item">&#8226; Design & Build</div>
+
+                    <div class="wrap_selection_description_item">&#8226; Landscape Architects</div>
+
+                    <div class="wrap_selection_description_item">&#8226; and More...</div>
+
+                </div>
+
+            </div>
+
+
+        </uButton>
+
+    </uCol>
+
+
+
+
+</uContainer>
+
+@functions {
+
+    [Parameter]
+    private string Text { get; set; }
+
+}

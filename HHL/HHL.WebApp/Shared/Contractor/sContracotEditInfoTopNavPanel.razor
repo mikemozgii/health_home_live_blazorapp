@@ -1,0 +1,49 @@
+@inject Microsoft.AspNetCore.Components.IUriHelper UriHelper
+
+<uContainer>
+    <uCol>
+        @foreach (var navItem in NavPanelItems)
+        {
+            if (navItem.IsActive)
+            {
+                <uButton Type="NavButton" Href="@navItem.Href" Title="@navItem.Name" isSoft="true" IsTransition="false" Color="green" CustomClass="mx-15" />
+            }
+            else
+            {
+                <uButton Type="NavButton" Href="@navItem.Href" Title="@navItem.Name" isSoft="true" IsTransition="false" CustomClass="mx-15" />
+            }
+        }
+
+    </uCol>
+
+</uContainer>
+
+
+
+
+
+@functions {
+
+    List<NavPanelItem> NavPanelItems { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        NavPanelItems = new List<NavPanelItem>()
+{
+
+        new NavPanelItem(UriHelper, "Legal Info", UrlNameHdr.ContractorEditLegalInfo ),
+        new NavPanelItem(UriHelper, "Profile", UrlNameHdr.ContractorEditProfile ),
+        new NavPanelItem(UriHelper, "Services", UrlNameHdr.ContractorEditServices),
+        new NavPanelItem(UriHelper, "Service Locations", UrlNameHdr.ContractorEditServiceLocations),
+        new NavPanelItem(UriHelper, "Plan", UrlNameHdr.ContractorEditPlan),
+        new NavPanelItem(UriHelper, "Schedule", UrlNameHdr.ContractorEditSchedule),
+        new NavPanelItem(UriHelper, "Payment Methods", UrlNameHdr.ContractorEditPaymentMethods),
+        //new NavPanelItem(UriHelper, "Day-Offs", UrlNameHdr.ContractorEditDayOff),
+        //new NavPanelItem() { Name = "Payment Methods" },
+        //new NavPanelItem() { Name = "Plans" }
+        };
+    }
+
+
+}

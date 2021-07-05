@@ -1,0 +1,130 @@
+
+
+@if (Type == "textarea")
+{
+    @if (IsGroup)
+    {
+
+    <div class="form-group @FormGroupClass">
+
+        <label class="form-label" for="@Id">
+            @Label
+            @if (IsRequired)
+            {
+                <span class="font-red ">*</span>
+            }
+        </label>
+
+        <textarea class="form-control" rows="@Rows" placeholder="@Placeholder" id="@Id"></textarea>
+
+    </div>
+    }
+    else
+    {
+        <label class="form-label" for="@Id">
+            @Label
+            @if (IsRequired)
+            {
+                <span class="font-red ">*</span>
+            }
+        </label>
+
+        <textarea class="form-control" rows="@Rows" placeholder="@Placeholder" id="@Id"></textarea>
+    }
+}
+else if (Type == "child")
+{
+    @if (IsGroup)
+    {
+
+       <div class="form-group @FormGroupClass">
+
+           <label class="form-label" for="@Id">
+               @Label
+               @if (IsRequired)
+               {
+                   <span class="font-red ">*</span>
+               }
+           </label>
+           @ChildContent
+
+       </div>
+}
+else
+{
+    <label class="form-label" for="@Id">@Label</label>
+
+    @ChildContent
+
+}
+}
+else
+{
+    @if (IsGroup)
+    {
+
+<div class="form-group @FormGroupClass">
+
+    <label class="form-label" for="@Id">
+        @Label
+        @if (IsRequired)
+        {
+            <span class="font-red ">*</span>
+        }
+    </label>
+    <input type="@Type" class="form-control" placeholder="@Placeholder" id="@Id">
+
+</div>
+}
+else
+{
+    <label class="form-label" for="@Id">
+        @Label
+        @if (IsRequired)
+        {
+            <span class="font-red ">*</span>
+        }
+    </label>
+
+
+    <input type="@Type" class="form-control" placeholder="@Placeholder" id="@Id">
+
+}
+}
+
+
+
+
+
+@functions {
+
+    [Parameter]
+    private string Label { get; set; }
+
+    [Parameter]
+    private string Id { get; set; }
+
+    [Parameter]
+    private string Type { get; set; }
+
+    [Parameter]
+    private string Placeholder { get; set; }
+
+    [Parameter]
+    private string FormGroupClass { get; set; }
+
+    [Parameter]
+    private bool IsGroup { get; set; }
+
+    [Parameter]
+    private bool IsRequired { get; set; }
+
+    [Parameter]
+    private int Rows { get; set; } = 0;
+
+    [Parameter]
+    private RenderFragment ChildContent { get; set; }
+
+    private string RequiredLabelHtml { get; set; }
+
+}

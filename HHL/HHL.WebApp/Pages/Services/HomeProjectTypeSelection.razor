@@ -1,0 +1,74 @@
+@page "/home/{Text}/project/project-type-selection";
+@inject InstantDatahandler InstantDatahandler;
+<uContainer AllignCols="center" CustomClassContainer="" IsDefault="true" CustomStyleContainer="" CustomStyleRow="height: calc(100vh - 10px); align-items: center;margin-top:-100px">
+
+
+    @foreach (var proejctType in ProjectTypes)
+    {
+
+        <uCol Grow="1" Customstyle="text-align:center;">
+
+            <uButton Type="NavButton" Color="blue" IsSoft="true" Href="/home/residential/job-type-selection">
+
+                <div class="wrap_selection">
+
+                    @*<div class="wrap_selection_header">
+
+                            <uFontAwesomeIcon Thickness="s" Size="48px" Icon="home-alt" />
+
+                        </div>*@
+                    <div class="wrap_selection_title my-25"><h2 class="font-weight-normal-bold">@proejctType.Name</h2></div>
+
+                    @*<div class="wrap_selection_description ml-55">
+
+                            <div class="wrap_selection_description_item">&#8226; House</div>
+
+                            <div class="wrap_selection_description_item">&#8226; Condo</div>
+
+                            <div class="wrap_selection_description_item">&#8226; Townhouse</div>
+
+                            <div class="wrap_selection_description_item">&#8226; Apartment</div>
+
+                            <div class="wrap_selection_description_item">&#8226; and etc...</div>
+
+                        </div>*@
+
+                </div>
+
+
+            </uButton>
+
+        </uCol>
+    }
+
+</uContainer>
+
+@functions {
+
+    [Parameter]
+    private string Text { get; set; }
+
+    IEnumerable<e_HomeProjectType> ProjectTypes;
+
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+
+        ProjectTypes = new List<e_HomeProjectType>();
+        if (Text == "residential")
+        {
+            ProjectTypes = InstantDatahandler.All_HomeProjectTypes.Where(q => q.IsResidential);
+        }
+        else if (Text == "commercial")
+        {
+            ProjectTypes = InstantDatahandler.All_HomeProjectTypes.Where(q => q.IsCommercial);
+        }
+
+
+
+
+
+    }
+}

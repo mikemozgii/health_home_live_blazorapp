@@ -1,0 +1,21 @@
+
+
+    <div class="@WizardStepModel.HeaderItemClass">
+        <div>
+            <span class="wizard_header_item">
+                <uFontAwesomeIcon Size="22px" Icon="@WizardStepModel.CurrentIcon" Thickness="s" CustomClass="wizard_header_item_icon" />
+            </span>
+        </div>
+        <div class="wizard_header_item_title">
+            @WizardStepModel.Name
+        </div>
+    </div>
+
+
+
+@functions {
+
+    
+    [Parameter] WizardStepModel WizardStepModel { get; set; }
+
+}

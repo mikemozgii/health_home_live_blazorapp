@@ -1,0 +1,59 @@
+@page "/home/{BuldingType}/task/task-type-selection";
+@page "/home/{BuldingType}/task/task-type-selection/project/{ProjectId}";
+@inject InstantDatahandler InstantDatahandler;
+<uContainer AllignCols="center" CustomClassContainer="py-35" IsDefault="true" CustomStyleContainer="" CustomStyleRow="">
+
+
+    @foreach (var tasktype in TaskTypes)
+    {
+
+        <uCol Grow="1" Customstyle="text-align:center;" CustomClass="mb-15">
+
+            <uButton Type="NavButton" Color="silverish" IsSoft="true" Href="@($"/home/{BuldingType}/task/{tasktype.HomeTaskTypeName.ToUrl()}/task-service-selection{(!string.IsNullOrWhiteSpace(ProjectId) ? $"/project/{ProjectId}" : string.Empty)}")">
+
+                <div class="wrap_selection pt-0 pb-0" style="width:340px">
+
+                    <div class="wrap_selection_title mb-5"><h5 class="font-weight-normal-bold mt-0">@tasktype.HomeTaskTypeName</h5></div>
+
+                    <div class="wrap_selection_description pl-0" style="text-align: center;">
+
+
+                        @foreach (var taskService in InstantDatahandler.All_VmHomeTaskCategories.Where(q => q.HomeTaskTypeId == tasktype.HomeTaskTypeId))
+                        {
+                            <uBadge Color="silverish" CustomClass="font-weight-semi-bold" IsSoft="true">@taskService.HomeTaskServiceTypeName</uBadge>
+
+                        }
+
+                    </div>
+
+                </div>
+
+
+            </uButton>
+
+        </uCol>
+    }
+
+</uContainer>
+
+@functions {
+
+    [Parameter]
+    private string BuldingType { get; set; }
+
+    IEnumerable<v_VmHomeTaskCategory> TaskTypes;
+
+    [Parameter]
+    private string ProjectId { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+
+        TaskTypes = new List<v_VmHomeTaskCategory>();
+        var buldingType = String.Equals(BuldingType, "residential", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
+        TaskTypes = InstantDatahandler.All_VmHomeTaskCategories.Where(q => q.HomeBuldingTypeId == buldingType && q.IsActive).DistinctBy(q => q.HomeTaskTypeId).OrderBy(q => q.Name);
+
+
+    }
+}

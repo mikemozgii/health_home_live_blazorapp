@@ -1,0 +1,84 @@
+@page "/home/{BuldingType}/add-new-project";
+
+@inject AutoMapper.IMapper _mapper;
+@inject Microsoft.AspNetCore.Components.IUriHelper UriHelper;
+@inject UiJsHandler UiJsHandler;
+@inject InstantDatahandler InstantDatahandler;
+@inject ProjectSvc ProjectSvc;
+    <EditForm Model="@AddUpdateProjectFormModel" OnValidSubmit="@HandleAddUpdateProjectFormModelSubmit">
+        <uContainer AllignCols="center" IsDefault="true" IsFullHeight="true">
+
+            <uCol>
+                <uContainer AllignCols="center" IsDefault="true" IsVerticalCenter="true">
+
+                    <uCol CustomClass="mb-15 mx-15">
+
+
+                        <h3 class="font-blue font-weight-normal mb-0">
+                            Add a <span class="font-weight-semi-bold">Project</span>
+                        </h3>
+
+
+
+                    </uCol>
+
+
+                    <uCol CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="Name" Id="Line1">
+                            <InputCustomText bind-Value="@AddUpdateProjectFormModel.Name" id="Line1" class="form-control" Placeholder="Project Name" />
+                        </uFormInput>
+                    </uCol>
+
+                    <uCol CustomClass="mx-15">
+                        <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Priority" Id="PriorityId">
+                            <InputCustomSelect bind-Value="@AddUpdateProjectFormModel.PriorityId" id="PriorityId" class="form-control custom-select">
+                                @foreach (var l in PrioritySelectModels.OrderBy(q => q.Id))
+                                {
+                                    <option value="@l.Id">@l.Name</option>
+                                }
+                            </InputCustomSelect>
+
+                        </uFormInput>
+                    </uCol>
+
+                    <uCol CustomClass="mx-15" CustomStyle="text-align:right">
+
+                        <uButton Type="Submbit" Title="Save" />
+
+                    </uCol>
+
+                </uContainer>
+            </uCol>
+        </uContainer>
+    </EditForm>
+
+        @functions {
+
+            AddUpdateProjectFormModel AddUpdateProjectFormModel { get; set; } = new AddUpdateProjectFormModel();
+            IEnumerable<PrioritySelectModel> PrioritySelectModels { get; set; } = Enumerable.Empty<PrioritySelectModel>();
+
+
+            [Parameter]
+            private string BuldingType { get; set; }
+
+            protected override async Task OnInitializedAsync()
+            {
+
+                PrioritySelectModels = _mapper.Map<IEnumerable<e_Priority>, IEnumerable<PrioritySelectModel>>(InstantDatahandler.All_Priorities);
+                AddUpdateProjectFormModel.HomeBuldingTypeId = String.Equals(BuldingType, "residential", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
+                AddUpdateProjectFormModel.PriorityId = 3;
+
+            }
+
+
+            async void HandleAddUpdateProjectFormModelSubmit()
+            {
+
+                using (var ls = await new LoadingScreen(UiJsHandler).Load())
+                {
+                    var r = await ProjectSvc.Add(AddUpdateProjectFormModel);
+                    UriHelper.NavigateTo($"{UrlNameHdr.ClientNewProjectOrders}/{r}", forceLoad: true);
+                }
+
+            }
+        }

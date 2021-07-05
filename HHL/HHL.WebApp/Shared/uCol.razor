@@ -1,0 +1,81 @@
+
+
+
+<div id="@Id" class="uCol @CustomClass" style="@ColStyle">
+    @ChildContent
+</div>
+
+
+
+
+@functions {
+
+    [Parameter]
+    private RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    private string Id { get; set; }
+
+    [Parameter]
+    private string Width { get; set; } = "100%";
+
+    [Parameter]
+    private string CustomStyle { get; set; }
+
+    [Parameter]
+    private string CustomClass { get; set; }
+
+    [Parameter]
+    private int Grow { get; set; } = 0;
+
+    [Parameter]
+    private string AlignCol { get; set; } = "auto";
+
+    [Parameter]
+    private bool IsDefaultVerticalSize { get; set; }
+
+    [Parameter]
+    private bool IsTextCenter { get; set; }
+
+    [Parameter]
+    private bool IsDefaultSpaceBetween { get; set; }
+
+    string ColStyle { get; set; } = "";
+
+    
+    protected override async Task OnInitializedAsync()
+    {
+        ColStyle = $"-ms-flex: {Grow} 0 {Width}; flex: {Grow} 0 {Width}; max-width: {Width};align-self:{AlignCol};";
+
+        if (Grow > 0)
+        {
+            ColStyle = $"flex:{Grow};align-self:{AlignCol};";
+        }
+
+        if (IsDefaultVerticalSize)
+        {
+            ColStyle += "margin-top:-30%;";
+        }
+
+        if (IsTextCenter)
+        {
+            ColStyle += "text-align:center;";
+        }
+
+        if (string.IsNullOrWhiteSpace(Id))
+        {
+            Id = Guid.NewGuid().ToString();
+        }
+
+        ColStyle += $" {CustomStyle}";
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (IsDefaultSpaceBetween)
+        {
+            CustomClass = $"mx-15 {CustomClass}";
+        }
+    }
+
+}

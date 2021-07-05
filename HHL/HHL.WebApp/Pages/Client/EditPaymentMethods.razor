@@ -1,0 +1,325 @@
+﻿@page "/client/payment-methods"
+@inject AutoMapper.IMapper _mapper;
+@inject ClientSvc ClientSvc;
+@inject InstantDatahandler InstantDatahandler;
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+
+    <uContainer AllignCols="center" IsDefault="true" IsFullHeight="true">
+
+        <uCol CustomClass="pb-35 pt-35">
+
+            <sClientEditInfoTopNavPanel />
+
+            @if (!PaymentMethods.IsNullOrEmpty())
+            {
+
+        <uContainer CustomClassContainer="mt-25">
+
+
+            @foreach (var paymentMethod in PaymentMethods)
+            {
+         
+            <uCol Width="200px" CustomClass="mx-15 mt-15">
+                <div class="card px-15 py-15">
+                    <div>
+
+                        <uContainer>
+
+                            <uCol AlignCol="center" Grow="1">
+
+
+
+                                @if (paymentMethod.Card.Brand == "visa")
+                                {
+                                    <uFontAwesomeIcon Thickness="b" Color="blue" Size="14px" Icon="cc-visa" />
+                                }
+                                else if (paymentMethod.Card.Brand == "mastercard")
+                                {
+                                    <uFontAwesomeIcon Thickness="b" Color="green" Size="14px" Icon="cc-mastercard" />
+                                }
+                                else if (paymentMethod.Card.Brand == "amex")
+                                {
+                                    <uFontAwesomeIcon Thickness="b" Color="grain" Size="14px" Icon="cc-amex" />
+                                }
+
+                            </uCol>
+
+                            <uCol AlignCol="center" Grow="1" CustomStyle="text-align:right">
+                                <uButton isSoft="true" Size="btn-xs" Color="red" CustomClass="px-0 py-0 btn-bg-transparent" CustomOnClickv2="@(e => DeletePaymentMethod(e, paymentMethod))"> <uFontAwesomeIcon Thickness="s" Size="12px" Icon="trash" CustomClass="mr-5" /></uButton>
+                            </uCol>
+
+                        </uContainer>
+
+                    </div>
+
+
+
+                    <div class="font-weight-normal-bold">@paymentMethod.Card.Brand.FirstCharToUpper() •••• @paymentMethod.Card.Last4</div>
+                    <div class="font-silver font-size-11"> Expires @paymentMethod.Card.ExpMonth/@paymentMethod.Card.ExpYear</div>
+
+                </div>
+            </uCol>
+                    }
+               
+
+
+                @if (PaymentMethods.Count() < 10)
+                {
+
+                    <uCol Width="145px" CustomClass="mx-15 mt-15">
+
+
+
+                        <uButton IsSoft="true" Color="grain" CustomOnClickv2="@(e => AddPaymentMethod(e))" CustomStyle="width:100%;height:100%">
+                            <div>
+                                <uFontAwesomeIcon Thickness="s" Size="14px" Icon="plus" />
+                            </div>
+                            <div class="pb-2">
+                                Add
+                            </div>
+
+
+
+                        </uButton>
+
+                    </uCol>
+                }
+
+
+
+
+
+            </uContainer>
+            }
+            else
+            {
+
+
+                <uContainer CustomClassContainer="mt-25">
+                    
+                    <uCol>
+
+                        <div class="text-center">
+
+                            <h2 class="my-25"> Please Add Payment Method</h2>
+
+                            <uButton IsTransition="false" IsSoft="true" Color="grain" CustomOnClickv2="@(e=> AddPaymentMethod(e))">
+                                <uFontAwesomeIcon Thickness="s" Size="14px" Icon="plus" CustomClass="mr-5" /> Add Payment Method
+                            </uButton>
+                        </div>
+
+                    </uCol>
+
+                </uContainer>
+
+
+
+
+                    }
+            </uCol>
+
+
+
+
+
+    </uContainer>
+
+
+    <CascadingValue Value="@ModalSeetings">
+        <uModal Id="MyccdddModal" Title="Add Address" ContainerStyle="max-width:500px;" WrapStyle="padding-top:0px">
+
+            <EditForm Model="@AddPaymentMethodFormModel" OnValidSubmit="@HandleAddPaymentMethodFormModelSubmit">
+                <DataAnnotationsValidator />
+
+                <uContainer AllignCols="center" CustomClassContainer="">
+                    <uCol CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="Cardholder Name" Id="CardholderName">
+                            <InputCustomText bind-Value="@AddPaymentMethodFormModel.CardholderName" id="CardholderName" class="form-control" Placeholder="Cardholder Name" />
+                        </uFormInput>
+                    </uCol>
+
+                    <uCol CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="Card Number" Id="CardNumber">
+                            <InputCustomNumber bind-Value="@AddPaymentMethodFormModel.CardNumber" id="CardNumber" class="form-control" Placeholder="Card Number" />
+                        </uFormInput>
+                    </uCol>
+                    <uCol>
+
+                        <uContainer AllignCols="center">
+
+                            <uCol Grow="1" CustomClass="mx-15">
+                                <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="Expiry Month" Id="ExpiryMonth">
+                                    <InputCustomNumber bind-Value="@AddPaymentMethodFormModel.ExpiryMonth" id="ExpiryMonth" Min="1" Max="12" class="form-control" Placeholder="MM" />
+                                </uFormInput>
+                            </uCol>
+
+                            <uCol Grow="1" CustomClass="mx-15">
+                                <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="Expiry Year" Id="ExpiryYear">
+                                    <InputCustomNumber bind-Value="@AddPaymentMethodFormModel.ExpiryYear" id="ExpiryYear" Min="2019" Max="2035" class="form-control" Placeholder="YYYY" />
+                                </uFormInput>
+                            </uCol>
+
+                            <uCol Grow="1" CustomClass="mx-15">
+                                <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="CVC" Id="CVC">
+                                    <InputCustomNumber bind-Value="@AddPaymentMethodFormModel.Cvc" id="CVC" Min="100" Max="999" class="form-control" Placeholder="CVC" />
+                                </uFormInput>
+                            </uCol>
+                        </uContainer>
+
+
+                    </uCol>
+
+
+                    <uCol CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="Address Line 1" Id="Line1">
+                            <InputCustomText bind-Value="@AddPaymentMethodFormModel.AddressLine1" id="Line1" class="form-control" Placeholder="Street and number, P.O. box, c/o." />
+                        </uFormInput>
+                    </uCol>
+
+                    <uCol CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" Label="Address Line 2" Id="Line2">
+                            <InputCustomText bind-Value="@AddPaymentMethodFormModel.AddressLine2" id="Line2" class="form-control" Placeholder="Apartment, suite, unit, building, floor, etc." />
+                        </uFormInput>
+                    </uCol>
+
+                    <uCol CustomClass="mx-15">
+
+                        <uFormInput IsGroup="true" IsRequired="true" Type="child" Label=" Country" Id="CountryId">
+                            <InputCustomSelect bind-Value="@AddPaymentMethodFormModel.Country" id="CountryId" OnCustomChange="@(e=> HandleCustomCountryChange(e))" class="form-control custom-select">
+                                <option value="">Select Country</option>
+                                @foreach (var l in CountrySelectModels)
+                                {
+                                    <option value="@l.Name">@l.Name</option>
+                                }
+
+                            </InputCustomSelect>
+                        </uFormInput>
+                    </uCol>
+
+                    <uCol>
+                        <uFormInput IsGroup="true" IsRequired="true" Type="child" Label=" State/Province/Region" Id="RegionId">
+                            <InputCustomSelect bind-Value="@AddPaymentMethodFormModel.Region" isDisabled="@(AddPaymentMethodFormModel.Country == null)" id="RegionId" class="form-control custom-select">
+                                <option value="">Select Region</option>
+
+                                @foreach (var l in RegionSelectModels)
+                                {
+                                    <option value="@l.Name">@l.Name</option>
+                                }
+
+                            </InputCustomSelect>
+
+                        </uFormInput>
+                    </uCol>
+
+
+                    <uCol Grow="1">
+                        <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="City" Id="City">
+                            <InputCustomText bind-Value="@AddPaymentMethodFormModel.City" id="City" class="form-control" Placeholder="City" />
+                        </uFormInput>
+                    </uCol>
+
+
+                    <uCol CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="Postal Code" Id="PostalCode">
+                            <InputCustomText bind-Value="@AddPaymentMethodFormModel.PostalCode" id="PostalCode" class="form-control" Placeholder="Enter valid Zip code" />
+                        </uFormInput>
+                    </uCol>
+
+                    <uCol CustomClass="mx-15" CustomStyle="text-align:right">
+
+                        <uButton Type="Submbit" Title="Save" />
+
+                    </uCol>
+                </uContainer>
+
+
+            </EditForm>
+
+
+        </uModal>
+    </CascadingValue>
+
+
+@functions {
+
+    IEnumerable<PaymentMethod> PaymentMethods { get; set; } = Enumerable.Empty<PaymentMethod>();
+    AddPaymentMethodFormModel AddPaymentMethodFormModel { get; set; } = new AddPaymentMethodFormModel();
+    ModalSeetings ModalSeetings = new ModalSeetings() { ShowModal = false };
+    IEnumerable<CountrySelectModel> CountrySelectModels { get; set; } = Enumerable.Empty<CountrySelectModel>();
+    IEnumerable<RegionSelectModel> RegionSelectModels { get; set; } = Enumerable.Empty<RegionSelectModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await FillClientPaymetMethods();
+    }
+
+    async Task FillClientPaymetMethods()
+    {
+        PaymentMethods = await ClientSvc.SelectCurrentPaymentMethods();
+    }
+
+    async void HandleAddPaymentMethodFormModelSubmit()
+    {
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            var r = await ClientSvc.InsertPaymentMethod(AddPaymentMethodFormModel);
+            if (r != null)
+            {
+                await FillClientPaymetMethods();
+
+                ModalSeetings.ShowModal = false;
+                StateHasChanged();
+            }
+
+
+        }
+    }
+
+    async void DeletePaymentMethod(UIMouseEventArgs __e, PaymentMethod paymentMethod)
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            if (await new StripeSvc().DeletePaymentMethod(paymentMethod))
+            {
+                await FillClientPaymetMethods();
+                StateHasChanged();
+            }
+
+
+        }
+
+    }
+    
+
+    async void AddPaymentMethod(UIMouseEventArgs __e)
+    {
+        AddPaymentMethodFormModel = new AddPaymentMethodFormModel();
+        CountrySelectModels = _mapper.Map<IEnumerable<e_Country>, IEnumerable<CountrySelectModel>>(InstantDatahandler.All_Countries).OrderBy(q => q.Name != "United States");
+        ModalSeetings.ShowModal = true;
+    }
+
+
+
+
+
+    async void HandleCustomCountryChange(UIChangeEventArgs __e)
+    {
+        AddPaymentMethodFormModel.Country = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? __e.Value.ToString() : (String)default;
+
+        if (AddPaymentMethodFormModel?.Country != null)
+        {
+
+            var countryId = CountrySelectModels.First(q => String.Equals(q.Name, AddPaymentMethodFormModel.Country, StringComparison.OrdinalIgnoreCase)).Id;
+            RegionSelectModels = _mapper.Map<IEnumerable<e_Region>, IEnumerable<RegionSelectModel>>(InstantDatahandler.All_Regions.Where(q => q.CountryId == countryId)).OrderBy(q => q.Name);
+        }
+        else
+        {
+            AddPaymentMethodFormModel.Region = null;
+        }
+
+        StateHasChanged();
+    }
+
+}

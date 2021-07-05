@@ -1,0 +1,32 @@
+
+
+
+
+@if (Value == 1)
+{
+      <uFontAwesomeIcon Color="blue" Thickness="s" Size="@IconSize" Icon="home-alt" CustomClass="mr-2" />@(new BuldingTypeHelper().GetName(1).FirstCharToUpper())
+
+}
+else if (Value == 2)
+{
+       <uFontAwesomeIcon Color="grain" Thickness="s" Size="@IconSize" Icon="hotel" CustomClass="mr-2" />@(new BuldingTypeHelper().GetName(2).FirstCharToUpper())
+}
+
+
+
+
+
+
+@functions {
+
+
+    [Parameter]
+    private int Value { get; set; }
+
+    [Parameter]
+    private string IconSize { get; set; } = "12px";
+
+
+
+
+}

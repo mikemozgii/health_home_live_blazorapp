@@ -1,0 +1,124 @@
+@page "/client/edit-plan"
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+@inject InstantDatahandler InstantDatahandler;
+@inject ClientSvc ClientSvc;
+
+<uContainer AllignCols="center" IsDefault="true" IsFullHeight="true" >
+
+    <uCol>
+
+        <uContainer AllignCols="center">
+
+            <uCol CustomClass="pb-35 pt-35">
+
+                <sClientEditInfoTopNavPanel />
+
+            </uCol>
+
+            <uCol>
+
+
+
+                <uContainer AllignCols="center">
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uPlanCard Title="@($"{BasicPlan.Name} Plan")" Price="@BasicPlan.PriceYearly"  IsYearly="true" IsSelected="@(e_Client?.ClientPlanId == BasicPlan.Id)" Color="silverish" PriceDiscounted="@BasicPlan.PriceYearlyDiscounted" Items="@BasicPlanItems" CustomOnClickv2="@(e=> SelectClientPlan(e, BasicPlan))" />
+                    </uCol>
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uPlanCard Title="@($"{PremiumPlan.Name} Plan")" Price="@PremiumPlan.PriceYearly"  IsYearly="true" IsSelected="@(e_Client?.ClientPlanId == PremiumPlan.Id)" Color="blue" PriceDiscounted="@PremiumPlan.PriceYearlyDiscounted" Items="@PremiumPlanItems" CustomOnClickv2="@(e=> SelectClientPlan(e, PremiumPlan))" />
+                    </uCol>
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uPlanCard Title="@($"{UnlimitedPlan.Name} Plan")" Price="@UnlimitedPlan.PriceYearly"  IsYearly="true" IsSelected="@(e_Client?.ClientPlanId == UnlimitedPlan.Id)" Color="green" PriceDiscounted="@UnlimitedPlan.PriceYearlyDiscounted" Items="@UnlimitedPlanItems" CustomOnClickv2="@(e=> SelectClientPlan(e, UnlimitedPlan))" />
+                    </uCol>
+                </uContainer>
+
+
+
+
+
+            </uCol>
+
+
+        </uContainer>
+    </uCol>
+
+</uContainer>
+
+
+
+
+
+@functions {
+
+    e_ClientPlan BasicPlan;
+    IEnumerable<string> BasicPlanItems;
+    e_ClientPlan PremiumPlan;
+    IEnumerable<string> PremiumPlanItems;
+    e_ClientPlan UnlimitedPlan;
+    IEnumerable<string> UnlimitedPlanItems;
+
+    e_Client  e_Client;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+
+      
+
+        //var r = await ClientSvc.SelectCurrent();
+        //e_Client = r.;
+
+        BasicPlan = InstantDatahandler.All_ClientPlans.First(q => q.Id == 1);
+        BasicPlanItems = new List<string>() {
+            $"Home or Health or Life",
+            //$"{BasicPlan.ServiceTypeCount} Service Type and {BasicPlan.ServiceCategoryCount} Category",
+            //$"Limited to {BasicPlan.LocationLimitCount} Locations",
+            //$"Limited to {BasicPlan.TaskLimitCount} Tasks  ${BasicPlan.BudgetLimitation.ToString("##")} Orders per Day",
+            "-No Google Search Optimization",
+            "-No Review Verification"
+
+        };
+        PremiumPlan = InstantDatahandler.All_ClientPlans.First(q => q.Id == 2);
+        PremiumPlanItems = new List<string>() {
+            $"Home or Health or Life",
+            //$"{PremiumPlan.ServiceTypeCount} Service Types and {PremiumPlan.ServiceCategoryCount} Categories",
+            //$"Limited to {BasicPlan.LocationLimitCount} Locations",
+            //$"Limited to {PremiumPlan.TaskLimitCount} Tasks ${PremiumPlan.BudgetLimitation.ToString("##")} Orders per Day",
+            "-No Google Search Optimization",
+            "-No Review Verification"
+
+        };
+        UnlimitedPlan = InstantDatahandler.All_ClientPlans.First(q => q.Id == 3);
+        UnlimitedPlanItems = new List<string>() {
+            $"Any or All (Home, Health, Life)",
+            $"Unlimited Service Types and Categories",
+            $"Unlimited Locations",
+            //$"Unlimited Tasks and Orders per Day",
+            //"Full Google Search Optimization",
+            //"Full Review Verification"
+        };
+
+
+          e_Client = await ClientSvc.SelectCurrent();
+    }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+    }
+
+
+    async void SelectClientPlan(UIMouseEventArgs __e, e_ClientPlan plan)
+    {
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            if (await ClientSvc.Update(plan))
+            {
+                e_Client.ClientPlanId = plan.Id;
+                StateHasChanged();
+            }
+        }
+
+    }
+}

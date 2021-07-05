@@ -1,0 +1,291 @@
+@page "/contractor/edit-profile"
+@inject AutoMapper.IMapper _mapper;
+@inject InstantDatahandler InstantDatahandler;
+@inject ContractorSvc ContractorSvc;
+@inject UiJsHandler UiJsHandler;
+
+    <EditForm Model="@EditContractorProfileFormModel" OnValidSubmit="@HandleEditContractorProfileFormModelSubmit">
+        <uContainer AllignCols="center" IsDefault="true">
+
+            <uCol>
+
+                <uContainer AllignCols="center">
+
+                    <uCol CustomClass="pb-35 pt-35">
+
+                        <sContracotEditInfoTopNavPanel />
+
+                    </uCol>
+                </uContainer>
+
+                <uContainer AllignCols="center" CustomClassContainer="">
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" Label="Year Founded" Id="YearFounded">
+
+                            <InputCustomNumber bind-Value="@EditContractorProfileFormModel.YearFounded" Min="1900" Max="2019" id="YearFounded" class="form-control">
+
+
+                            </InputCustomNumber>
+
+                        </uFormInput>
+
+                    </uCol>
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" Label="Industry" Id="IndustryId">
+                            <InputCustomSelect bind-Value="@EditContractorProfileFormModel.IndustryId" id="IndustryId" class="form-control custom-select">
+                                <option value="">Select Industry</option>
+                                @foreach (var l in IndustrySelectModels)
+                                {
+                                    <option value="@l.Id">@l.Name</option>
+                                }
+
+                            </InputCustomSelect>
+
+                        </uFormInput>
+
+                    </uCol>
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" Label="Company Size" Id="CompanySizeId">
+                            <InputCustomSelect bind-Value="@EditContractorProfileFormModel.CompanySizeId" id="CompanySizeId" class="form-control custom-select">
+                                <option value="">Select Company Size</option>
+                                @foreach (var l in CompanySizeSelectModels)
+                                {
+                                    <option value="@l.Id">@l.Name</option>
+                                }
+
+                            </InputCustomSelect>
+
+                        </uFormInput>
+
+                    </uCol>
+
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" Label="Company Type" Id="CompanyTypeId">
+                            <InputCustomSelect bind-Value="@EditContractorProfileFormModel.CompanyTypeId" id="CompanyTypeId" class="form-control custom-select">
+                                <option value="">Select Company Type</option>
+                                @foreach (var l in CompanyTypeSelectModels)
+                                {
+                                    <option value="@l.Id">@l.Name</option>
+                                }
+
+                            </InputCustomSelect>
+
+                        </uFormInput>
+
+                    </uCol>
+
+                </uContainer>
+
+
+                <uContainer AllignCols="center" CustomClassContainer="mb-15">
+
+                    <uCol Grow="1" CustomClass="mx-15">
+
+
+                        <uFormInput IsGroup="true" Type="child" Label="Tagline" Id="Tagline">
+
+                            <InputCustomTextArea Row="3" bind-Value="@EditContractorProfileFormModel.OrganizationTagline" id="Tagline" class="form-control" Placeholder="Enter a tagline" />
+
+
+                        </uFormInput>
+
+                    </uCol>
+
+                </uContainer>
+
+                <uContainer AllignCols="center" CustomClassContainer="mb-15">
+
+                    <uCol Grow="1" CustomClass="mx-15">
+
+                        <uFormInput IsGroup="true" Type="child" Label="About Company" Id="AboutCompany">
+                            <InputCustomTextArea Row="5" bind-Value="@EditContractorProfileFormModel.OrganizationAbout" id="AboutCompany" class="form-control" Placeholder="Enter company description" />
+                        </uFormInput>
+
+                    </uCol>
+
+                </uContainer>
+
+                <uContainer AllignCols="center" CustomClassContainer="mb-15">
+
+                    <uCol Grow="1" CustomClass="mx-15">
+
+                        <uFormInput IsGroup="true" Type="child" Label="WebSite" Id="WebSite">
+                            <InputCustomText bind-Value="@EditContractorProfileFormModel.WebSite" id="WebSite" class="form-control" Placeholder="https://www.example.com" />
+
+                        </uFormInput>
+
+                    </uCol>
+
+                    <uCol Grow="1" CustomClass="mx-15">
+
+                        <uFormInput IsGroup="true" Type="child" Label="Facebook" Id="Facebook">
+                            <InputCustomText bind-Value="@EditContractorProfileFormModel.Facebook" id="Facebook" class="form-control" Placeholder="https://www.facebook.com/example" />
+
+                        </uFormInput>
+
+                    </uCol>
+
+                    <uCol Grow="1" CustomClass="mx-15">
+
+                        <uFormInput IsGroup="true" Type="child" Label="Instagram" Id="Instagram">
+                            <InputCustomText bind-Value="@EditContractorProfileFormModel.Instagram" id="Instagram" class="form-control" Placeholder="https://www.instagram.com/example" />
+
+                        </uFormInput>
+
+                    </uCol>
+
+
+                </uContainer>
+
+
+                <uContainer AllignCols="center" CustomClassContainer="mb-15">
+                    <uCol Grow="1" CustomClass="mx-15">
+
+                        <uFormInput IsGroup="true" Type="child" Label="Linkedin" Id="Linkedin">
+                            <InputCustomText bind-Value="@EditContractorProfileFormModel.Linkedin" id="Linkedin" class="form-control" Placeholder="https://www.linkedin.com/example" />
+
+                        </uFormInput>
+
+                    </uCol>
+                    <uCol Grow="1" CustomClass="mx-15">
+
+                        <uFormInput IsGroup="true" Type="child" Label="Twitter" Id="Twitter">
+                            <InputCustomText bind-Value="@EditContractorProfileFormModel.Twitter" id="Twitter" class="form-control" Placeholder="https://www.twitter.com/example" />
+
+                        </uFormInput>
+
+                    </uCol>
+
+                    <uCol Grow="1" CustomClass="mx-15">
+
+                        <uFormInput IsGroup="true" Type="child" Label="Skype" Id="Skype">
+                            <InputCustomText bind-Value="@EditContractorProfileFormModel.Skype" id="Skype" class="form-control" Placeholder="" />
+
+                        </uFormInput>
+
+                    </uCol>
+
+                </uContainer>
+
+
+                <uContainer AllignCols="center" CustomClassContainer="">
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" Label="Language 1" Id="Language1Id">
+                            <InputCustomSelect bind-Value="@EditContractorProfileFormModel.Language1Id" id="Language1Id" class="form-control custom-select">
+                                <option value="">Select Language</option>
+                                @foreach (var l in LanguageSelectModels)
+                                {
+                                    <option value="@l.Id">@l.Name</option>
+                                }
+
+                            </InputCustomSelect>
+
+                        </uFormInput>
+
+                    </uCol>
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" Label="Language 2" Id="Language2Id">
+                            <InputCustomSelect bind-Value="@EditContractorProfileFormModel.Language2Id" id="Language2Id" class="form-control custom-select">
+                                <option value="">Select Language</option>
+                                @foreach (var l in LanguageSelectModels)
+                                {
+                                    <option value="@l.Id">@l.Name</option>
+                                }
+
+                            </InputCustomSelect>
+
+                        </uFormInput>
+
+                    </uCol>
+
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" Label="Language 3" Id="Language3Id">
+                            <InputCustomSelect bind-Value="@EditContractorProfileFormModel.Language3Id" id="Language3Id" class="form-control custom-select">
+                                <option value="">Select Language</option>
+                                @foreach (var l in LanguageSelectModels)
+                                {
+                                    <option value="@l.Id">@l.Name</option>
+                                }
+
+                            </InputCustomSelect>
+
+                        </uFormInput>
+
+                    </uCol>
+
+                </uContainer>
+
+
+                <uContainer AllignCols="center" CustomClassContainer="mt-15  mb-35">
+
+                    <uCol Grow="1" AlignCol="center" CustomClass="mx-15">
+
+
+                        <uCheckbox IsForm="true" Title="Public" Id="ShareProfileWithPublic">
+                            <InputCustomCheckbox bind-Value="@EditContractorProfileFormModel.ShareProfileWithPublic" IsCustomChecked="@EditContractorProfileFormModel.ShareProfileWithPublic" OnCustomChange="@HandleShareProfileWithPublicChange" class="custom-control-input custom-control-input-notshadowfocus" id="ShareProfileWithPublic" />
+                        </uCheckbox>
+                    </uCol>
+
+                    <uCol Grow="1" AlignCol="center" CustomStyle="text-align:right" CustomClass="mx-15">
+
+                        <uButton Type="Submbit" Title="Save" />
+
+                    </uCol>
+
+                </uContainer>
+            </uCol>
+
+        </uContainer>
+
+    </EditForm>
+
+
+@functions {
+
+    EditContractorProfileFormModel EditContractorProfileFormModel { get; set; } = new EditContractorProfileFormModel();
+    IEnumerable<IndustrySelectModel> IndustrySelectModels = Enumerable.Empty<IndustrySelectModel>();
+    IEnumerable<CompanySizeSelectModel> CompanySizeSelectModels { get; set; } = Enumerable.Empty<CompanySizeSelectModel>();
+    IEnumerable<CompanyTypeSelectModel> CompanyTypeSelectModels { get; set; } = Enumerable.Empty<CompanyTypeSelectModel>();
+    IEnumerable<LanguageSelectModel> LanguageSelectModels { get; set; } = Enumerable.Empty<LanguageSelectModel>();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        IndustrySelectModels = _mapper.Map<IEnumerable<e_Industry>, IEnumerable<IndustrySelectModel>>(InstantDatahandler.All_Industries);
+        CompanySizeSelectModels = _mapper.Map<IEnumerable<e_CompanySize>, IEnumerable<CompanySizeSelectModel>>(InstantDatahandler.All_CompanySizes);
+        CompanyTypeSelectModels = _mapper.Map<IEnumerable<e_CompanyType>, IEnumerable<CompanyTypeSelectModel>>(InstantDatahandler.All_CompanyTypes);
+        LanguageSelectModels = _mapper.Map<IEnumerable<e_Language>, IEnumerable<LanguageSelectModel>>(InstantDatahandler.All_Languages).OrderBy(q => q.Name != "English");
+        var r = await ContractorSvc.SelectCurrent();
+        EditContractorProfileFormModel = _mapper.Map<EditContractorProfileFormModel>(r);
+
+    }
+
+    async void HandleEditContractorProfileFormModelSubmit()
+    {
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            if (await ContractorSvc.Update(EditContractorProfileFormModel))
+            {
+                //e_Contractor.ContractorPlanId = plan.Id;
+                //StateHasChanged();
+            }
+        }
+    }
+
+    async void HandleShareProfileWithPublicChange(UIChangeEventArgs __e)
+    {
+        EditContractorProfileFormModel.ShareProfileWithPublic = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? Convert.ToBoolean(__e.Value.ToString()) : false;
+        StateHasChanged();
+    }
+
+
+}

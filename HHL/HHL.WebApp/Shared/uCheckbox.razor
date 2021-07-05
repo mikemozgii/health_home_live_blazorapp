@@ -1,0 +1,84 @@
+
+
+
+@if (IsForm)
+{
+
+
+    <div class="custom-control custom-checkbox @Color" style="@CustomStyle">
+        @ChildContent
+        <label class="custom-control-label custom-control-input-cursor-pointer" for="@Id">
+            @Title
+        </label>
+    </div>
+}
+else
+{
+
+    <div class="custom-control custom-checkbox @Color" style="@CustomStyle">
+        <input type="checkbox" class="custom-control-input custom-control-input-notshadowfocus" disabled="@isDisabled" id="@Id">
+        <label class="custom-control-label custom-control-input-cursor-pointer" for="@Id">
+            @Title
+        </label>
+    </div>
+
+}
+
+
+
+
+
+
+
+@functions {
+    [Parameter]
+    private string Title { get; set; }
+
+    [Parameter]
+    private string Id { get; set; }
+
+    [Parameter]
+    private bool isDisabled { get; set; }
+
+
+    [Parameter]
+    private string CustomStyle { get; set; }
+
+    [Parameter]
+    private string CustomClass { get; set; }
+
+    [Parameter]
+    private bool IsForm { get; set; }
+
+
+    [Parameter]
+    private string Type { get; set; }
+
+    [Parameter]
+    private string Color { get; set; } = "blue";
+
+
+    [Parameter]
+    private EventCallback CustomOnClick { get; set; }
+
+    [Parameter]
+    private RenderFragment ChildContent { get; set; }
+
+    //string FinalClass { get; set; }
+
+    //protected override async Task OnParametersSetAsync()
+    //{
+
+
+
+    //    if (!string.IsNullOrWhiteSpace("Color"))
+    //    {
+    //        Color = $"-{Color}";
+    //    }
+
+    //    FinalClass = $"btn {tIsIcon} {Size} btn{tIsSoft}{Color} {tIsRoundedCircle}  {tIsTransition} {CustomClass}";
+
+    //}
+
+
+}

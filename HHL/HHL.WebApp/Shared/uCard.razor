@@ -1,0 +1,53 @@
+
+
+<div class="card px-30 py-30">
+
+    <uContainer AllignCols="center">
+        <uCol Width="80px" CustomClass="mr-25">
+
+            <uButton IsSoft="true" IsTransition="false" Color="@IconColor" Size="btn-lg" CustomClass="rounded-circle" CustomStyle="width:80px;height:80px;">
+
+                <uFontAwesomeIcon Thickness="s" Size="28px" Icon="@Icon" CustomStyle="margin-top:3px;"> </uFontAwesomeIcon>
+
+            </uButton>
+
+        </uCol>
+
+        <uCol Grow="1">
+
+            <span class="font-size-32">@Value</span>
+            <h6 class="font-weight-normal font-silver">@Title</h6>
+        </uCol>
+
+    </uContainer>
+
+</div>
+
+
+@functions {
+    [Parameter]
+    private string Title { get; set; } = "r";
+
+    [Parameter]
+    private string Value { get; set; }
+
+    [Parameter]
+    private string IconColor { get; set; }
+
+    [Parameter]
+    private string Icon { get; set; }
+
+    //[Parameter]
+    //private string CustomClass { get; set; }
+
+    //[Parameter]
+    //private string CustomStyle { get; set; }
+
+    //[Parameter]
+    //private string Size { get; set; } = "14px";
+
+    //[Parameter]
+    //private EventCallback CustomOnClick { get; set; }
+
+
+}

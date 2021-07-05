@@ -1,0 +1,204 @@
+@page "/client/edit-settings"
+@inject HHLAuthSessionSvc AuthSessionSvc;
+@inject AutoMapper.IMapper _mapper;
+
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+@inject ClientSvc ClientSvc;
+@inject InstantDatahandler InstantDatahandler;
+<EditForm Model="@ClientEditSettingsFormModel" OnValidSubmit="@ClientEditSettingsFormModelSubmit">
+    <uContainer AllignCols="center" IsDefault="true" IsFullHeight="true" >
+
+        <uCol>
+
+            <uContainer AllignCols="center">
+
+                <uCol CustomClass="pb-35 pt-35">
+
+                    <sClientEditInfoTopNavPanel />
+
+                </uCol>
+
+                <uCol>
+
+
+                    <DataAnnotationsValidator />
+
+                    <uContainer AllignCols="center" CustomClassContainer="">
+
+                        <uCol Grow="1" CustomClass="mx-15">
+
+                            <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="TimeZone" Id="TimeZoneId">
+                                <InputCustomSelect bind-Value="@ClientEditSettingsFormModel.TimeZoneId" id="TimeZoneId" class="form-control custom-select">
+                                    @foreach (var l in TimeZoneSelectModels)
+                                    {
+                                        <option value="@l.Id">@l.Name (@(l.GMTOffset > 0 ? $"+{l.GMTOffset} GMT" : $"{l.GMTOffset} GMT")) </option>
+                                    }
+
+                                </InputCustomSelect>
+
+                            </uFormInput>
+
+                        </uCol>
+
+                    </uContainer>
+
+
+
+
+                </uCol>
+
+
+                <uCol CustomClass="mt-15">
+
+                    <uContainer AllignCols="center" CustomClassContainer="">
+                        <uCol Grow="1" CustomClass="mx-15">
+
+                            <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Default Country" Id="DefaultCountryId">
+                                <InputCustomSelect bind-Value="@ClientEditSettingsFormModel.DefaultCountryId" id="DefaultCountryId" OnCustomChange="@(e=> HandleCustomCountryChange(e))" class="form-control custom-select">
+                                    <option value="">Select Country</option>
+                                    @foreach (var l in CountrySelectModels)
+                                    {
+                                        <option value="@l.Id">@l.Name</option>
+                                    }
+
+                                </InputCustomSelect>
+                            </uFormInput>
+                        </uCol>
+
+                        <uCol Grow="1" IsDefaultSpaceBetween="true">
+                            <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Default State/Province/Region" Id="DefaultRegionId">
+                                <InputCustomSelect bind-Value="@ClientEditSettingsFormModel.DefaultRegionId" isDisabled="@(ClientEditSettingsFormModel.DefaultCountryId == null)" OnCustomChange="@(e=> HandleCustomRegionChange(e))" id="DefaultRegionId" class="form-control custom-select">
+                                   <option value="">Select Region</option>
+                                
+                                    @foreach (var l in RegionSelectModels)
+                                    {
+                                        <option value="@l.Id">@l.Name</option>
+                                    }
+
+                                </InputCustomSelect>
+
+                            </uFormInput>
+                        </uCol>
+
+                        <uCol Grow="1" IsDefaultSpaceBetween="true">
+                            <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Default City" Id="DefaultCityId">
+                                <InputCustomSelect bind-Value="@ClientEditSettingsFormModel.DefaultCityId" isDisabled="@(ClientEditSettingsFormModel.DefaultRegionId == null)"   id="DefaultCityId" class="form-control custom-select">
+                                  
+                                    <option value="">Select City</option>
+
+                                    @foreach (var l in CitySelectModels)
+                                    {
+                                        <option value="@l.Id">@l.Name</option>
+                                    }
+
+                                </InputCustomSelect>
+
+                            </uFormInput>
+                        </uCol>
+
+                    </uContainer>
+
+
+                </uCol>
+
+                <uCol>
+                    <uContainer AllignCols="center" CustomClassContainer="mt-15">
+
+
+                        <uCol Grow="1" CustomStyle="text-align:right" CustomClass="mx-15">
+
+                            <uButton Type="Submbit" Title="Save" />
+
+                        </uCol>
+
+                    </uContainer>
+
+                </uCol>
+
+            </uContainer>
+        </uCol>
+
+    </uContainer>
+
+</EditForm>
+
+
+
+@functions {
+
+    Client_EditSettingsFormModel ClientEditSettingsFormModel { get; set; } = new Client_EditSettingsFormModel();
+    IEnumerable<TimeZoneSelectModel> TimeZoneSelectModels { get; set; } = Enumerable.Empty<TimeZoneSelectModel>();
+    IEnumerable<CountrySelectModel> CountrySelectModels { get; set; } = Enumerable.Empty<CountrySelectModel>();
+    IEnumerable<RegionSelectModel> RegionSelectModels { get; set; } = Enumerable.Empty<RegionSelectModel>();
+    IEnumerable<CitySelectModel> CitySelectModels { get; set; } = Enumerable.Empty<CitySelectModel>();
+
+
+    e_Client e_Client;
+    protected override async Task OnInitializedAsync()
+    {
+        var r = await ClientSvc.SelectCurrent();
+        ClientEditSettingsFormModel = _mapper.Map<Client_EditSettingsFormModel>(r);
+        TimeZoneSelectModels = _mapper.Map<IEnumerable<e_TimeZone>, IEnumerable<TimeZoneSelectModel>>(InstantDatahandler.All_TimeZones).OrderBy(q=>q.Name);
+        CountrySelectModels = _mapper.Map<IEnumerable<e_Country>, IEnumerable<CountrySelectModel>>(InstantDatahandler.All_Countries).OrderBy(q => q.Name != "United States");
+        if (ClientEditSettingsFormModel.DefaultCountryId != null)
+        {
+            RegionSelectModels = _mapper.Map<IEnumerable<e_Region>, IEnumerable<RegionSelectModel>>(InstantDatahandler.All_Regions.Where(q => q.CountryId == ClientEditSettingsFormModel.DefaultCountryId)).OrderBy(q => q.Name);
+            if (ClientEditSettingsFormModel.DefaultRegionId != null)
+            {
+                CitySelectModels = _mapper.Map<IEnumerable<e_City>, IEnumerable<CitySelectModel>>(InstantDatahandler.All_Cities.Where(q => q.RegionId == ClientEditSettingsFormModel.DefaultRegionId)).OrderBy(q => q.Name);
+            }
+
+        }
+    }
+
+
+
+    async void ClientEditSettingsFormModelSubmit()
+    {
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            await ClientSvc.Update(ClientEditSettingsFormModel);
+        }
+    }
+
+
+    async void HandleCustomCountryChange(UIChangeEventArgs __e)
+    {
+        ClientEditSettingsFormModel.DefaultCountryId = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? new Guid(__e.Value.ToString()) : (Guid?)default;
+
+        if (ClientEditSettingsFormModel?.DefaultCountryId != null)
+        {
+            //AddServiceLocationModel.RegionId = null;
+            RegionSelectModels = _mapper.Map<IEnumerable<e_Region>, IEnumerable<RegionSelectModel>>(InstantDatahandler.All_Regions.Where(q => q.CountryId == ClientEditSettingsFormModel.DefaultCountryId)).OrderBy(q => q.Name);
+            //ClientEditSettingsFormModel.DefaultRegionId = RegionSelectModels.First().Id;
+            ClientEditSettingsFormModel.DefaultCityId = null;
+
+
+        }
+        else
+        {
+            ClientEditSettingsFormModel.DefaultRegionId = null;
+            ClientEditSettingsFormModel.DefaultCityId = null;
+        }
+
+        StateHasChanged();
+    }
+
+    async void HandleCustomRegionChange(UIChangeEventArgs __e)
+    {
+        ClientEditSettingsFormModel.DefaultRegionId = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? new Guid(__e.Value.ToString()) : (Guid?)default;
+
+        if (ClientEditSettingsFormModel?.DefaultRegionId != null)
+        {
+            CitySelectModels = _mapper.Map<IEnumerable<e_City>, IEnumerable<CitySelectModel>>(InstantDatahandler.All_Cities.Where(q => q.RegionId == ClientEditSettingsFormModel.DefaultRegionId)).OrderBy(q => q.Name);
+            //ClientEditSettingsFormModel.DefaultCityId = CitySelectModels.First().Id;
+
+        }
+        else
+        {
+            ClientEditSettingsFormModel.DefaultCityId = null;
+        }
+
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,99 @@
+@inject UiJsHandler UiJsHandler;
+
+
+<div id="@Id" class="modal  @modalToggleClassWrap" style="@WrapStyle">
+
+        <!-- Modal content -->
+        @*
+   
+        *@
+
+    <div class="modal-content  @modalToggleClass" style="@ContainerStyle">
+
+        @if (!string.IsNullOrWhiteSpace(Title))
+        {
+            <div class="mb-20">
+                <span class="font-size-24 font-normal-bold" >@Title</span>
+                <span class="close" onclick="@(e=> ToggleModal(e))">&times;</span>
+            </div>
+        }
+
+
+
+
+        @ChildContent
+    </div>
+ </div>
+
+
+        @functions {
+
+
+            //[Parameter] string ContainerClass  { get; set; }
+            [Parameter] string ContainerStyle  { get; set; }
+            [Parameter] string WrapStyle  { get; set; }
+            [Parameter]
+            private string Title { get; set; }
+
+            [Parameter]
+            private string Id { get; set; }
+
+            string modalToggleClass { get; set; } = "display_none";
+            string modalToggleClassWrap { get; set; } = "display_none";
+
+            [CascadingParameter]
+            public ModalSeetings ModalSeetings { get; set; }
+            [Parameter]
+            private RenderFragment ChildContent { get; set; }
+
+            protected override async Task OnParametersSetAsync()
+            {
+
+                if (ModalSeetings.ShowModal)
+                {
+
+                    modalToggleClass = "animated zoomIn faster";
+                    modalToggleClassWrap = "animated fadeIn faster";
+
+                }
+                else if (modalToggleClass.Contains("zoomIn"))
+                {
+                    modalToggleClass = "animated zoomOut faster";
+                    modalToggleClassWrap = "animated fadeOut faster";
+
+                }
+
+            }
+
+            protected override async Task OnAfterRenderAsync()
+            {
+                if (!ModalSeetings.ShowModal)
+                {
+                    await UiJsHandler.AddElementClass(Id, "display_none", 500);
+                }
+
+            }
+
+
+            async void ToggleModal(UIMouseEventArgs __e)
+            {
+
+
+                if (!ModalSeetings.ShowModal)
+                {
+
+                    modalToggleClass = "animated zoomIn faster";
+                    modalToggleClassWrap = "animated fadeIn faster";
+
+                }
+                else if (modalToggleClass.Contains("zoomIn"))
+                {
+                    modalToggleClass = "animated zoomOut faster";
+                    modalToggleClassWrap = "animated fadeOut faster";
+
+                }
+
+                ModalSeetings.ShowModal = !ModalSeetings.ShowModal;
+            }
+
+        }

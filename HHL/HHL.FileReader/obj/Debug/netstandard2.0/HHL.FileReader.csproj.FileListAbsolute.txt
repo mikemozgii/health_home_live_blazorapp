@@ -1,0 +1,8 @@
+C:\Users\khokh\source\repos\HHL\HHL\HHL.FileReader\bin\Debug\netstandard2.0\HHL.FileReader.deps.json
+C:\Users\khokh\source\repos\HHL\HHL\HHL.FileReader\bin\Debug\netstandard2.0\HHL.FileReader.dll
+C:\Users\khokh\source\repos\HHL\HHL\HHL.FileReader\bin\Debug\netstandard2.0\HHL.FileReader.pdb
+C:\Users\khokh\source\repos\HHL\HHL\HHL.FileReader\obj\Debug\netstandard2.0\HHL.FileReader.AssemblyInfoInputs.cache
+C:\Users\khokh\source\repos\HHL\HHL\HHL.FileReader\obj\Debug\netstandard2.0\HHL.FileReader.AssemblyInfo.cs
+C:\Users\khokh\source\repos\HHL\HHL\HHL.FileReader\obj\Debug\netstandard2.0\HHL.FileReader.dll
+C:\Users\khokh\source\repos\HHL\HHL\HHL.FileReader\obj\Debug\netstandard2.0\HHL.FileReader.pdb
+C:\Users\khokh\source\repos\HHL\HHL\HHL.FileReader\obj\Debug\netstandard2.0\HHL.FileReader.csprojAssemblyReference.cache

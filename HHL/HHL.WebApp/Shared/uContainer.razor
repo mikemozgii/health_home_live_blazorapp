@@ -1,0 +1,98 @@
+
+
+    <div class="@ContainerClass" style="@CustomStyleContainer">
+
+
+        <div class="uRow @CustomClassRow"    style="@RowStyle">
+
+            @ChildContent
+
+        </div>
+
+       
+
+    </div>
+
+
+
+
+
+@functions {
+
+    [Parameter]
+    private RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    private string AllignCols { get; set; } = "flex-start";
+
+    [Parameter]
+    private string CustomStyleRow { get; set; } = "";
+
+    [Parameter]
+    private string CustomStyleContainer { get; set; } = "";
+
+    [Parameter]
+    private string CustomClassContainer { get; set; } = "";
+
+    [Parameter]
+    private string CustomClassRow { get; set; } = "";
+
+    [Parameter]
+    private bool IsDefault { get; set; }
+
+    [Parameter]
+    private bool IsFullHeight { get; set; }
+
+    [Parameter]
+    private bool IsVerticalCenter { get; set; }
+
+    [Parameter]
+    private bool IsBackgoround { get; set; }
+
+    [Parameter]
+    private bool IsDefaultVerticalSize { get; set; }
+
+    string RowStyle { get; set; } = "";
+
+    string ContainerClass { get; set; } = "";
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        RowStyle = $"justify-content: {AllignCols};";
+        ContainerClass = $"uContainer";
+
+        if (IsDefault)
+        {
+
+            RowStyle += $"width:1140px;margin:0 auto;";
+        }
+
+        if (IsFullHeight)
+        {
+            RowStyle += "height: calc(100vh - 112px);";
+        }
+
+        if (IsVerticalCenter)
+        {
+            RowStyle += "align-items:center;";
+        }
+
+        if (IsVerticalCenter)
+        {
+            RowStyle += "align-items:center;";
+        }
+
+        if (IsBackgoround)
+        {
+            ContainerClass += " bg-grey-light";
+        }
+
+
+        ContainerClass += $" {CustomClassContainer}";
+
+        RowStyle += $" {CustomStyleRow}";
+    }
+
+}

@@ -1,0 +1,315 @@
+@page "/signup"
+@using HHL.Core.Models;
+@inject Microsoft.AspNetCore.Components.IUriHelper UriHelper
+@inject ClientRegistrySvc ClientRegistrySvc
+@inject EmailSvc EmailSvc;
+<uContainer AllignCols="center" CustomClassContainer="py-65">
+
+    <uCol Width="555px" CustomStyle="text-align: left">
+
+
+
+
+        @if (showVerifyEmailMsg)
+        {
+            <uContainer AllignCols="center" CustomClassContainer="py-70" CustomStyleContainer="max-width:888px;">
+
+                <uCol AlignCol="center" CustomClass="px-15 text-center" Grow="1">
+
+
+                    <h2 class="font-green animated fadeIn">Please verify your <strong>email</strong> address!</h2>
+                    <p>
+                        Don't forget to check your spam folder.
+                    </p>
+
+                </uCol>
+
+                <uCol AlignCol="center" CustomClass="mt-40">
+
+                    <EditForm Model="@EmailVerificaitonModel" OnValidSubmit="@HandleVerificaitonSubmit">
+                        <DataAnnotationsValidator />
+
+                        @if (!Errors.IsNullOrEmpty())
+                        {
+
+                            <div class="mb-20">
+
+                                @foreach (var error in Errors)
+                                {
+                                    <div class="validation-message">
+                                        @error.Message
+                                    </div>
+                                }
+                            </div>
+
+                        }
+
+
+                        <uFormInput IsGroup="true" Type="child" Label="Enter Verification Code" Id="Code">
+
+                            <InputCustomText bind-Value="@EmailVerificaitonModel.Code" id="Code" class="form-control" Placeholder="809679" />
+                            <ValidationMessage for="@(()=> EmailVerificaitonModel.Code)" />
+
+
+
+
+                        </uFormInput>
+
+
+
+                        <div style="text-align:center;">
+
+                            <uButton Type="Submit" Title="Submit" />
+
+                        </div>
+
+
+
+                    </EditForm>
+
+
+                </uCol>
+
+            </uContainer>
+        }
+        else
+        {
+
+            <div class="mb-45">
+
+                <h3 class="font-blue font-weight-normal mb-0">Welcome</h3>
+                <p>Fill out the form to get started.</p>
+            </div>
+
+            <EditForm Model="@SignUpModel" OnValidSubmit="@HandleRegisterSubmit">
+
+                <DataAnnotationsValidator />
+
+
+                @if (!Errors.IsNullOrEmpty())
+                {
+
+                    <div class="mb-20">
+
+                        @foreach (var error in Errors)
+                        {
+                            <div class="validation-message">
+                                @error.Message
+                            </div>
+                        }
+                    </div>
+
+
+                }
+
+
+                <uFormInput IsGroup="true" Type="child" Label="Username" Id="Username">
+
+                    <InputCustomText bind-Value="@SignUpModel.Username" id="Username" class="form-control" Placeholder="jsonwalker" />
+                    <ValidationMessage for="@(()=> SignUpModel.Username)" />
+
+
+                </uFormInput>
+
+
+                <uFormInput IsGroup="true" Type="child" Label="Email" Id="Email">
+
+                    <InputCustomText bind-Value="@SignUpModel.Email" id="Email" class="form-control" Placeholder="jsonwalker@gmail.com" />
+                    <ValidationMessage for="@(()=> SignUpModel.Email)" />
+
+
+                </uFormInput>
+
+
+                <uFormInput IsGroup="true" Type="child" Label="Password" Id="Password">
+
+                    <InputPassword bind-Value="@SignUpModel.Password" id="Password" class="form-control" Placeholder="********" />
+                    <ValidationMessage for="@(()=> SignUpModel.Password)" />
+
+
+                </uFormInput>
+
+                <uFormInput IsGroup="true" Type="child" Label="Confirm Password" Id="ConfirmPassword">
+
+                    <InputPassword bind-Value="@SignUpModel.ConfirmPassword" id="ConfirmPassword" class="form-control" Placeholder="********" />
+                    <ValidationMessage for="@(()=> SignUpModel.ConfirmPassword)" />
+
+
+                </uFormInput>
+
+
+                <div>
+
+                    <small class="font-silver-light">
+
+                        I agree to the
+                        <NavLink class="link-muted" href="terms">
+                            Terms and Conditions
+                        </NavLink>
+
+                    </small>
+                </div>
+
+                <uContainer>
+
+                    <uCol Width="50%" AlignCol="center">
+
+                        <small class="font-silver-light">
+                            Already have an account?
+                            <NavLink href="signin">
+                                Sign In
+                            </NavLink>
+                        </small>
+
+                    </uCol>
+
+
+                    <uCol Width="50%" AlignCol="center" CustomStyle="text-align:right">
+
+                        <uButton Type="Submit" Title="Get Started" />
+
+                    </uCol>
+
+                </uContainer>
+
+            </EditForm>
+        }
+
+
+
+
+    </uCol>
+
+
+
+</uContainer>
+
+<uLoadinScreen Show="@isLoading" />
+
+
+
+@functions {
+
+    SignUpModel SignUpModel = new SignUpModel()
+    {
+
+
+        //Email = "khokhlov.mikhail@gmail.com",
+
+        //Username = "mikekh32",
+        //Password = "Mmemrm32!",
+        //ConfirmPassword = "Mmemrm32!"
+    };
+
+
+    EmailVerificaitonModel EmailVerificaitonModel = new EmailVerificaitonModel();
+
+
+    [Parameter]
+    private bool isLoading { get; set; } = false;
+
+
+    bool showVerifyEmailMsg = false;
+
+
+    IEnumerable<ErrorMdl> Errors;
+
+
+    void ChangeLoading()
+    {
+        isLoading = !isLoading;
+    }
+
+
+
+
+
+    protected override async Task OnAfterRenderAsync()
+    {
+        if (isLoading && !showVerifyEmailMsg)
+        {
+
+            await RegesterUser();
+        }
+
+        if (isLoading && showVerifyEmailMsg)
+        {
+            await EmailVerification();
+        }
+    }
+
+
+    void HandleVerificaitonSubmit()
+    {
+        Errors = null;
+        isLoading = true;
+    }
+
+    void HandleRegisterSubmit()
+    {
+        Errors = null;
+        isLoading = true;
+
+    }
+
+
+
+    async Task RegesterUser()
+    {
+        var model = new RegisterRequest()
+        {
+
+            AccountName = SignUpModel.Username,
+            Email = SignUpModel.Email,
+            Password = SignUpModel.Password,
+
+        };
+
+
+        var response = await ClientRegistrySvc.Register(model);
+
+        if (response.Success)
+        {
+            showVerifyEmailMsg = true;
+        }
+        else
+        {
+
+            Errors = response.Errors;
+        }
+
+        isLoading = false;
+        StateHasChanged();
+    }
+
+
+    async Task EmailVerification()
+    {
+
+
+        var model = new EmailVerificationRequest()
+        {
+            Code = EmailVerificaitonModel.Code,
+            Email = SignUpModel.Email
+        };
+
+        var response = await EmailSvc.VerifyEmail(model);
+
+
+        if (response.Success)
+        {
+            UriHelper.NavigateTo("/signin", forceLoad: true);
+        }
+        else
+        {
+            Errors = response.Errors;
+            isLoading = false;
+            StateHasChanged();
+        }
+
+
+    }
+
+}
+
+

@@ -1,0 +1,146 @@
+@page  "/client/edit-personal-info";
+@inject AutoMapper.IMapper _mapper;
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+@inject ClientSvc ClientSvc;
+@inject InstantDatahandler InstantDatahandler;
+
+
+<uContainer AllignCols="center" IsDefault="true" IsFullHeight="true" >
+
+    <uCol>
+        <uContainer AllignCols="center">
+
+            <uCol CustomClass="pb-35 pt-35">
+
+                <sClientEditInfoTopNavPanel />
+
+            </uCol>
+
+            <uCol>
+                <EditForm Model="@EditClientInfoModel" OnValidSubmit="@HandleEditClientInfoModelSubmit">
+                    <DataAnnotationsValidator />
+
+                    <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+                        <uCol Grow="1" CustomClass="mx-15">
+
+                            <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="First Name" Id="FirstName">
+                                <InputCustomText bind-Value="@EditClientInfoModel.FirstName" id="FirstName" class="form-control" Placeholder="John" />
+                            </uFormInput>
+
+                        </uCol>
+
+                        <uCol Grow="1" CustomClass="mx-15">
+
+                            <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Last Name" Id="LastName">
+                                <InputCustomText bind-Value="@EditClientInfoModel.LastName" id="LastName" class="form-control" Placeholder="Smith" />
+                            </uFormInput>
+
+                        </uCol>
+
+                    </uContainer>
+
+                    <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+                        <uCol Grow="1" CustomClass="mx-15">
+
+                            <uFormInput IsGroup="true" Type="child" Label="Organization & Business Name" Id="OrganizationName">
+                                <InputCustomText bind-Value="@EditClientInfoModel.OrganizationName" id="OrganizationName" class="form-control" Placeholder="AAA Inc" />
+                                <ValidationMessage for="@(()=> EditClientInfoModel.OrganizationName)" />
+                            </uFormInput>
+
+                        </uCol>
+                        <uCol Grow="1" CustomClass="mx-15">
+                            <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Date Of Birth" Id="ClientDateOfBirth">
+                                <InputCustomDate bind-Value="@EditClientInfoModel.DateOfBirth" id="ClientDateOfBirth" class="form-control" />
+                                <ValidationMessage for="@(()=> EditClientInfoModel.DateOfBirth)" />
+                            </uFormInput>
+                        </uCol>
+                    </uContainer>
+
+                    <uContainer AllignCols="center" CustomClassContainer="">
+
+
+                        <uCol Grow="1" CustomClass="mx-15">
+
+                            <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Prefered Language" Id="PrimaryLanguageId">
+                                <InputCustomSelect bind-Value="@EditClientInfoModel.PrimaryLanguageId" id="PrimaryLanguageId" class="form-control custom-select" Placeholder="English">
+                                    @foreach (var l in LanguageSelectModels)
+                                    {
+                                        <option value="@l.Id">@l.Name</option>
+                                    }
+
+                                </InputCustomSelect>
+                            </uFormInput>
+
+                        </uCol>
+                        <uCol Grow="1" CustomClass="mx-15">
+
+                            <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Secondary Language" Id="SecondaryLanguageId">
+                                <InputCustomSelect bind-Value="@EditClientInfoModel.SecondaryLanguageId" id="SecondaryLanguageId" class="form-control custom-select" Placeholder="English">
+                                    <option>Select language</option>
+                                    @foreach (var l in LanguageSelectModels)
+                                    {
+                                        <option value="@l.Id">@l.Name</option>
+                                    }
+
+                                </InputCustomSelect>
+                            </uFormInput>
+
+                        </uCol>
+
+                    </uContainer>
+
+
+                    <uContainer AllignCols="center" CustomClassContainer="mt-15">
+
+
+                        <uCol Grow="1" CustomStyle="text-align:right" CustomClass="mx-15">
+
+                            <uButton Type="Submbit" Title="Save" />
+
+                        </uCol>
+
+                    </uContainer>
+                </EditForm>
+
+            </uCol>
+
+
+        </uContainer>
+    </uCol>
+
+</uContainer>
+
+
+
+
+
+@functions {
+
+    [Parameter]
+    Client_EditPersonaInfoFormModel EditClientInfoModel { get; set; } = new Client_EditPersonaInfoFormModel();
+    [Parameter]
+    IEnumerable<LanguageSelectModel> LanguageSelectModels { get; set; } = Enumerable.Empty<LanguageSelectModel>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var r = await ClientSvc.SelectCurrent();
+        EditClientInfoModel = _mapper.Map<Client_EditPersonaInfoFormModel>(r);
+        LanguageSelectModels = _mapper.Map<IEnumerable<e_Language>, IEnumerable<LanguageSelectModel>>(InstantDatahandler.All_Languages).OrderBy(q => q.Name != "English");
+
+    }
+
+    async void HandleEditClientInfoModelSubmit()
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            await ClientSvc.Update(EditClientInfoModel);
+
+        }
+
+    }
+}

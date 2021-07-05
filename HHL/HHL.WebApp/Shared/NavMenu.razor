@@ -1,0 +1,754 @@
+
+@inject Microsoft.AspNetCore.Components.IUriHelper UriHelper;
+@inject HHLAuthSessionSvc AuthSessionSvc;
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+@inject AccAuthSvc AccAuthSvc;
+@*<div class="font-red">@CurrentUrl</div>*@
+
+<uContainer AllignCols="flex-end" CustomStyleContainer="padding-top:10px;width:1140px;margin: 0 auto;height:34px">
+
+
+
+    @if (AuthSessionSvc.IsAuthenticated &&
+    (AuthSessionSvc.AccountSession.ContractorInfo == null ||
+    AuthSessionSvc.AccountSession.ContractorInfo?.ContractorStatusId == (int)ContractorStatus.ApplicationInProgress ||
+    AuthSessionSvc.AccountSession.ContractorInfo?.ContractorStatusId == (int)ContractorStatus.ApplicationCompleted))
+    {
+
+        <uCol Grow="1" CustomStyle="text-align: left">
+
+            @if (!UriHelper.GetAbsoluteUri().Contains("/contractor/application"))
+            {
+
+                @if (AuthSessionSvc.AccountSession.ContractorInfo?.ContractorStatusId == (int)ContractorStatus.ApplicationInProgress)
+                {
+                    <NavLink class="uLink" href="/contractor/application">
+                        Complete Contractor Application
+                    </NavLink>
+                }
+                else if (AuthSessionSvc.AccountSession.ContractorInfo?.ContractorStatusId == (int)ContractorStatus.ApplicationCompleted && !UriHelper.GetAbsoluteUri().Contains("/contractor/identity-verification"))
+                {
+        <NavLink class="uLink" href="/contractor/identity-verification">
+            Verify Contractor Identity
+        </NavLink>
+                }
+                else if (AuthSessionSvc.AccountSession.ContractorInfo == null)
+                {
+                    <NavLink class="uLink" href="/contractor/application">
+
+                        Become a Contractor
+                    </NavLink>
+                }
+            }
+
+
+
+
+
+
+        </uCol>
+    }
+    else if (AuthSessionSvc.IsAuthenticated && AuthSessionSvc.AccountSession.ContractorInfo?.ContractorStatusId == (int)ContractorStatus.ApplicationVerified)
+    {
+        <uCol Grow="1" CustomStyle="text-align: left">
+
+
+
+            <span class="account_btn_left" onclick="@ToggleMenu_Contractor_click">
+
+
+                <span style="margin-right:7px;position:relative; top:7px;margin-left:-7px">
+
+                    <img style="width:24px;height:24px; border-radius:50%;" src="/img/empty-photo.jpg" />
+
+
+                    <span class="badge badge-sm badge-green badge-pos rounded-circle" style="top:-7px;left:-17px;width:14px;height:14px;padding:2.5px;line-height:12px">
+                        3
+                    </span>
+                </span>
+
+                <span class="">@AuthSessionSvc.AccountSession.ContractorInfo.ContractorName</span>
+
+            </span>
+
+
+        </uCol>
+
+    }
+
+
+
+    @*<uCol Width="90px" CustomStyle="text-align: right">
+
+
+            <NavLink class="uLink" href="contacts">
+                Careers
+            </NavLink>
+
+
+        </uCol>*@
+
+    @*<uCol Width="100px" CustomStyle="text-align: right">*@
+
+
+    @*<uFontAwesomeIcon Icon="search" CustomClass="uLink" Size="14px" CustomStyle="padding: 0px 5px 0px 5px">
+        </uFontAwesomeIcon>
+
+        <uFontAwesomeIcon Icon="shopping-cart" CustomClass="uLink" Size="14px" CustomStyle="padding: 0px 5px 0px 5px">
+        </uFontAwesomeIcon>*@
+
+
+
+
+    @*<uFontAwesomeIcon Icon="user" CustomClass="uLink" Size="14px" CustomStyle="padding: 0px 7px 0px 3px">
+        </uFontAwesomeIcon>*@
+
+    @*</uCol>*@
+
+    @if (!AuthSessionSvc.IsAuthenticated)
+    {
+
+        <uCol Grow="1" CustomStyle="text-align: right">
+
+
+            <NavLink class="uLink" href="@Link1_href">
+                @Link2_title
+            </NavLink>
+
+
+        </uCol>
+    }
+    else
+    {
+        <uCol Grow="1" CustomStyle="text-align: right">
+
+
+
+            <span class="account_btn" onclick="@ToggleMenu_Personal_click">
+
+                <span class="">@(!string.IsNullOrWhiteSpace(AuthSessionSvc.AccountSession.ClientInfo.ClientName) ?  AuthSessionSvc.AccountSession.ClientInfo.ClientName : AuthSessionSvc.AccountSession.AccountName )</span>
+
+                <span style="margin-left:7px;position:relative; top:7px;">
+
+                    <img style="width:24px;height:24px; border-radius:50%;" src="/img/empty-photo.jpg" />
+
+
+                    <span class="badge badge-sm badge-blue badge-pos rounded-circle" style="top:-7px;right:3px;width:14px;height:14px;padding:2.5px;line-height:12px">
+
+                        3
+                    </span>
+                </span>
+
+            </span>
+
+
+        </uCol>
+
+    }
+
+
+</uContainer>
+
+
+
+
+
+
+
+<uContainer AllignCols="center" CustomClassContainer="pb-15 mt-10" CustomStyleContainer="width:1140px;margin: 0 auto">
+
+
+    <uCol Width="200px" AlignCol="center">
+
+
+        <NavLink class="uNavbar-link" href="" Match="NavLinkMatch.All">
+            <span class="" style="font-size:20px;padding-left:2px;font-weight:700">
+                <span class="" style="color: #377dff">Home</span><span class="font-green">Health</span><span style="color: #de4437">L<span class="" style="">!</span>fe</span>
+            </span>
+        </NavLink>
+
+
+    </uCol>
+
+    <uCol Grow="1">
+
+
+
+
+    </uCol>
+
+
+
+    <uCol Width="90px" AlignCol="center" CustomStyle="text-align: right">
+
+
+        <NavLink class="uNavbar-link uNavbar-link-toggle" href="home">
+            Home
+        </NavLink>
+
+
+    </uCol>
+
+    <uCol Width="95px" AlignCol="center" CustomStyle="text-align: right">
+
+
+        <NavLink class="uNavbar-link uNavbar-link-toggle" style="text-align: right" href="health">
+            Health
+        </NavLink>
+
+
+    </uCol>
+
+    <uCol Width="80px" AlignCol="center" CustomStyle="text-align: right">
+
+        <NavLink class="uNavbar-link uNavbar-link-toggle" style="text-align: right" href="life">
+            Live
+        </NavLink>
+
+    </uCol>
+
+
+
+
+
+
+    @if (!AuthSessionSvc.IsAuthenticated)
+    {
+        <uCol Width="110px" AlignCol="center" CustomStyle="text-align: right">
+            <uButton Href="@SignUp_href" CustomOnClickv2="@SignUpBtn_click" Color="blue" Type="NavButton" Title="@SignUp_title" CustomStyle="align-items:center" Size="btn-sm">
+
+            </uButton>
+        </uCol>
+    }
+    else
+    {
+        <uCol Width="180px" AlignCol="center" CustomStyle="text-align: right">
+            <uButton Href="/order" Title="Find a Contractor" Color="blue" Type="NavButton" CustomStyle="align-items:center" Size="btn-sm">
+
+            </uButton>
+        </uCol>
+    }
+
+</uContainer>
+
+
+
+@if (AuthSessionSvc.IsAuthenticated)
+{
+    <div class="acc_nav_menu @MainLayout.acc_menu_class" style="">
+
+        @*<uContainer CustomClassContainer="pt-30" CustomStyleContainer="margin-left:0; margin-right:0" CustomClassRow="ml-50">
+
+            <uCol Width="280px" AlignCol="center">
+
+                <h6 class="mb-0 font-weight-normal-bold">Client Account</h6>
+
+            </uCol>
+
+            <uCol Width="15px" AlignCol="center">
+
+                <uFontAwesomeIcon Thickness="s" Icon="times" Size="14px" CustomClass="font-silver uLink" CustomStyle="" CustomOnClick="@ToggleMenu_Personal_click">
+                </uFontAwesomeIcon>
+            </uCol>
+
+        </uContainer>*@
+
+
+        <uContainer CustomClassContainer="py-25 bg-blue-lighter " CustomStyleContainer="margin-left:0; margin-right:0;" CustomClassRow="ml-35">
+
+            <uCol AlignCol="center" CustomStyle="text-align:right;">
+
+                <uFontAwesomeIcon Thickness="s" Icon="times" Size="14px" CustomClass="font-silver uLink" CustomStyle="margin-right:37px" CustomOnClick="@ToggleMenu_Personal_click">
+                </uFontAwesomeIcon>
+            </uCol>
+
+            <uCol Width="50px" AlignCol="center" CustomClass="mx-5">
+
+
+                <img style="width:50px;height:50px; border-radius:4px;" src="/img/empty-photo.jpg" />
+
+            </uCol>
+
+            <uCol Width="200px" CustomClass="mx-5">
+
+                <div class="font-weight-semi-bold">
+                    @(!string.IsNullOrWhiteSpace(AuthSessionSvc.AccountSession.ClientInfo.ClientName) ? AuthSessionSvc.AccountSession.ClientInfo.ClientName : AuthSessionSvc.AccountSession.AccountName)
+                </div>
+
+                <div class="font-size-11">
+                    @AuthSessionSvc.AccountSession.EmailName.ToLower()
+                </div>
+
+
+            </uCol>
+
+        </uContainer>
+
+        <uContainer CustomClassContainer="mt-30" CustomStyleContainer="margin-left:0; margin-right:0" CustomClassRow="ml-40">
+
+            <uCol AlignCol="center" CustomClass="my-2">
+
+
+                <uButton Type="NavButton" Href="@UrlNameHdr.ClientDashboard" Size="btn-sm" IsTransition="false" Color="soft-link-blue" CustomClass="font-weight-normal menu_btn">
+
+                    <uFontAwesomeIcon Thickness="s" Size="13px" Icon="home" CustomClass="menu_icon" />
+                    <span>Dashboard</span>
+                </uButton>
+
+            </uCol>
+
+
+            <uCol AlignCol="center" CustomClass="my-2">
+
+
+                <uButton Type="NavButton" Href="@UrlNameHdr.ClientProejctsUnpaid" Size="btn-sm" IsTransition="false" Color="soft-link-blue" CustomClass="font-weight-normal menu_btn">
+
+                    <uFontAwesomeIcon Thickness="s" Size="13px" Icon="tasks" CustomClass="menu_icon" />
+                    <span>Projects</span>
+                </uButton>
+
+            </uCol>
+
+            <uCol AlignCol="center" CustomClass="my-2">
+
+
+                <uButton Type="NavButton" Href="@UrlNameHdr.ClientEditPersonalInfo" Size="btn-sm" IsTransition="false" Color="soft-link-blue" CustomClass="font-weight-normal menu_btn">
+
+                    <uFontAwesomeIcon Thickness="s" Size="13px" Icon="user" CustomClass="menu_icon" />
+                    <span>Client Account</span>
+                </uButton>
+
+            </uCol>
+
+
+
+
+            @*<uCol AlignCol="center" CustomClass="my-2">
+
+
+                    <uButton Type="NavButton" Href="/account/dashboard" Size="btn-sm" IsTransition="false" Color="soft-link-blue" CustomClass="font-weight-normal menu_btn">
+
+                        <uFontAwesomeIcon Thickness="s" Size="13px" Icon="receipt" CustomClass="menu_icon" />
+                        <span>Payment Methods</span>
+                    </uButton>
+
+                </uCol>
+
+                <uCol AlignCol="center" CustomClass="my-2">
+
+
+                    <uButton Type="NavButton" Href="/account/subscriptions" Size="btn-sm" IsTransition="false" Color="soft-link-green" CustomClass="font-weight-normal menu_btn">
+
+                        <uFontAwesomeIcon Thickness="s" Size="13px" Icon="sync" CustomClass="menu_icon" />
+                        <span>Plans</span>
+                    </uButton>
+
+                </uCol>
+
+                <uCol AlignCol="center" CustomClass="my-2">
+
+
+                    <uButton Type="NavButton" Href="/account/dashboard" Size="btn-sm" IsTransition="false" Color="soft-link-blue" CustomClass="font-weight-normal menu_btn">
+
+                        <uFontAwesomeIcon Thickness="s" Size="13px" Icon="lock" CustomClass="menu_icon" />
+                        <span>Security</span>
+                    </uButton>
+
+                </uCol>*@
+
+            @*<uCol AlignCol="center" CustomClass="my-2 mt-10 ml-10">
+
+
+                    <h6 class="font-weight-normal-bold mb-0"> Projects</h6>
+
+                </uCol>
+
+                <uCol AlignCol="center" CustomClass="my-2">
+
+                    <uButton Type="NavButton" Href="@UrlNameHdr.ClientNewProjectOrders" Size="btn-sm" IsTransition="false" Color="soft-link-blue" CustomClass="font-weight-normal menu_btn">
+
+                        <uFontAwesomeIcon Thickness="s" Size="13px" Icon="shopping-cart" CustomClass="menu_icon" />
+                        <span>New</span>
+                    </uButton>
+
+                </uCol>
+
+                <uCol AlignCol="center" CustomClass="my-2">
+
+                    <uButton Type="NavButton" Href="@UrlNameHdr.ClientNewProjectOrders" Size="btn-sm" IsTransition="false" Color="soft-link-blue" CustomClass="font-weight-normal menu_btn">
+
+                        <uFontAwesomeIcon Thickness="s" Size="13px" Icon="business-time" CustomClass="menu_icon" />
+                        <span>Waiting For Review</span>
+                    </uButton>
+
+                </uCol>
+
+                <uCol AlignCol="center" CustomClass="my-2">
+
+                    <uButton Type="NavButton" Href="@UrlNameHdr.ClientNewProjectOrders" Size="btn-sm" IsTransition="false" Color="soft-link-blue" CustomClass="font-weight-normal menu_btn">
+
+                        <uFontAwesomeIcon Thickness="s" Size="13px" Icon="tasks" CustomClass="menu_icon" />
+                        <span>In Process</span>
+                    </uButton>
+
+                </uCol>
+
+                <uCol AlignCol="center" CustomClass="my-2">
+
+
+                    <uButton Type="NavButton" Href="@UrlNameHdr.ClientNewProjectOrders" Size="btn-sm" IsTransition="false" Color="soft-link-blue" CustomClass="font-weight-normal menu_btn">
+
+                        <uFontAwesomeIcon Thickness="s" Size="13px" Icon="check" CustomClass="menu_icon" />
+                        <span>Completed</span>
+                    </uButton>
+
+                </uCol>*@
+
+
+
+
+
+            <uCol AlignCol="center" CustomClass="my-2 mt-5">
+
+
+                <div class="divider-grey-lighter" style="width:230px"></div>
+
+            </uCol>
+
+            <uCol AlignCol="center" CustomClass="my-2">
+
+
+                <uButton CustomOnClickv2="@(e=> SignOut(e))" Size="btn-sm" IsTransition="false" Color="soft-link-blue" CustomClass="font-weight-normal menu_btn">
+
+                    <uFontAwesomeIcon Thickness="s" Size="13px" Icon="sign-out" CustomClass="menu_icon" />
+                    <span>Sign Out</span>
+                </uButton>
+
+            </uCol>
+            <uCol AlignCol="center" CustomClass="my-2">
+
+
+                <uButton Size="btn-sm" IsTransition="false" Color="soft-link-blue" CustomClass="font-weight-normal menu_btn">
+
+                    <uFontAwesomeIcon Thickness="s" Size="13px" Icon="user-plus" CustomClass="menu_icon" />
+                    <span>Invite friends</span>
+                </uButton>
+
+            </uCol>
+
+
+
+            <div style="position:absolute;bottom:0">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 511.998 511.998" style="enable-background:new 0 0 511.998 511.998;" xml:space="preserve" width="220px" height="220px" class=""><g><path style="fill:#E5EDFB" d="M155.968,187.07h38.254c14.29-26.216,38.712-46.094,68.024-54.357  c-5.897-14.318-19.979-24.397-36.419-24.397c-4.11,0-8.069,0.633-11.79,1.798c0.02-0.598,0.046-1.195,0.046-1.798  c0-29.244-23.714-52.956-52.96-52.956c-25.223,0-46.309,17.632-51.642,41.239c-3.168-1.056-6.548-1.634-10.069-1.634  c-10.834,0-20.398,5.424-26.133,13.703c-3.2-0.825-6.56-1.272-10.019-1.272c-22,0-39.834,17.835-39.834,39.836  c0,21.997,17.835,39.836,39.834,39.836h63.687" data-original="#9FDEF7" class="" data-old_color="#377DFF" /><path style="fill:#DFF4F2" d="M373.536,162.958c-20.468-21.893-49.607-35.578-81.941-35.578c-53.408,0-98.066,37.345-109.362,87.34  c-6.704-2.236-13.865-3.466-21.318-3.466c-22.947,0-43.196,11.49-55.341,29.022c-6.779-1.751-13.888-2.692-21.216-2.692  C37.768,237.584,0,275.352,0,321.942c0,46.588,37.768,84.361,84.358,84.361h93.011c0.196-28.675,23.489-51.858,52.206-51.858  c5.446,0,10.697,0.835,15.633,2.382c-0.023-0.79-0.059-1.582-0.059-2.382c0-38.787,31.442-70.23,70.228-70.23  c33.443,0,61.41,23.387,68.483,54.691c4.197-1.401,8.678-2.17,13.346-2.17c14.368,0,27.051,7.194,34.655,18.175  c4.245-1.098,8.696-1.688,13.284-1.688c19.231,0,36.057,10.279,45.295,25.637c13.396-14.793,21.557-34.414,21.557-55.94  c0-46.056-37.332-83.384-83.384-83.384c-8.696,0-17.08,1.333-24.963,3.803c0.041-1.263,0.096-2.529,0.096-3.803  c0-18.832-4.641-36.579-12.845-52.163" data-original="#BEEAFC" class="" data-old_color="#BEEAFC" /><path style="fill:#DFF4F2" d="M89.442,237.74c-1.682-0.102-3.376-0.157-5.084-0.157C37.768,237.582,0,275.351,0,321.941  c0,46.588,37.768,84.361,84.358,84.361h93.011c0.061-8.998,2.4-17.454,6.464-24.823C137.844,346.086,103.961,295.755,89.442,237.74z  " data-original="#AEE4FF" class="" data-old_color="#AEE4FF" /><path style="fill:#E5EDFB" d="M81.614,174.026c0-27.362,4.208-53.738,11.999-78.528c-8.402,1.551-15.646,6.407-20.333,13.171  c-3.2-0.825-6.56-1.272-10.019-1.272c-22,0-39.834,17.835-39.834,39.836c0,21.997,17.835,39.836,39.834,39.836h18.678  C81.727,182.747,81.614,178.4,81.614,174.026z" data-original="#83D4ED" class="" data-old_color="#377DFF" /><path style="fill:#F6E7E7" d="M445.146,350.991c-4.588,0-9.041,0.588-13.284,1.688c-7.604-10.982-20.287-18.175-34.655-18.175  c-4.668,0-9.149,0.769-13.346,2.17c-7.074-31.305-35.04-54.691-68.483-54.691c-38.786,0-70.228,31.443-70.228,70.23  c0,0.8,0.035,1.592,0.059,2.382c-4.936-1.547-10.187-2.382-15.633-2.382c-28.835,0-52.212,23.373-52.212,52.216  c0,28.835,23.378,52.21,52.212,52.21h156.329h29.013h30.23c29.175,0,52.827-23.651,52.827-52.824  C497.973,374.64,474.321,350.991,445.146,350.991z" data-original="#E4F2F9" class="" data-old_color="#DE4437" /><path style="fill:#F6E7E7" d="M285.258,337.525c0-18.847,4-36.758,11.185-52.941c-29.585,8.267-51.295,35.403-51.295,67.627  c0,0.8,0.035,1.592,0.059,2.382c-4.936-1.547-10.187-2.382-15.633-2.382c-28.835,0-52.212,23.373-52.212,52.216  c0,28.835,23.378,52.21,52.212,52.21h132.677C316.86,436.184,285.258,390.545,285.258,337.525z" data-original="#D7EDF9" class="active-path" data-old_color="#DE4437" /></g> </svg>
+
+            </div>
+
+        </uContainer>
+
+
+    </div>
+
+
+
+
+
+
+}
+
+
+  @if (AuthSessionSvc.IsAuthenticated  &&  AuthSessionSvc.AccountSession.ContractorInfo?.ContractorStatusId == (int)ContractorStatus.ApplicationVerified)
+    {
+<div class="acc_nav_menu_left @MainLayout.acc_menu_left_class" style="">
+
+
+
+    @*<uContainer CustomClassContainer="pt-30" CustomStyleContainer="margin-left:0; margin-right:0" CustomClassRow="ml-50">
+
+        <uCol Width="280px" AlignCol="center" CustomClass="">
+
+            <h6 class="mb-0 font-weight-normal-bold">Contractor Account</h6>
+
+        </uCol>
+
+        <uCol Width="15px" AlignCol="center" CustomClass="">
+
+            <uFontAwesomeIcon Thickness="s" Icon="times" Size="14px" CustomClass="font-silver uLink" CustomStyle="" CustomOnClick="@ToggleMenu_Contractor_click">
+            </uFontAwesomeIcon>
+        </uCol>
+
+    </uContainer>*@
+
+
+    <uContainer CustomClassContainer="py-25 bg-green-lighter" CustomStyleContainer="margin-left:0px; margin-right:0px" CustomClassRow="ml-35">
+
+
+        <uCol AlignCol="center" CustomStyle="text-align:right;">
+
+            <uFontAwesomeIcon Thickness="s" Icon="times" Size="14px" CustomClass="font-silver uLink" CustomStyle="margin-right:37px" CustomOnClick="@ToggleMenu_Contractor_click">
+            </uFontAwesomeIcon>
+        </uCol>
+
+
+        <uCol Width="50px" AlignCol="center" CustomClass="mx-5">
+
+
+            <img style="width:50px;height:50px; border-radius:4px;" src="/img/empty-photo.jpg" />
+
+        </uCol>
+
+        <uCol Width="200px" CustomClass="mx-5">
+
+            <div class="font-weight-semi-bold">
+                @AuthSessionSvc.AccountSession.ContractorInfo.ContractorName
+            </div>
+
+            <div class="font-size-11">
+                @AuthSessionSvc.AccountSession.ContractorInfo.OrganizationName
+            </div>
+
+
+        </uCol>
+
+    </uContainer>
+
+    <uContainer CustomClassContainer="mt-30" CustomStyleContainer="margin-left:0; margin-right:0" CustomClassRow="ml-40">
+
+        <uCol AlignCol="center" CustomClass="my-2">
+
+
+            <uButton Type="NavButton" Href="/contractor/dashboard" Size="btn-sm" IsTransition="false" Color="soft-link-green" CustomClass="font-weight-normal menu_btn">
+
+                <uFontAwesomeIcon Thickness="s" Size="13px" Icon="city" CustomClass="menu_icon" />
+                <span>Dashboard</span>
+            </uButton>
+
+        </uCol>
+
+
+
+
+
+        <uCol AlignCol="center" CustomClass="my-2">
+
+
+            <uButton Type="NavButton" Href="/account/dashboard" Size="btn-sm" IsTransition="false" Color="soft-link-green" CustomClass="font-weight-normal menu_btn">
+
+                <uFontAwesomeIcon Thickness="s" Size="13px" Icon="layer-group" CustomClass="menu_icon" />
+                <span>Projects</span>
+            </uButton>
+
+        </uCol>
+
+
+
+        <uCol AlignCol="center" CustomClass="my-2">
+
+
+            <uButton Type="NavButton" Href="@UrlNameHdr.ContractorEditLegalInfo" Size="btn-sm" IsTransition="false" Color="soft-link-green" CustomClass="font-weight-normal menu_btn">
+
+                <uFontAwesomeIcon Thickness="s" Size="13px" Icon="user-hard-hat" CustomClass="menu_icon" />
+                <span>Contractor Account</span>
+            </uButton>
+
+        </uCol>
+
+
+        @*<uCol AlignCol="center" CustomClass="my-2">
+
+
+            <uButton Type="NavButton" Href="/account/dashboard" Size="btn-sm" IsTransition="false" Color="soft-link-green" CustomClass="font-weight-normal menu_btn">
+
+                <uFontAwesomeIcon Thickness="s" Size="13px" Icon="receipt" CustomClass="menu_icon" />
+                <span>Billing</span>
+            </uButton>
+
+        </uCol>
+
+        <uCol AlignCol="center" CustomClass="my-2">
+
+
+            <uButton Type="NavButton" Href="/account/dashboard" Size="btn-sm" IsTransition="false" Color="soft-link-green" CustomClass="font-weight-normal menu_btn">
+
+                <uFontAwesomeIcon Thickness="s" Size="13px" Icon="lock" CustomClass="menu_icon" />
+                <span>Security</span>
+            </uButton>
+
+        </uCol>
+
+        <uCol AlignCol="center" CustomClass="my-2">
+
+
+            <uButton Type="NavButton" Href="/account/subscriptions" Size="btn-sm" IsTransition="false" Color="soft-link-green" CustomClass="font-weight-normal menu_btn">
+
+                <uFontAwesomeIcon Thickness="s" Size="13px" Icon="sync" CustomClass="menu_icon" />
+                <span>Plans</span>
+            </uButton>
+
+        </uCol>*@
+
+
+
+
+
+        <uCol AlignCol="center" CustomClass="my-2 mt-5">
+
+
+            <div class="divider-grey-lighter" style="width:230px"></div>
+
+        </uCol>
+
+        <uCol AlignCol="center" CustomClass="my-2">
+
+
+
+            <uButton CustomOnClickv2="@(e=> SignOut(e))" Size="btn-sm" IsTransition="false" Color="soft-link-blue" CustomClass="font-weight-normal menu_btn">
+
+                <uFontAwesomeIcon Thickness="s" Size="13px" Icon="sign-out" CustomClass="menu_icon" />
+                <span>Sign Out</span>
+            </uButton>
+        </uCol>
+        <uCol AlignCol="center" CustomClass="my-2">
+
+
+            <uButton Type="NavButton" Href="/account/dashboard" Size="btn-sm" IsTransition="false" Color="soft-link-green" CustomClass="font-weight-normal menu_btn">
+
+                <uFontAwesomeIcon Thickness="s" Size="13px" Icon="smile-plus" CustomClass="menu_icon" />
+                <span>Invite Clients</span>
+            </uButton>
+
+        </uCol>
+
+
+
+        <div style="position:absolute;bottom:0">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 511.998 511.998" style="enable-background:new 0 0 511.998 511.998;" xml:space="preserve" width="320px" height="320px" class=""><g><path style="fill:#E5EDFB" d="M155.968,187.07h38.254c14.29-26.216,38.712-46.094,68.024-54.357  c-5.897-14.318-19.979-24.397-36.419-24.397c-4.11,0-8.069,0.633-11.79,1.798c0.02-0.598,0.046-1.195,0.046-1.798  c0-29.244-23.714-52.956-52.96-52.956c-25.223,0-46.309,17.632-51.642,41.239c-3.168-1.056-6.548-1.634-10.069-1.634  c-10.834,0-20.398,5.424-26.133,13.703c-3.2-0.825-6.56-1.272-10.019-1.272c-22,0-39.834,17.835-39.834,39.836  c0,21.997,17.835,39.836,39.834,39.836h63.687" data-original="#9FDEF7" class="" data-old_color="#377DFF" /><path style="fill:#DFF4F2" d="M373.536,162.958c-20.468-21.893-49.607-35.578-81.941-35.578c-53.408,0-98.066,37.345-109.362,87.34  c-6.704-2.236-13.865-3.466-21.318-3.466c-22.947,0-43.196,11.49-55.341,29.022c-6.779-1.751-13.888-2.692-21.216-2.692  C37.768,237.584,0,275.352,0,321.942c0,46.588,37.768,84.361,84.358,84.361h93.011c0.196-28.675,23.489-51.858,52.206-51.858  c5.446,0,10.697,0.835,15.633,2.382c-0.023-0.79-0.059-1.582-0.059-2.382c0-38.787,31.442-70.23,70.228-70.23  c33.443,0,61.41,23.387,68.483,54.691c4.197-1.401,8.678-2.17,13.346-2.17c14.368,0,27.051,7.194,34.655,18.175  c4.245-1.098,8.696-1.688,13.284-1.688c19.231,0,36.057,10.279,45.295,25.637c13.396-14.793,21.557-34.414,21.557-55.94  c0-46.056-37.332-83.384-83.384-83.384c-8.696,0-17.08,1.333-24.963,3.803c0.041-1.263,0.096-2.529,0.096-3.803  c0-18.832-4.641-36.579-12.845-52.163" data-original="#BEEAFC" class="" data-old_color="#BEEAFC" /><path style="fill:#DFF4F2" d="M89.442,237.74c-1.682-0.102-3.376-0.157-5.084-0.157C37.768,237.582,0,275.351,0,321.941  c0,46.588,37.768,84.361,84.358,84.361h93.011c0.061-8.998,2.4-17.454,6.464-24.823C137.844,346.086,103.961,295.755,89.442,237.74z  " data-original="#AEE4FF" class="" data-old_color="#AEE4FF" /><path style="fill:#E5EDFB" d="M81.614,174.026c0-27.362,4.208-53.738,11.999-78.528c-8.402,1.551-15.646,6.407-20.333,13.171  c-3.2-0.825-6.56-1.272-10.019-1.272c-22,0-39.834,17.835-39.834,39.836c0,21.997,17.835,39.836,39.834,39.836h18.678  C81.727,182.747,81.614,178.4,81.614,174.026z" data-original="#83D4ED" class="" data-old_color="#377DFF" /><path style="fill:#F6E7E7" d="M445.146,350.991c-4.588,0-9.041,0.588-13.284,1.688c-7.604-10.982-20.287-18.175-34.655-18.175  c-4.668,0-9.149,0.769-13.346,2.17c-7.074-31.305-35.04-54.691-68.483-54.691c-38.786,0-70.228,31.443-70.228,70.23  c0,0.8,0.035,1.592,0.059,2.382c-4.936-1.547-10.187-2.382-15.633-2.382c-28.835,0-52.212,23.373-52.212,52.216  c0,28.835,23.378,52.21,52.212,52.21h156.329h29.013h30.23c29.175,0,52.827-23.651,52.827-52.824  C497.973,374.64,474.321,350.991,445.146,350.991z" data-original="#E4F2F9" class="" data-old_color="#DE4437" /><path style="fill:#F6E7E7" d="M285.258,337.525c0-18.847,4-36.758,11.185-52.941c-29.585,8.267-51.295,35.403-51.295,67.627  c0,0.8,0.035,1.592,0.059,2.382c-4.936-1.547-10.187-2.382-15.633-2.382c-28.835,0-52.212,23.373-52.212,52.216  c0,28.835,23.378,52.21,52.212,52.21h132.677C316.86,436.184,285.258,390.545,285.258,337.525z" data-original="#D7EDF9" class="active-path" data-old_color="#DE4437" /></g> </svg>
+
+        </div>
+
+    </uContainer>
+
+
+</div>
+    }
+
+
+
+@functions {
+
+    [CascadingParameter] MainLayout MainLayout { get; set; }
+    //public string CurrentUrl;
+
+    //[CascadingParameter]
+    //private AppSettings AppSettings { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //CurrentUrl = UriHelper.GetAbsoluteUri();
+        await SignUpBtn_click();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        //OnUrlHasChange();
+    }
+
+    protected override async Task OnAfterRenderAsync()
+    {
+
+    }
+
+
+
+    //async void OnUrlHasChange()
+    //{
+    //    var tCurrentUrl = UriHelper.GetAbsoluteUri();
+    //    if (!String.Equals(CurrentUrl, tCurrentUrl, StringComparison.OrdinalIgnoreCase))
+    //    {
+    //        await ToggleMenu_Personal_click();
+    //        //StateHasChanged();
+    //    }
+    //}
+
+    string SignUp_href = "signin";
+    string SignUp_title = "Sign In";
+
+    string Link1_href = "signup";
+
+    string Link2_title = "Sign Up";
+
+    //string acc_menu_class = "display_none";
+
+    async Task ToggleMenu_Personal_click()
+    {
+
+        if (MainLayout.acc_menu_class == "display_none" || MainLayout.acc_menu_class == "animated slideOutRight faster")
+        {
+
+            MainLayout.acc_menu_class = "animated slideInRight faster";
+        }
+        else
+        {
+            MainLayout.acc_menu_class = "animated slideOutRight faster";
+        }
+
+
+    }
+
+
+
+    async Task SignOut(UIMouseEventArgs e)
+    {
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            var response = await AccAuthSvc.SignOut(AuthSessionSvc.AccountSession.AccountId);
+            // UriHelper.NavigateTo($"api/cookie/DeleteAuthCookie", forceLoad: true);
+            await UiJsHandler.DeleteCookie(AuthConfigHdr.AuthCookieName);
+            UriHelper.NavigateTo($"/signin", forceLoad: true);
+        }
+
+    }
+
+
+
+    async Task ToggleMenu_Contractor_click()
+    {
+        if (MainLayout.acc_menu_left_class == "display_none" || MainLayout.acc_menu_left_class == "animated slideOutLeft faster")
+        {
+
+            MainLayout.acc_menu_left_class = "animated slideInLeft faster";
+        }
+        else
+        {
+            MainLayout.acc_menu_left_class = "animated slideOutLeft faster";
+        }
+
+
+    }
+
+    async Task SignUpBtn_click()
+    {
+
+        var currentUrl = UriHelper.GetAbsoluteUri();
+        if (currentUrl.Contains("signin"))
+        {
+
+            SignUp_href = "signup";
+            SignUp_title = "Sign Up";
+
+            Link1_href = "signin";
+            Link2_title = "Sign In";
+        }
+        else
+        {
+            SignUp_title = "Sign In";
+            SignUp_href = "signin";
+
+            Link1_href = "signup";
+            Link2_title = "Sign Up";
+
+        }
+
+
+    }
+
+}

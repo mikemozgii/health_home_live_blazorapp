@@ -1,0 +1,224 @@
+@inject AutoMapper.IMapper _mapper;
+@inject IHHLQueryExecutionSvc _HHLQueryExecutionSvc;
+@inject InstantDatahandler InstantDatahandler;
+<EditForm Model="@EditAddressModel" OnValidSubmit="@HandleEditAddressModelSubmit">
+    <DataAnnotationsValidator />
+
+    <uContainer AllignCols="center" CustomClassContainer="">
+
+        <uCol Grow="1" CustomClass="mx-15">
+            <uFormInput IsGroup="true" Type="child" Label="Street Address 1" Id="Line1">
+                <InputCustomText bind-Value="@EditAddressModel.Line1" id="Line1" class="form-control" Placeholder="Street and number, P.O. box, c/o." />
+                <ValidationMessage for="@(()=> EditAddressModel.Line1)" />
+
+            </uFormInput>
+        </uCol>
+
+        <uCol Grow="1" CustomClass="mx-15">
+            <uFormInput IsGroup="true" Type="child" Label="Street Address 2" Id="Line2">
+                <InputCustomText bind-Value="@EditAddressModel.Line2" id="Line2" class="form-control" Placeholder="Apartment, suite, unit, building, floor, etc." />
+                <ValidationMessage for="@(()=> EditAddressModel.Line2)" />
+
+            </uFormInput>
+        </uCol>
+
+        <uCol Grow="1" CustomClass="mx-15">
+            <uFormInput IsGroup="true" Type="child" Label="PostalCode" Id="PostalCode">
+                <InputCustomText bind-Value="@EditAddressModel.PostalCode" id="PostalCode" class="form-control" Placeholder="12355" />
+                <ValidationMessage for="@(()=> EditAddressModel.PostalCode)" />
+
+            </uFormInput>
+        </uCol>
+    </uContainer>
+
+
+    <uContainer AllignCols="center" CustomClassContainer="">
+
+
+        <uCol Grow="1" CustomClass="mx-15">
+            <uFormInput IsGroup="true" Type="child" Label="Country" Id="CountryId">
+                <InputCustomSelect bind-Value="@EditAddressModel.CountryId" OnCustomChange="@HandleCountryChange" id="CountryId" class="form-control custom-select" Placeholder="United States">
+                    <option>Select Code </option>
+                    @foreach (var l in CountrySelectModels)
+                    {
+                        <option value="@l.Id">@l.Name</option>
+                    }
+
+                </InputCustomSelect>
+
+
+                <ValidationMessage for="@(()=> EditAddressModel.CountryId)" />
+
+            </uFormInput>
+
+        </uCol>
+
+        <uCol Grow="1" CustomClass="mx-15">
+            <uFormInput IsGroup="true" Type="child" Label="State/Province/Region" Id="RegionId">
+                <InputCustomSelect bind-Value="@EditAddressModel.RegionId" id="RegionId" class="form-control custom-select" Placeholder="New York">
+                    <option value="">Select Code </option>
+                    @foreach (var l in RegionSelectModels)
+                    {
+                        <option value="@l.Id">@l.Name</option>
+                    }
+
+                </InputCustomSelect>
+
+
+                <ValidationMessage for="@(()=> EditAddressModel.RegionId)" />
+
+            </uFormInput>
+        </uCol>
+
+
+        <uCol Grow="1" CustomClass="mx-15">
+
+            <uFormInput IsGroup="true" Type="child" Label="City" Id="City">
+                <InputCustomText bind-Value="@EditAddressModel.City" id="City" class="form-control" Placeholder="New York" />
+                <ValidationMessage for="@(()=> EditAddressModel.City)" />
+
+            </uFormInput>
+        </uCol>
+
+    </uContainer>
+
+    <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+
+        <uCol Grow="1" CustomClass="mx-15" CustomStyle="text-align:right">
+
+            <uButton Type="Submbit" Title="Save Changes" />
+
+        </uCol>
+
+    </uContainer>
+
+</EditForm>
+
+
+<uLoadinScreen Show="@isLoading" />
+@functions {
+
+    EditAddressModel EditAddressModel;
+    IEnumerable<CountrySelectModel> CountrySelectModels;
+    IEnumerable<RegionSelectModel> RegionSelectModels;
+
+    [Parameter]
+    private bool isLoading { get; set; } = false;
+
+    [Parameter]
+    Guid? AddressId { get; set; }
+
+
+
+
+
+    void HandleCountryChange(UIChangeEventArgs __e)
+    {
+
+        EditAddressModel.CountryId = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? new Guid(__e.Value.ToString()) : (Guid?)default;
+
+        if (EditAddressModel?.CountryId != null)
+        {
+            EditAddressModel.RegionId = null;
+            RegionSelectModels = _mapper.Map<IEnumerable<e_Region>, IEnumerable<RegionSelectModel>>(InstantDatahandler.All_Regions.Where(q => q.CountryId == EditAddressModel.CountryId)).OrderBy(q => q.Name);
+            StateHasChanged();
+        }
+
+
+    }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+
+        CountrySelectModels = _mapper.Map<IEnumerable<e_Country>, IEnumerable<CountrySelectModel>>(InstantDatahandler.All_Countries).OrderBy(q => q.Name != "United States");
+
+        RegionSelectModels = new List<RegionSelectModel>();
+
+        if (AddressId != null)
+        {
+
+            var r = await _HHLQueryExecutionSvc.SELECTbyIdAsync<e_Address>(AddressId);
+            EditAddressModel = _mapper.Map<EditAddressModel>(r.Results.First());
+            if (EditAddressModel.CountryId != null)
+            {
+                RegionSelectModels = _mapper.Map<IEnumerable<e_Region>, IEnumerable<RegionSelectModel>>(InstantDatahandler.All_Regions.Where(q => q.CountryId == EditAddressModel.CountryId)).OrderBy(q => q.Name);
+            }
+
+        }
+        else
+        {
+            EditAddressModel = new EditAddressModel();
+        }
+
+    }
+
+
+    void HandleEditAddressModelSubmit()
+    {
+        isLoading = true;
+    }
+
+
+
+
+    protected override async Task OnAfterRenderAsync()
+    {
+
+
+
+        if (isLoading)
+        {
+
+            await UpdateAddress();
+        }
+    }
+
+
+
+
+    async Task UpdateAddress()
+    {
+
+        var address = new e_Address();
+
+        if (EditAddressModel.Id != null)
+        {
+            address.Id = (Guid)EditAddressModel.Id;
+            address.Line1 = EditAddressModel.Line1;
+            address.Line2 = EditAddressModel.Line2;
+            address.CountryId = EditAddressModel.CountryId;
+            address.RegionId = EditAddressModel.RegionId;
+            address.City = EditAddressModel.City;
+            address.PostalCode = EditAddressModel.PostalCode;
+
+            await _HHLQueryExecutionSvc.UPDATEAsync(address)
+;
+        }
+        else
+        {
+            address.Line1 = EditAddressModel.Line1;
+            address.Line2 = EditAddressModel.Line2;
+            address.CountryId = EditAddressModel.CountryId;
+            address.RegionId = EditAddressModel.RegionId;
+            address.PostalCode = EditAddressModel.PostalCode;
+            address.City = EditAddressModel.City;
+            address.PostalCode = EditAddressModel.PostalCode;
+            var response = await _HHLQueryExecutionSvc.INSERTAsync(address);
+            if (response.Success)
+            {
+                var PrimaryAddressId = response.Results.First().Id;
+                var d = await _HHLQueryExecutionSvc.UPDATEAsync<e_Client>(_HHLQueryExecutionSvc._AccountSession.ClientInfo.ClientId, Pairing.Of(nameof(e_Client.PrimaryAddressId), PrimaryAddressId));
+                EditAddressModel.Id = PrimaryAddressId;
+            }
+        }
+
+
+        isLoading = false;
+        StateHasChanged();
+
+    }
+
+}

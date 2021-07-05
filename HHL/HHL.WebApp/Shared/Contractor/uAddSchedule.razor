@@ -1,0 +1,401 @@
+@inject AutoMapper.IMapper _mapper;
+
+@inject HHLAuthSessionSvc AuthSessionSvc;
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+
+
+<uContainer AllignCols="center" CustomClassRow="mb-15 mx-15" CustomStyleRow="border-bottom: 1px solid #e7eaf3">
+    <uCol Grow="1">
+
+        <h6 class="font-weight-normal-bold"> Weekly Schedule </h6>
+
+    </uCol>
+
+
+</uContainer>
+
+
+
+<uContainer AllignCols="center">
+
+    @if (!AddSheduleFormModel.Days.IsNullOrEmpty())
+    {
+
+        @foreach (var day in AddSheduleFormModel.Days)
+        {
+
+            var i = AddSheduleFormModel.Days.IndexOf(day);
+
+            <uCol Grow="1" IsDefaultSpaceBetween="true" IsTextCenter="true">
+                <h6 class="font-weight-normal-bold mb-3">@day.Name</h6>
+
+                @if (day.AddSheduleDayModels_Include.Any())
+                {
+                    <div class="font-size-10 font-silver-light mb-5 font-weight-normal-bold">(tap to delete)</div>
+                }
+
+
+                @foreach (var shift in day.AddSheduleDayModels_Include)
+                {
+                    <div class="badge-soft-green font-size-12 text-center mb-5" onclick="@(e=> DeleteShiftHandler(e, shift, day))" style="border-radius: 5px; cursor:pointer"> @(new DateTime(2012, 01, 01).Add(shift.TimeStart).ToString("H:mm tt")) - @(new DateTime(2012, 01, 01).Add(shift.TimeEnd).ToString("H:mm tt")) </div>
+                }
+
+
+                @if (AddActiveIndex == -1 || day.AddSheduleDayModels_Include.Count < 5)
+                {
+                    <uButton Size="btn-xs" IsSoft="true" Color="grain" CustomClass="mt-7" CustomOnClickv2="@(e=> AddShiftHandler(e, i, day))" CustomStyle="padding: 3px 6px">
+                        <uFontAwesomeIcon Thickness="s" Size="11px" Icon="plus" CustomClass="mr-3" /> Add
+                    </uButton>
+                }
+
+                @if (i == AddActiveIndex)
+                {
+                    <EditForm Model="@AddSheduleShiftModelForm" OnValidSubmit="@HandleAddSheduleShiftModelFormSubmit">
+                        <DataAnnotationsValidator />
+                        <uContainer AllignCols="center" CustomClassContainer="mt-15">
+
+
+                            <uCol Grow="1" IsDefaultSpaceBetween="true" CustomStyle="text-align:left">
+                                <uFormInput IsGroup="true" Type="child" FormGroupClass="input-group-xs mb-5" Label="Time Start" Id="TimeStart">
+                                    <InputCustomTime bind-Value="@AddSheduleShiftModelForm.TimeStart" id="TimeStart" class="form-control" />
+                                    @*<ValidationMessage for="@(()=> AddSheduleShiftModelForm.TimeStart)" />*@
+                                </uFormInput>
+                                <uFormInput IsGroup="true" Type="child" FormGroupClass="input-group-xs  mb-5" Label="Time Start" Id="TimeEnd">
+                                    <InputCustomTime bind-Value="@AddSheduleShiftModelForm.TimeEnd" id="TimeEnd" class="form-control" />
+                                    @*<ValidationMessage for="@(()=> AddSheduleShiftModelForm.TimeEnd)" />*@
+                                </uFormInput>
+
+                                <div class="text-center">
+                                    <uButton Size="btn-xs" Type="Submit" IsSoft="true" Color="green" CustomClass="mt-7" CustomStyle="padding: 3px 6px">
+                                        <uFontAwesomeIcon Thickness="s" Size="11px" Icon="save" CustomClass="mr-3" /> Save
+                                    </uButton>
+                                </div>
+
+                            </uCol>
+
+
+                        </uContainer>
+
+                    </EditForm>
+                }
+
+
+            </uCol>
+        }
+    }
+
+
+
+</uContainer>
+
+
+
+<uContainer AllignCols="center" CustomClassRow="mx-15 mt-45" CustomStyleRow="border-bottom: 1px solid #e7eaf3">
+    <uCol Grow="1">
+
+        <h6 class="font-weight-normal-bold"> Days to Exclude </h6>
+
+    </uCol>
+
+
+</uContainer>
+
+
+<uContainer CustomClassRow="mb-15">
+
+    @if (!AddSheduleFormModel.ExclusionDays.IsNullOrEmpty())
+    {
+
+        @foreach (var day in AddSheduleFormModel.ExclusionDays.Where(q => q.Date > DateTime.Now))
+        {
+            <uCol Width="145px" CustomClass="card px-5 pb-5  mx-15 mt-15">
+
+                <div style="text-align: right">
+                    <button class="btn  btn-xs btn-soft-silver btn-bg-transparent px-4" style="padding-bottom:0" onclick=@(e => DeleteExcludeDay(e, day))>
+                        <uFontAwesomeIcon Thickness="s" Size="11px" Icon="trash" />
+                    </button>
+                </div>
+
+
+                <div class="text-center">
+                    @if (!string.IsNullOrWhiteSpace(day.Name))
+                    {
+                        <span class="font-size-12">@day.Name</span>
+                    }
+                    else
+                    {
+                        <span class="font-weight-normal-bold">-</span>
+                    }
+
+
+                </div>
+
+                <div class="text-center">
+                    <h6 class="font-weight-normal-bold font-silver mb-3"> @day.Date.ToString("MMM, d yyyy") </h6>
+                </div>
+
+                @if (day.IsAllDay)
+                {
+                    <div class="text-center">
+                        <h6 class="font-weight-normal-bold font-blue"> All day</h6>
+                    </div>
+                }
+                else
+                {
+                    <div class="badge-soft-red font-size-12 text-center mb-5" style="border-radius: 5px; cursor:pointer"> @(new DateTime(2012, 01, 01).Add(day.TimeStart).ToString("H:mm tt")) - @(new DateTime(2012, 01, 01).Add(day.TimeEnd).ToString("H:mm tt")) </div>
+                }
+
+
+
+            </uCol>
+        }
+
+
+    }
+
+
+
+    @if (!isExcludedayFormActive)
+    {
+        <uCol Width="145px" CustomClass="mx-15 mt-15">
+
+
+
+            <uButton IsSoft="true" Color="grain" CustomOnClickv2="@(e=> AddExclusionDateHandler(e))" CustomStyle="width:100%;height:100%">
+                <div>
+                    <uFontAwesomeIcon Thickness="s" Size="14px" Icon="plus" />
+                </div>
+                <div class="pb-2">
+                    Add
+                </div>
+
+
+
+            </uButton>
+
+        </uCol>
+    }
+
+
+
+
+</uContainer>
+
+
+<CascadingValue Value="@ModalSeetings">
+    <uModal Id="ExcludeDay" Title="Exclude Day" ContainerStyle="max-width:500px">
+
+        <EditForm Model="@AddScheduleExclusionDayForm" OnValidSubmit="@HandleAddScheduleExclusionDayFormSubmit">
+            <DataAnnotationsValidator />
+
+            <uContainer AllignCols="center" CustomClassContainer="">
+
+
+                <uCol CustomClass="mx-10">
+                    <uFormInput IsGroup="true" Type="child"  Label="Name" Id="Name">
+                        <InputCustomText bind-Value="@AddScheduleExclusionDayForm.Name" id="Name" class="form-control" Placeholder="Vacation" />
+                    </uFormInput>
+                </uCol>
+
+                <uCol CustomClass="mx-15 mt-10">
+                    <uFormInput IsGroup="true" Type="child"  Label="Date" Id="Date">
+                        <InputCustomDate bind-Value="@AddScheduleExclusionDayForm.Date" id="Date" class="form-control" />
+                    </uFormInput>
+                </uCol>
+
+                @if (!AddScheduleExclusionDayForm.IsAllDay)
+                {
+
+                    <uCol CustomClass="mx-15 mt-10">
+                        <uFormInput IsGroup="true" Type="child" Label="Time Start" Id="TimeStart">
+                            <InputCustomTime bind-Value="@AddScheduleExclusionDayForm.TimeStart" id="TimeStart" class="form-control" />
+                            @*<ValidationMessage for="@(()=> AddSheduleShiftModelForm.TimeStart)" />*@
+                        </uFormInput>
+                    </uCol>
+
+                    <uCol CustomClass="mx-15 mt-10">
+                        <uFormInput IsGroup="true" Type="child"  Label="Time Start" Id="TimeEnd">
+                            <InputCustomTime bind-Value="@AddScheduleExclusionDayForm.TimeEnd" id="TimeEnd" class="form-control" />
+                            @*<ValidationMessage for="@(()=> AddSheduleShiftModelForm.TimeEnd)" />*@
+                        </uFormInput>
+                    </uCol>
+                }
+
+
+
+
+            <uCol CustomClass="mx-10">
+
+
+
+
+                <uContainer AllignCols="center">
+                    <uCol Grow="1"  CustomStyle="text-align:left" AlignCol="center">
+
+                        <uCheckbox IsForm="true" Title="All Day" Id="IsAllDay">
+                            <InputCustomCheckbox bind-Value="@AddScheduleExclusionDayForm.IsAllDay" IsCustomChecked="@AddScheduleExclusionDayForm.IsAllDay" OnCustomChange="@HandleAllDayChange" class="custom-control-input custom-control-input-notshadowfocus" id="IsAllDay" />
+                        </uCheckbox>
+
+                    </uCol>
+                    <uCol Grow="1" CustomStyle="text-align:right" AlignCol="center">
+                        <uButton Type="Submbit" Title="Save" />
+                    </uCol>
+
+                </uContainer>
+
+            </uCol>
+            </uContainer>
+
+
+        </EditForm>
+
+
+    </uModal>
+</CascadingValue>
+
+
+
+@functions {
+
+    ModalSeetings ModalSeetings { get; set; } = new ModalSeetings() { ShowModal = false };
+    [CascadingParameter] AddSheduleFormModel AddSheduleFormModel { get; set; }
+    [Parameter] AddSheduleShiftModel AddSheduleShiftModelForm { get; set; }
+    [Parameter] AddScheduleExclusionDay AddScheduleExclusionDayForm { get; set; } = new AddScheduleExclusionDay();
+
+
+    int AddActiveIndex = -1;
+    AddSheduleDayModel ActiveDay;
+    bool isExcludedayFormActive = false;
+
+
+    async Task DeleteExcludeDay(UIMouseEventArgs __e, AddScheduleExclusionDay day)
+    {
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+
+
+            AddSheduleFormModel.ExclusionDays.Remove(day);
+            StateHasChanged();
+
+
+        }
+    }
+
+
+    async void HandleAllDayChange(UIChangeEventArgs __e)
+    {
+
+        AddScheduleExclusionDayForm.IsAllDay = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? Convert.ToBoolean(__e.Value.ToString()) : false;
+
+        StateHasChanged();
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+    }
+
+
+    void HandleAddSheduleShiftModelFormSubmit()
+    {
+        if (ActiveDay.AddSheduleDayModels_Include.IsNullOrEmpty())
+        {
+            ActiveDay.AddSheduleDayModels_Include = new List<AddSheduleShiftModel>();
+        }
+
+        ActiveDay.AddSheduleDayModels_Include.Add(AddSheduleShiftModelForm);
+        AddActiveIndex = -1;
+        ActiveDay = null;
+    }
+
+    async void HandleAddScheduleExclusionDayFormSubmit()
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+
+
+            if (AddSheduleFormModel.ExclusionDays.IsNullOrEmpty())
+            {
+                AddSheduleFormModel.ExclusionDays = new List<AddScheduleExclusionDay>();
+            }
+
+            AddSheduleFormModel.ExclusionDays.Add(AddScheduleExclusionDayForm);
+            //isExcludedayFormActive = false;
+            //AddScheduleExclusionDayForm = null;
+
+            ModalSeetings.ShowModal = false;
+            StateHasChanged();
+        }
+
+
+
+    }
+
+    public async void AddExclusionDateHandler(UIMouseEventArgs e)
+    {
+        AddScheduleExclusionDayForm = new AddScheduleExclusionDay() { Date = DateTime.Now.AddDays(1), IsAllDay = true, TimeStart = TimeSpan.FromHours(8), TimeEnd = TimeSpan.FromHours(16) };
+        if (AddSheduleFormModel.ExclusionDays.Any())
+        {
+            var tLast = AddSheduleFormModel.ExclusionDays.Where(q => !q.IsStatHoliday).LastOrDefault();
+            if (tLast != null)
+            {
+                AddScheduleExclusionDayForm.Date = tLast.Date.AddDays(1);
+                AddScheduleExclusionDayForm.Name = tLast.Name;
+                AddScheduleExclusionDayForm.TimeStart = tLast.TimeStart;
+                AddScheduleExclusionDayForm.TimeEnd = tLast.TimeEnd;
+            }
+
+        }
+        ModalSeetings.ShowModal = true;
+        //isExcludedayFormActive = true;
+    }
+
+    public async void AddShiftHandler(UIMouseEventArgs e, int addActiveIndex, AddSheduleDayModel activeDay)
+    {
+        if (activeDay.AddSheduleDayModels_Include.Any())
+        {
+            var t = activeDay.AddSheduleDayModels_Include.Last().TimeEnd;
+            TimeSpan tTimeStart;
+            if (t >= TimeSpan.FromHours(23))
+            {
+                tTimeStart = t.Add(TimeSpan.FromHours(24));
+            }
+            else
+            {
+                tTimeStart = activeDay.AddSheduleDayModels_Include.Last().TimeEnd.Add(TimeSpan.FromHours(1));
+            }
+
+            TimeSpan tTimeEnd;
+            if (tTimeStart >= TimeSpan.FromHours(20))
+            {
+                tTimeEnd = tTimeStart.Add(TimeSpan.FromHours(24));
+            }
+            else
+            {
+                tTimeEnd = tTimeStart.Add(TimeSpan.FromHours(4));
+            }
+
+
+            AddSheduleShiftModelForm = new AddSheduleShiftModel() { TimeStart = tTimeStart, TimeEnd = tTimeEnd };
+
+        }
+        else
+        {
+            AddSheduleShiftModelForm = new AddSheduleShiftModel() { TimeStart = TimeSpan.FromHours(8), TimeEnd = TimeSpan.FromHours(17) };
+        }
+
+
+        AddActiveIndex = addActiveIndex;
+        ActiveDay = activeDay;
+    }
+
+    public async void DeleteShiftHandler(UIMouseEventArgs e, AddSheduleShiftModel shift, AddSheduleDayModel activeDay)
+    {
+        activeDay.AddSheduleDayModels_Include.Remove(shift);
+    }
+
+
+}

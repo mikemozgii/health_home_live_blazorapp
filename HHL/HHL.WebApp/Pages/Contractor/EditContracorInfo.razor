@@ -1,0 +1,364 @@
+@page "/contractor/settings"
+@inject HHLAuthSessionSvc AuthSessionSvc;
+@inject AutoMapper.IMapper _mapper;
+@inject InstantDatahandler InstantDatahandler;
+@inject v_EditContractorInfo v_EditContractorInfo;
+<uContainer AllignCols="center" CustomClassContainer="pb-65 pt-35 bg-grey-light" CustomStyleRow="width:1110px;margin: 0 auto">
+
+    <uCol>
+
+        <div class="mb-45 ml-15">
+            <h3 class="font-blue font-weight-normal mb-0">Edit Personal Info</h3>
+        </div>
+
+    </uCol>
+
+    <uCol>
+
+        <EditForm Model="@EditContractorInfoModel" OnValidSubmit="@HandleEditContractorInfoModelSubmit">
+            <DataAnnotationsValidator />
+
+            <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+                <uCol Grow="1" CustomClass="mx-15">
+
+                    <uFormInput IsGroup="true" Type="child" Label="First Name" Id="FirstName">
+                        <InputCustomText bind-Value="@EditContractorInfoModel.FirstName" id="FirstName" class="form-control" Placeholder="Jogn" />
+                        <ValidationMessage for="@(()=> EditContractorInfoModel.FirstName)" />
+
+                    </uFormInput>
+
+                </uCol>
+
+                <uCol Grow="1" CustomClass="mx-15">
+
+                    <uFormInput IsGroup="true" Type="child" Label="Last Name" Id="LastName">
+                        <InputCustomText bind-Value="@EditContractorInfoModel.LastName" id="LastName" class="form-control" Placeholder="Smith" />
+                        <ValidationMessage for="@(()=> EditContractorInfoModel.LastName)" />
+
+                    </uFormInput>
+
+                </uCol>
+
+            </uContainer>
+
+            <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+                <uCol Grow="1" CustomClass="mx-15">
+
+                    <uFormInput IsGroup="true" Type="child" Label="Organization Name" Id="OrganizationName">
+                        <InputCustomText bind-Value="@EditContractorInfoModel.OrganizationName" id="OrganizationName" class="form-control" Placeholder="AAA Inc" />
+                        <ValidationMessage for="@(()=> EditContractorInfoModel.OrganizationName)" />
+
+                    </uFormInput>
+
+                </uCol>
+
+                <uCol Grow="1" CustomClass="mx-15">
+
+                    <uFormInput IsGroup="true" Type="child" Label="Organization Number" Id="OrganizationIdentity">
+                        <InputCustomText bind-Value="@EditContractorInfoModel.OrganizationIdentity" id="OrganizationIdentity" class="form-control" Placeholder="Smith" />
+                        <ValidationMessage for="@(()=> EditContractorInfoModel.OrganizationIdentity)" />
+
+                    </uFormInput>
+
+                </uCol>
+
+            </uContainer>
+
+
+            <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+                <uCol Grow="1" CustomClass="mx-15">
+                    <uFormInput IsGroup="true" Type="child" Label="Date Of Birth" Id="ContractorDateOfBirth">
+                        <InputCustomDate bind-Value="@EditContractorInfoModel.DateOfBirth" id="ContractorDateOfBirth" class="form-control" />
+                        <ValidationMessage for="@(()=> EditContractorInfoModel.DateOfBirth)" />
+                    </uFormInput>
+                </uCol>
+
+                <uCol Grow="1" CustomClass="mx-15">
+
+                    <uFormInput IsGroup="true" Type="child" Label="SSN / SIN" Id="SIN">
+                        <InputCustomText bind-Value="@EditContractorInfoModel.SIN" id="SIN" class="form-control" Placeholder="Smith" />
+                        <ValidationMessage for="@(()=> EditContractorInfoModel.SIN)" />
+
+                    </uFormInput>
+
+                </uCol>
+
+            </uContainer>
+
+
+            <uContainer AllignCols="center" CustomClassContainer="">
+
+                <uCol Grow="1" CustomClass="mx-15">
+
+                    <uFormInput IsGroup="true" Type="child" Label="Prefered Language" Id="PrimaryLanguageId">
+                        <InputCustomSelect bind-Value="@EditContractorInfoModel.PrimaryLanguageId" id="PrimaryLanguageId" class="form-control custom-select" Placeholder="English">
+                            <option>Select language</option>
+                            @foreach (var l in LanguageSelectModels)
+                            {
+                                <option value="@l.Id">@l.Name</option>
+                            }
+
+                        </InputCustomSelect>
+
+
+                        <ValidationMessage for="@(()=> EditContractorInfoModel.PrimaryLanguageId)" />
+
+                    </uFormInput>
+
+                </uCol>
+
+                <uCol Grow="1" CustomClass="mx-15">
+
+                    <uFormInput IsGroup="true" Type="child" Label="Secondary Language" Id="SecondaryLanguageId">
+                        <InputCustomSelect bind-Value="@EditContractorInfoModel.SecondaryLanguageId" id="SecondaryLanguageId" class="form-control custom-select" Placeholder="English">
+                            <option>Select language</option>
+                            @foreach (var l in LanguageSelectModels)
+                            {
+                                <option value="@l.Id">@l.Name</option>
+                            }
+
+                        </InputCustomSelect>
+
+
+                        <ValidationMessage for="@(()=> EditContractorInfoModel.SecondaryLanguageId)" />
+
+                    </uFormInput>
+
+                </uCol>
+
+            </uContainer>
+
+            <uContainer AllignCols="center" CustomClassContainer="">
+
+                <uCol Grow="1" CustomClass="mx-15">
+
+                    <uFormInput IsGroup="true" Type="child" Label="Primary Email" Id="PrimaryEmailName">
+                        <InputCustomText bind-Value="@EditContractorInfoModel.PrimaryEmailName" id="PrimaryEmailName" class="form-control" Placeholder="example@gmail.com" />
+                        <ValidationMessage for="@(()=> EditContractorInfoModel.PrimaryEmailName)" />
+                    </uFormInput>
+
+                </uCol>
+
+                <uCol Grow="1" CustomClass="mx-15">
+
+                    <uFormInput IsGroup="true" Type="child" Label="Secondary Email" Id="SecondaryEmailName">
+                        <InputCustomText bind-Value="@EditContractorInfoModel.SecondaryEmailName" id="SecondaryEmailName" class="form-control" Placeholder="example@gmail.com" />
+                        <ValidationMessage for="@(()=> EditContractorInfoModel.SecondaryEmailName)" />
+                    </uFormInput>
+
+                </uCol>
+
+            </uContainer>
+
+            <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+
+                <uCol Grow="1" CustomStyle="text-align:right" CustomClass="mx-15">
+
+                    <uButton Type="Submbit" Title="Save Changes" />
+
+                </uCol>
+
+            </uContainer>
+        </EditForm>
+
+    </uCol>
+
+    <uCol>
+        <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+            <uCol CustomClass="mb-15">
+
+                <h5 class="font-weight-normal-bold mx-15">Contact Phone Number</h5>
+
+
+            </uCol>
+
+            <uCol>
+
+                <uEditPhoneNumber PhoneId="@ContractorPrimaryInfoPhoneId" />
+
+            </uCol>
+
+        </uContainer>
+
+    </uCol>
+
+
+    <uCol>
+        <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+            <uCol CustomClass="mb-15">
+
+                <h5 class="font-weight-normal-bold mx-15">Billing Address</h5>
+
+            </uCol>
+
+            <uCol>
+
+                <uEditAddress AddressId="@ContractorBillingAddressId" />
+
+            </uCol>
+
+        </uContainer>
+
+    </uCol>
+
+
+    @*<uCol>
+            <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+                <uCol CustomClass="mb-15">
+
+                    <h5 class="font-weight-normal-bold mx-15">Do you have Location ?</h5>
+
+                </uCol>
+
+                <uCol>
+
+                    <uEditAddress AddressId="@ContractorBillingAddressId" />
+
+                </uCol>
+
+            </uContainer>
+
+        </uCol>*@
+
+
+    @*<uCol>
+            <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+                <uCol CustomClass="mb-15">
+
+                    <h5 class="font-weight-normal-bold mx-15">Do you have Location ?</h5>
+
+                </uCol>
+
+                <uCol>
+
+                    <uEditAddress AddressId="@ContractorBillingAddressId" />
+
+                </uCol>
+
+            </uContainer>
+
+        </uCol>*@
+
+</uContainer>
+
+
+
+<uLoadinScreen Show="@isLoading" />
+
+@functions {
+
+    EditContractorInfoModel EditContractorInfoModel;
+    IEnumerable<LanguageSelectModel> LanguageSelectModels;
+    Guid? ContractorPrimaryInfoPhoneId;
+    Guid? ContractorSecondaryInfoPhoneId;
+    Guid? ContractorBillingAddressId;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        //var r = await v_EditContractorInfo.GetByAccountId();
+        //EditContractorInfoModel = _mapper.Map<EditContractorInfoModel>(r);
+        //ContractorPrimaryInfoPhoneId = EditContractorInfoModel.PrimaryPhoneId;
+        //ContractorSecondaryInfoPhoneId = EditContractorInfoModel.SecondaryPhoneId;
+        //ContractorBillingAddressId = EditContractorInfoModel.BillingAddressId;
+
+        LanguageSelectModels = _mapper.Map<IEnumerable<e_Language>, IEnumerable<LanguageSelectModel>>(InstantDatahandler.All_Languages).OrderBy(q => q.Name != "English");
+
+    }
+
+
+
+    IEnumerable<ErrorMdl> Errors;
+
+    [Parameter]
+    private bool isLoading { get; set; } = false;
+
+
+    void HandleEditContractorInfoModelSubmit()
+    {
+        isLoading = true;
+    }
+
+
+    protected override async Task OnAfterRenderAsync()
+    {
+        if (isLoading)
+        {
+
+            //await UpdateContractorInfo();
+        }
+    }
+
+
+
+
+    //async Task UpdateContractorInfo()
+    //{
+
+    //    var r = e_Contractor;
+
+    //    r.Id = (Guid)EditContractorInfoModel.Id;
+    //    await r.UPDATEAsync(
+    //        new string[] { nameof(e_Contractor.FirstName), nameof(e_Contractor.LastName), nameof(e_Contractor.OrganizationName), nameof(e_Contractor.OrganizationIdentity), nameof(e_Contractor.PrimaryLanguageId), nameof(e_Contractor.SecondaryLanguageId), nameof(e_Contractor.DateOfBirth), nameof(e_Contractor.SIN) },
+    //        new object[] { EditContractorInfoModel.FirstName, EditContractorInfoModel.LastName, EditContractorInfoModel.OrganizationName, EditContractorInfoModel.OrganizationIdentity, EditContractorInfoModel.PrimaryLanguageId, EditContractorInfoModel.SecondaryLanguageId, EditContractorInfoModel.DateOfBirth, EditContractorInfoModel.SIN });
+
+
+
+    //    var e1 = new e_Email();
+
+    //    if (EditContractorInfoModel.PrimaryEmailId != null)
+    //    {
+    //        e1.Id = (Guid)EditContractorInfoModel.PrimaryEmailId;
+    //        await e1.UPDATEAsync(new string[] { nameof(e_Email.Name) }, new object[] { EditContractorInfoModel.PrimaryEmailName });
+    //    }
+    //    else
+    //    {
+
+    //        e1.Name = EditContractorInfoModel.PrimaryEmailName;
+
+    //        var response = await e1.INSERTAsync();
+    //        if (response.Success)
+    //        {
+    //            var EmailId = response.Results.First().Id;
+    //            var d = await e_Contractor.UPDATEAsync(nameof(e_Contractor.PrimaryEmailId), EmailId, QuerySvc.SetAccountIdQueryFilter(AuthSessionSvc.AccountSession.AccountId));
+    //            EditContractorInfoModel.PrimaryEmailId = EmailId;
+    //        }
+    //    }
+
+
+
+    //    var e2 = new e_Email();
+
+    //    if (EditContractorInfoModel.SecondaryEmailId != null)
+    //    {
+    //        e2.Id = (Guid)EditContractorInfoModel.SecondaryEmailId;
+    //        await e2.UPDATEAsync(new string[] { nameof(e_Email.Name) }, new object[] { EditContractorInfoModel.SecondaryEmailName });
+    //    }
+    //    else
+    //    {
+
+    //        e2.Name = EditContractorInfoModel.SecondaryEmailName;
+
+    //        var response = await e2.INSERTAsync();
+    //        if (response.Success)
+    //        {
+    //            var EmailId = response.Results.First().Id;
+    //            var d = await e_Contractor.UPDATEAsync(nameof(e_Contractor.SecondaryEmailId), EmailId, QuerySvc.SetAccountIdQueryFilter(AuthSessionSvc.AccountSession.AccountId));
+    //            EditContractorInfoModel.SecondaryEmailId = EmailId;
+    //        }
+    //    }
+
+    //    isLoading = false;
+    //    StateHasChanged();
+
+    //}
+}

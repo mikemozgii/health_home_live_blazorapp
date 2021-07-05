@@ -1,0 +1,139 @@
+@page "/contractor/edit-schedule"
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+@inject InstantDatahandler InstantDatahandler;
+@inject ContractorSvc ContractorSvc;
+@inject ContractorApplicationSvc ContractorApplicationSvc;
+<uContainer AllignCols="center" IsDefault="true" IsFullHeight="true">
+
+    <uCol>
+
+        <uContainer AllignCols="center">
+
+            <uCol CustomClass="pb-35 pt-35">
+
+                <sContracotEditInfoTopNavPanel />
+
+            </uCol>
+
+            <uCol>
+
+
+                <uContainer AllignCols="center">
+
+
+                    <CascadingValue Value="@AddSheduleFormModel">
+                        <uAddSchedule />
+                    </CascadingValue>
+
+                </uContainer>
+
+
+            </uCol>
+
+            <uCol>
+ 
+                <uContainer AllignCols="center" CustomClassContainer="mt-15">
+                    <uCol Grow="1" CustomStyle="text-align:right" CustomClass="mx-15">
+
+                        <uButton CustomOnClickv2="@(e=> SaveContractorSchedule(e))" IsTransition="false" isSoft="true">
+                            Save
+                        </uButton>
+
+                    </uCol>
+
+                </uContainer>
+
+            </uCol>
+
+        </uContainer>
+    </uCol>
+
+</uContainer>
+
+
+
+
+
+@functions {
+
+
+    //    AddSheduleFormModel.Days.Add(new AddSheduleDayModel() { Name = "Monday", AddSheduleDayModels_Include = new List<AddSheduleShiftModel>() { tempAddSheduleShiftModel1, tempAddSheduleShiftModel2 } });
+    //AddSheduleFormModel.Days.Add(new AddSheduleDayModel() { Name = "Tuesday", AddSheduleDayModels_Include = new List<AddSheduleShiftModel>() { tempAddSheduleShiftModel1, tempAddSheduleShiftModel2 } });
+    //AddSheduleFormModel.Days.Add(new AddSheduleDayModel() { Name = "Wednesday", AddSheduleDayModels_Include = new List<AddSheduleShiftModel>() { tempAddSheduleShiftModel1, tempAddSheduleShiftModel2 } });
+    //AddSheduleFormModel.Days.Add(new AddSheduleDayModel() { Name = "Thursday", AddSheduleDayModels_Include = new List<AddSheduleShiftModel>() { tempAddSheduleShiftModel1, tempAddSheduleShiftModel2 } });
+    //AddSheduleFormModel.Days.Add(new AddSheduleDayModel() { Name = "Friday", AddSheduleDayModels_Include = new List<AddSheduleShiftModel>() { tempAddSheduleShiftModel1, tempAddSheduleShiftModel2 } });
+    //AddSheduleFormModel.Days.Add(new AddSheduleDayModel() { Name = "Saturday", AddSheduleDayModels_Include = new List<AddSheduleShiftModel>() });
+    //AddSheduleFormModel.Days.Add(new AddSheduleDayModel() { Name = "Sunday", AddSheduleDayModels_Include = new List<AddSheduleShiftModel>() });
+    //AddSheduleFormModel.ExclusionDays = new List<AddScheduleExclusionDay>();
+    //AddSheduleFormModel.ExclusionDays.Add(new AddScheduleExclusionDay() { Name = "Good Friday", IsAllDay = true, Date = new DateTime(2019, 04, 19), IsStatHoliday = true });
+    //AddSheduleFormModel.ExclusionDays.Add(new AddScheduleExclusionDay() { Name = "Victoria Day", IsAllDay = true, Date = new DateTime(2019, 05, 20), IsStatHoliday = true });
+    //AddSheduleFormModel.ExclusionDays.Add(new AddScheduleExclusionDay() { Name = "Canada Day", IsAllDay = true, Date = new DateTime(2019, 07, 01), IsStatHoliday = true });
+    //AddSheduleFormModel.ExclusionDays.Add(new AddScheduleExclusionDay() { Name = "Thanksgiving Day", IsAllDay = true, Date = new DateTime(2019, 10, 14), IsStatHoliday = true });
+    //AddSheduleFormModel.ExclusionDays.Add(new AddScheduleExclusionDay() { Name = "Remembrance Day", IsAllDay = true, Date = new DateTime(2019, 11, 11), IsStatHoliday = true });
+    //AddSheduleFormModel.ExclusionDays.Add(new AddScheduleExclusionDay() { Name = "Christmas Day", IsAllDay = true, Date = new DateTime(2019, 12, 26), IsStatHoliday = true });
+    //AddSheduleFormModel.ExclusionDays.Add(new AddScheduleExclusionDay() { Name = "Boxing Day", IsAllDay = true, Date = new DateTime(2019, 12, 26), IsStatHoliday = true });
+
+
+    e_Contractor e_Contractor;
+    public AddSheduleFormModel AddSheduleFormModel { get; set; } = new AddSheduleFormModel();
+
+    //AddSheduleFormModel.ExclusionDays.Add(new AddScheduleExclusionDay() { Name = "Good Friday", IsAllDay = true, Date = new DateTime(2019, 04, 19), IsStatHoliday = true });
+    protected override async Task OnInitializedAsync()
+    {
+
+        var ContractorWeeklySchedules = await ContractorSvc.SelectContractorWeeklySchedule();
+        AddSheduleFormModel.ExclusionDays = new List<AddScheduleExclusionDay>();
+        AddSheduleFormModel.Days = new List<AddSheduleDayModel>();
+        AddSheduleFormModel.Days.Add(new AddSheduleDayModel() { Name = "Monday", Id= 1, AddSheduleDayModels_Include = new List<AddSheduleShiftModel>() });
+        AddSheduleFormModel.Days.Add(new AddSheduleDayModel() { Name = "Tuesday", Id= 2, AddSheduleDayModels_Include = new List<AddSheduleShiftModel>()  });
+        AddSheduleFormModel.Days.Add(new AddSheduleDayModel() { Name = "Wednesday", Id= 3, AddSheduleDayModels_Include = new List<AddSheduleShiftModel>()  });
+        AddSheduleFormModel.Days.Add(new AddSheduleDayModel() { Name = "Thursday", Id= 4, AddSheduleDayModels_Include = new List<AddSheduleShiftModel>()  });
+        AddSheduleFormModel.Days.Add(new AddSheduleDayModel() { Name = "Friday", Id= 5, AddSheduleDayModels_Include = new List<AddSheduleShiftModel>()  });
+        AddSheduleFormModel.Days.Add(new AddSheduleDayModel() { Name = "Saturday", Id= 6, AddSheduleDayModels_Include = new List<AddSheduleShiftModel>() });
+        AddSheduleFormModel.Days.Add(new AddSheduleDayModel() { Name = "Sunday", Id= 7, AddSheduleDayModels_Include = new List<AddSheduleShiftModel>() });
+
+
+        var ContractorExcludeSchedules = await ContractorSvc.SelectContractorExcludeSchedule();
+
+        foreach (var r in ContractorWeeklySchedules)
+        {
+            var day = AddSheduleFormModel.Days.First(q => q.Id == r.WeekDay);
+            if (r.TimeStart != null && r.TimeEnd != null)
+            {
+                day.AddSheduleDayModels_Include.Add(new AddSheduleShiftModel() { TimeStart = r.TimeStart.Value, TimeEnd = r.TimeEnd.Value });
+            }
+
+        }
+
+        foreach (var r in ContractorExcludeSchedules)
+        {
+
+            var t = new AddScheduleExclusionDay();
+            t.Name = r.Name;
+            t.TimeStart = r.TimeStart;
+            t.TimeEnd = r.TimeEnd;
+            t.IsAllDay = r.IsAllDay;
+            t.Date = r.Date;
+
+            AddSheduleFormModel.ExclusionDays.Add(t);
+        }
+
+        e_Contractor = await ContractorSvc.SelectCurrent();
+    }
+
+
+
+    async Task SaveContractorSchedule(UIMouseEventArgs __e)
+    {
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            if (await ContractorSvc.EditContractorSchedule(AddSheduleFormModel))
+            {
+                //ContractorApplicationSvc._HHLQueryExecutionSvc._AccountSession.ContractorInfo = await SessionSvc.GetContractorSessionInfo();
+                //UriHelper.NavigateTo($"/contractor/identity-verification", forceLoad: true);
+            }
+        }
+    }
+
+
+}

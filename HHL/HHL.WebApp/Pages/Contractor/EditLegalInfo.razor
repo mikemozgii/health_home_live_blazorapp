@@ -1,0 +1,378 @@
+@page "/contractor/edit-legal-info"
+@inject HHLAuthSessionSvc AuthSessionSvc;
+@inject AutoMapper.IMapper _mapper;
+@inject InstantDatahandler InstantDatahandler;
+@inject v_EditContractorInfo v_EditContractorInfo;
+@inject ContractorSvc ContractorSvc;
+
+    <EditForm Model="@EditContractorLegalInfoFormModel" OnValidSubmit="@HandleEditContractorLegalInfoFormModelSubmit">
+        <uContainer AllignCols="center" IsDefault="true" IsFullHeight="true">
+
+            <uCol>
+
+                <uContainer AllignCols="center">
+
+                    <uCol CustomClass="pb-35 pt-35">
+
+                        <sContracotEditInfoTopNavPanel />
+
+                    </uCol>
+                </uContainer>
+
+                <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+                    <uCol Grow="1" CustomClass="mx-15">
+
+                        <uFormInput IsGroup="true" Type="child" Label="First Name" Id="FirstName">
+                            <InputCustomText bind-Value="@EditContractorLegalInfoFormModel.FirstName" id="FirstName" class="form-control" Placeholder="Jogn" />
+                            <ValidationMessage for="@(()=> EditContractorLegalInfoFormModel.FirstName)" />
+
+                        </uFormInput>
+
+                    </uCol>
+
+                    <uCol Grow="1" CustomClass="mx-15">
+
+                        <uFormInput IsGroup="true" Type="child" Label="Last Name" Id="LastName">
+                            <InputCustomText bind-Value="@EditContractorLegalInfoFormModel.LastName" id="LastName" class="form-control" Placeholder="Smith" />
+
+                        </uFormInput>
+
+                    </uCol>
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsRequired="true" IsGroup="true" Type="child" Label="Date Of Birth" Id="ContractorDateOfBirth">
+                            <InputCustomDate bind-Value="@EditContractorLegalInfoFormModel.DateOfBirth" id="ContractorDateOfBirth" class="form-control" />
+
+                        </uFormInput>
+                    </uCol>
+                </uContainer>
+
+                <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+                    <uCol Grow="1" CustomClass="mx-15">
+
+                        <uFormInput IsGroup="true" Type="child" Label="Organization Name" Id="OrganizationName">
+                            <InputCustomText bind-Value="@EditContractorLegalInfoFormModel.OrganizationName" id="OrganizationName" class="form-control" Placeholder="AAA Inc" />
+
+                        </uFormInput>
+
+                    </uCol>
+
+                    <uCol Grow="1" CustomClass="mx-15">
+
+                        <uFormInput IsGroup="true" Type="child" Label="Business Number" Id="OrganizationIdentity">
+                            <InputCustomText bind-Value="@EditContractorLegalInfoFormModel.OrganizationIdentity" id="OrganizationIdentity" class="form-control" Placeholder="Smith" />
+
+                        </uFormInput>
+
+                    </uCol>
+
+                    <uCol Grow="1" CustomClass="mx-15">
+
+                        <uFormInput IsRequired="true" IsGroup="true" Type="child" Label="Tax Number (GST/HST/QST)" Id="OrganizationTaxNumber">
+                            <InputCustomText bind-Value="@EditContractorLegalInfoFormModel.OrganizationTaxNumber" id="OrganizationTaxNumber" class="form-control" Placeholder="123456789 RT 0001" />
+
+                        </uFormInput>
+
+                    </uCol>
+
+
+                </uContainer>
+
+
+                <uContainer AllignCols="center">
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsRequired="true" IsGroup="true" Type="child" Label="Email" Id="PrimaryEmailName">
+                            <InputCustomText bind-Value="@EditContractorLegalInfoFormModel.PrimaryEmailName" id="PrimaryEmailName" class="form-control" Placeholder="example@gmail.com" />
+
+                        </uFormInput>
+                    </uCol>
+
+                    <uCol Width="200px" CustomClass="mx-15">
+                        <uFormInput IsRequired="true" IsGroup="true" Type="child" Label="Country Code" Id="PhoneCountryCodeId">
+                            <InputCustomSelect bind-Value="@EditContractorLegalInfoFormModel.PhoneCountryCodeId" id="PhoneCountryCodeId" class="form-control custom-select" Placeholder="+1">
+                                <option>Select Code </option>
+                                @foreach (var l in CountryCodeSelectModels)
+                                {
+                                    <option value="@l.Id">+ @l.PhoneCode @l.Name</option>
+                                }
+
+                            </InputCustomSelect>
+
+
+
+                        </uFormInput>
+
+                    </uCol>
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsRequired="true" IsGroup="true" Type="child" Label="Phone Number" Id="PhoneNumber">
+                            <InputCustomText bind-Value="@EditContractorLegalInfoFormModel.PhoneNumber" id="PhoneNumber" class="form-control" Placeholder="(888) 888-9999" />
+
+                        </uFormInput>
+                    </uCol>
+
+                </uContainer>
+
+
+                <uContainer AllignCols="center" CustomClassContainer="mb-10  mt-10">
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <h5 class="font-weight-normal-bold mb-0">Legal Business Address</h5>
+
+                    </uCol>
+
+                </uContainer>
+
+                <uContainer>
+
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Street Address 1" Id="Line1">
+                            <InputCustomText bind-Value="@EditContractorLegalInfoFormModel.PrimaryAddressLine1" id="Line1" class="form-control" Placeholder="Street and number, P.O. box, c/o." />
+  
+                        </uFormInput>
+                    </uCol>
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" Label="Street Address 2" Id="Line2">
+                            <InputCustomText bind-Value="@EditContractorLegalInfoFormModel.PrimaryAddressLine2" id="Line2" class="form-control" Placeholder="Apartment, suite, unit, building, floor, etc." />
+
+                        </uFormInput>
+                    </uCol>
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="PostalCode" Id="PostalCode">
+                            <InputCustomText bind-Value="@EditContractorLegalInfoFormModel.PrimaryAddressPostalCode" id="PostalCode" class="form-control" Placeholder="M3Z 0V6" />
+
+                        </uFormInput>
+                    </uCol>
+
+                </uContainer>
+
+                <uContainer AllignCols="center" CustomClassContainer="">
+
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="Country" Id="CountryId">
+                            <InputCustomSelect bind-Value="@EditContractorLegalInfoFormModel.PrimaryAddressCountryId" OnCustomChange="@(e=>HandleCustomCountryChange(e))" id="CountryId" class="form-control custom-select" Placeholder="United States">
+                                <option value="">Select Country</option>
+                                @foreach (var l in CountrySelectModels)
+                                {
+                                    <option value="@l.Id">@l.Name</option>
+                                }
+
+                            </InputCustomSelect>
+
+                        </uFormInput>
+
+                    </uCol>
+
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="State/Province/Region" Id="RegionId">
+                            <InputCustomSelect bind-Value="@EditContractorLegalInfoFormModel.PrimaryAddressRegionId" isDisabled="@(EditContractorLegalInfoFormModel.PrimaryAddressCountryId == null)" OnCustomChange="@(e=> HandleCustomRegionChange(e))" id="RegionId" class="form-control custom-select">
+                                <option value="">Select Region</option>
+
+                                @foreach (var l in RegionSelectModels)
+                                {
+                                    <option value="@l.Id">@l.Name</option>
+                                }
+
+                            </InputCustomSelect>
+
+                        </uFormInput>
+                    </uCol>
+
+
+                    <uCol Grow="1" CustomClass="mx-15">
+
+                        <uFormInput IsGroup="true" IsRequired="true" Type="child" Label=" City" Id="CityId">
+                            <InputCustomSelect bind-Value="@EditContractorLegalInfoFormModel.PrimaryAddressCityId" isDisabled="@(EditContractorLegalInfoFormModel.PrimaryAddressRegionId == null)" id="CityId" class="form-control custom-select">
+
+                                <option value="">Select City</option>
+
+                                @foreach (var l in CitySelectModels)
+                                {
+                                    <option value="@l.Id">@l.Name</option>
+                                }
+
+                            </InputCustomSelect>
+
+                        </uFormInput>
+                    </uCol>
+
+                </uContainer>
+
+                <uContainer AllignCols="center" CustomClassContainer="mt-15">
+
+
+                    <uCol Grow="1" CustomStyle="text-align:right" CustomClass="mx-15">
+
+                        <uButton Type="Submbit" Title="Save Changes" />
+
+                    </uCol>
+
+                </uContainer>
+            </uCol>
+
+        </uContainer>
+
+    </EditForm>
+
+
+@functions {
+
+    EditContractorLegalInfoFormModel EditContractorLegalInfoFormModel { get; set; } = new EditContractorLegalInfoFormModel();
+    IEnumerable<CountryCodeSelectModel> CountryCodeSelectModels = Enumerable.Empty<CountryCodeSelectModel>();
+    IEnumerable<CountrySelectModel> CountrySelectModels { get; set; } = Enumerable.Empty<CountrySelectModel>();
+    IEnumerable<RegionSelectModel> RegionSelectModels { get; set; } = Enumerable.Empty<RegionSelectModel>();
+    IEnumerable<CitySelectModel> CitySelectModels { get; set; } = Enumerable.Empty<CitySelectModel>();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        CountryCodeSelectModels = _mapper.Map<IEnumerable<e_Country>, IEnumerable<CountryCodeSelectModel>>(InstantDatahandler.All_Countries).OrderBy(q => q.Name != "United States");
+        CountrySelectModels = _mapper.Map<IEnumerable<e_Country>, IEnumerable<CountrySelectModel>>(InstantDatahandler.All_Countries).OrderBy(q => q.Name != "United States");
+        var r = await ContractorSvc.SelectCurrent_EditView();
+        EditContractorLegalInfoFormModel = _mapper.Map<EditContractorLegalInfoFormModel>(r);
+        CountrySelectModels = _mapper.Map<IEnumerable<e_Country>, IEnumerable<CountrySelectModel>>(InstantDatahandler.All_Countries).OrderBy(q => q.Name != "United States");
+        if (EditContractorLegalInfoFormModel.PrimaryAddressCountryId != null)
+        {
+            RegionSelectModels = _mapper.Map<IEnumerable<e_Region>, IEnumerable<RegionSelectModel>>(InstantDatahandler.All_Regions.Where(q => q.CountryId == EditContractorLegalInfoFormModel.PrimaryAddressCountryId)).OrderBy(q => q.Name);
+            if (EditContractorLegalInfoFormModel.PrimaryAddressRegionId != null)
+            {
+                CitySelectModels = _mapper.Map<IEnumerable<e_City>, IEnumerable<CitySelectModel>>(InstantDatahandler.All_Cities.Where(q => q.RegionId == EditContractorLegalInfoFormModel.PrimaryAddressRegionId)).OrderBy(q => q.Name);
+            }
+        }
+
+    }
+
+    async void HandleEditContractorLegalInfoFormModelSubmit()
+    {
+
+    }
+
+
+    async void HandleCustomCountryChange(UIChangeEventArgs __e)
+    {
+        EditContractorLegalInfoFormModel.PrimaryAddressCountryId = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? new Guid(__e.Value.ToString()) : (Guid?)default;
+
+        if (EditContractorLegalInfoFormModel?.PrimaryAddressCountryId != null)
+        {
+            RegionSelectModels = _mapper.Map<IEnumerable<e_Region>, IEnumerable<RegionSelectModel>>(InstantDatahandler.All_Regions.Where(q => q.CountryId == EditContractorLegalInfoFormModel.PrimaryAddressCountryId)).OrderBy(q => q.Name);
+            EditContractorLegalInfoFormModel.PrimaryAddressCityId = null;
+        }
+        else
+        {
+            EditContractorLegalInfoFormModel.PrimaryAddressRegionId = null;
+            EditContractorLegalInfoFormModel.PrimaryAddressCityId = null;
+        }
+
+        StateHasChanged();
+    }
+
+    async void HandleCustomRegionChange(UIChangeEventArgs __e)
+    {
+        EditContractorLegalInfoFormModel.PrimaryAddressRegionId = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? new Guid(__e.Value.ToString()) : (Guid?)default;
+
+        if (EditContractorLegalInfoFormModel?.PrimaryAddressRegionId != null)
+        {
+            CitySelectModels = _mapper.Map<IEnumerable<e_City>, IEnumerable<CitySelectModel>>(InstantDatahandler.All_Cities.Where(q => q.RegionId == EditContractorLegalInfoFormModel.PrimaryAddressRegionId)).OrderBy(q => q.Name);
+        }
+        else
+        {
+            EditContractorLegalInfoFormModel.PrimaryAddressCityId = null;
+        }
+
+        StateHasChanged();
+    }
+
+    //IEnumerable<ErrorMdl> Errors;
+
+    //[Parameter]
+    //private bool isLoading { get; set; } = false;
+
+
+    //void HandleEditContractorLegalInfoFormModelSubmit()
+    //{
+    //    isLoading = true;
+    //}
+
+
+    //protected override async Task OnAfterRenderAsync()
+    //{
+    //    if (isLoading)
+    //    {
+
+    //        //await UpdateContractorInfo();
+    //    }
+    //}
+
+
+
+
+    //async Task UpdateContractorInfo()
+    //{
+
+    //    var r = e_Contractor;
+
+    //    r.Id = (Guid)EditContractorLegalInfoFormModel.Id;
+    //    await r.UPDATEAsync(
+    //        new string[] { nameof(e_Contractor.FirstName), nameof(e_Contractor.LastName), nameof(e_Contractor.OrganizationName), nameof(e_Contractor.OrganizationIdentity), nameof(e_Contractor.PrimaryLanguageId), nameof(e_Contractor.SecondaryLanguageId), nameof(e_Contractor.DateOfBirth), nameof(e_Contractor.SIN) },
+    //        new object[] { EditContractorLegalInfoFormModel.FirstName, EditContractorLegalInfoFormModel.LastName, EditContractorLegalInfoFormModel.OrganizationName, EditContractorLegalInfoFormModel.OrganizationIdentity, EditContractorLegalInfoFormModel.PrimaryLanguageId, EditContractorLegalInfoFormModel.SecondaryLanguageId, EditContractorLegalInfoFormModel.DateOfBirth, EditContractorLegalInfoFormModel.SIN });
+
+
+
+    //    var e1 = new e_Email();
+
+    //    if (EditContractorLegalInfoFormModel.PrimaryEmailId != null)
+    //    {
+    //        e1.Id = (Guid)EditContractorLegalInfoFormModel.PrimaryEmailId;
+    //        await e1.UPDATEAsync(new string[] { nameof(e_Email.Name) }, new object[] { EditContractorLegalInfoFormModel.PrimaryEmailName });
+    //    }
+    //    else
+    //    {
+
+    //        e1.Name = EditContractorLegalInfoFormModel.PrimaryEmailName;
+
+    //        var response = await e1.INSERTAsync();
+    //        if (response.Success)
+    //        {
+    //            var EmailId = response.Results.First().Id;
+    //            var d = await e_Contractor.UPDATEAsync(nameof(e_Contractor.PrimaryEmailId), EmailId, QuerySvc.SetAccountIdQueryFilter(AuthSessionSvc.AccountSession.AccountId));
+    //            EditContractorLegalInfoFormModel.PrimaryEmailId = EmailId;
+    //        }
+    //    }
+
+
+
+    //    var e2 = new e_Email();
+
+    //    if (EditContractorLegalInfoFormModel.SecondaryEmailId != null)
+    //    {
+    //        e2.Id = (Guid)EditContractorLegalInfoFormModel.SecondaryEmailId;
+    //        await e2.UPDATEAsync(new string[] { nameof(e_Email.Name) }, new object[] { EditContractorLegalInfoFormModel.SecondaryEmailName });
+    //    }
+    //    else
+    //    {
+
+    //        e2.Name = EditContractorLegalInfoFormModel.SecondaryEmailName;
+
+    //        var response = await e2.INSERTAsync();
+    //        if (response.Success)
+    //        {
+    //            var EmailId = response.Results.First().Id;
+    //            var d = await e_Contractor.UPDATEAsync(nameof(e_Contractor.SecondaryEmailId), EmailId, QuerySvc.SetAccountIdQueryFilter(AuthSessionSvc.AccountSession.AccountId));
+    //            EditContractorLegalInfoFormModel.SecondaryEmailId = EmailId;
+    //        }
+    //    }
+
+    //    isLoading = false;
+    //    StateHasChanged();
+
+    //}
+}

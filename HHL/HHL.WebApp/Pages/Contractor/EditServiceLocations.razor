@@ -1,0 +1,354 @@
+@page "/contractor/edit-service-locations"
+@inject AutoMapper.IMapper _mapper;
+@using System.Linq;
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+@inject ClientSvc ClientSvc;
+@inject InstantDatahandler InstantDatahandler;
+@inject AddressSvc AddressSvc;
+@inject ContractorSvc ContractorSvc;
+
+<uContainer AllignCols="center" IsDefault="true" IsFullHeight="true" >
+
+    <uCol>
+        <uContainer AllignCols="center">
+
+            <uCol CustomClass="pb-35 pt-35">
+
+                <sContracotEditInfoTopNavPanel />
+
+            </uCol>
+
+
+
+            <uCol>
+
+                @if (!ContractorAddresses.IsNullOrEmpty())
+                {
+
+                    <uContainer CustomClassContainer="mb-20">
+
+
+                        @foreach (var addres in ContractorAddresses)
+                        {
+                            <uCol Width="200px" CustomClass="mx-15 mt-15">
+                                <div class="card px-15 py-15">
+
+                                    <div class="font-size-11 font-green">
+                                        
+                                        <uContainer>
+
+                                            <uCol Grow="1">
+
+                                                @addres.AreaKm km
+                                            </uCol>
+
+                                            <uCol Grow="1" CustomStyle="text-align:right">
+
+                                                <uButton isSoft="true" Size="btn-xs" CustomStyle=""  Color="blue" CustomClass="px-0 py-0 btn-bg-transparent" CustomOnClickv2="@(e => EditAddress(e, addres.Id))"> <uFontAwesomeIcon Thickness="s" Size="12px" Icon="pencil" CustomClass="mr-5" /></uButton>
+                                                <uButton isSoft="true" Size="btn-xs" CustomStyle=""  Color="red" CustomClass="px-0 py-0 ml-5 btn-bg-transparent" CustomOnClickv2="@(e => DeleteAddress(e, addres.Id))"> <uFontAwesomeIcon Thickness="s" Icon="trash" Size="12px" CustomClass="mr-5" /> </uButton>
+                                            </uCol>
+
+                                        </uContainer>
+
+
+
+                                    </div>
+
+                                    <div class="font-size-13 font-weight-normal-bold">@addres.Name</div>
+                                    <div class="font-size-13">@addres.CityName</div>
+                                    <div class="font-size-13">@addres.CountryName, @addres.RegionName</div>
+
+
+                                </div>
+                            </uCol>
+                        }
+
+
+
+                        @if (ContractorAddresses.Count() <= SelectedPlan.LocationLimitCount)
+                        {
+
+                            <uCol Width="145px" CustomClass="mx-15 mt-15">
+
+
+
+                                <uButton IsSoft="true" Color="grain" CustomOnClickv2="@(e => AddAddress(e))" CustomStyle="width:100%;height:100%">
+                                    <div>
+                                        <uFontAwesomeIcon Thickness="s" Size="14px" Icon="plus" />
+                                    </div>
+                                    <div class="pb-2">
+                                        Add
+                                    </div>
+
+
+
+                                </uButton>
+
+                            </uCol>
+                        }
+
+
+
+
+
+                    </uContainer>
+
+                }
+                else
+                {
+                    <div class="text-center">
+
+                        <h3 class="my-25"> Please add a Location where you are planning to operate</h3>
+
+                        <uButton IsTransition="false" IsSoft="true" Color="grain" CustomOnClickv2="@(e=> AddAddress(e))">
+                            <uFontAwesomeIcon Thickness="s" Size="14px" Icon="plus" CustomClass="mr-5" /> Add a Service Location
+                        </uButton>
+                    </div>
+
+
+                }
+
+
+            </uCol>
+
+        </uContainer>
+    </uCol>
+
+</uContainer>
+
+
+
+<CascadingValue Value="@ModalSeetings">
+    <uModal Id="MyccdddModal" Title="Add Service Location" ContainerStyle="max-width:500px" WrapStyle="padding-top:50px">
+
+        <EditForm Model="@AddEditContractorLocationFormModel" OnValidSubmit="@HandleAddEditContractorLocationFormModelSubmit">
+            <DataAnnotationsValidator />
+
+            <uContainer AllignCols="center" CustomClassContainer="">
+
+
+                <uCol CustomClass="mx-15">
+                    <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="Name" Id="Name">
+                        <InputCustomText bind-Value="@AddEditContractorLocationFormModel.Name" id="Name" class="form-control" Placeholder="Location Name" />
+                    </uFormInput>
+                </uCol>
+
+
+                <uCol CustomClass="mx-15">
+
+                    <uFormInput IsGroup="true" IsRequired="true" Type="child" Label=" Country" Id="CountryId">
+                        <InputCustomSelect bind-Value="@AddEditContractorLocationFormModel.CountryId" id="CountryId" OnCustomChange="@(e=> HandleCustomCountryChange(e))" class="form-control custom-select">
+                            <option value="">Select Country</option>
+                            @foreach (var l in CountrySelectModels)
+                            {
+                                <option value="@l.Id">@l.Name</option>
+                            }
+
+                        </InputCustomSelect>
+                    </uFormInput>
+                </uCol>
+
+                <uCol>
+                    <uFormInput IsGroup="true" IsRequired="true" Type="child" Label=" State/Province/Region" Id="RegionId">
+                        <InputCustomSelect bind-Value="@AddEditContractorLocationFormModel.RegionId" isDisabled="@(AddEditContractorLocationFormModel.CountryId == null)" OnCustomChange="@(e=> HandleCustomRegionChange(e))" id="RegionId" class="form-control custom-select">
+                            <option value="">Select Region</option>
+
+                            @foreach (var l in RegionSelectModels)
+                            {
+                                <option value="@l.Id">@l.Name</option>
+                            }
+
+                        </InputCustomSelect>
+
+                    </uFormInput>
+                </uCol>
+
+
+                <uCol Grow="1">
+                    <uFormInput IsGroup="true" IsRequired="true" Type="child" Label=" City" Id="CityId">
+                        <InputCustomSelect bind-Value="@AddEditContractorLocationFormModel.CityId" isDisabled="@(AddEditContractorLocationFormModel.RegionId == null)" id="CityId" class="form-control custom-select">
+
+                            <option value="">Select City</option>
+
+                            @foreach (var l in CitySelectModels)
+                            {
+                                <option value="@l.Id">@l.Name</option>
+                            }
+
+                        </InputCustomSelect>
+
+                    </uFormInput>
+                </uCol>
+
+
+                @*<uCol CustomClass="mx-15">
+                    <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="Postal Code" Id="PostalCode">
+                        <InputCustomText bind-Value="@AddEditContractorLocationFormModel.PostalCode" id="PostalCode" class="form-control" Placeholder="Enter valid Zip code" />
+                    </uFormInput>
+                </uCol>*@
+
+
+                <uCol CustomClass="mx-15">
+                    <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Area Covered" Id="@($"AreaCovered")">
+                        <InputCustomSelect bind-Value="@AddEditContractorLocationFormModel.AreaKm" id="@($"AreaCovered")" class="form-control custom-select" Placeholder="100km">
+                            @foreach (var l in InstantDatahandler.All_AreaKms)
+                            {
+                                <option value="@l.Value">@l.Name</option>
+                            }
+
+                        </InputCustomSelect>
+                    </uFormInput>
+                </uCol>
+                <uCol CustomClass="mx-15" CustomStyle="text-align:right">
+
+                    <uButton Type="Submbit" Title="Save" />
+
+                </uCol>
+            </uContainer>
+
+
+        </EditForm>
+
+
+    </uModal>
+</CascadingValue>
+
+@functions {
+
+    e_ContractorPlan SelectedPlan { get; set; }
+    List<v_Address> ContractorAddresses { get; set; } = new List<v_Address>();
+
+    IEnumerable<CountrySelectModel> CountrySelectModels { get; set; } = Enumerable.Empty<CountrySelectModel>();
+    IEnumerable<RegionSelectModel> RegionSelectModels { get; set; } = Enumerable.Empty<RegionSelectModel>();
+    IEnumerable<CitySelectModel> CitySelectModels { get; set; } = Enumerable.Empty<CitySelectModel>();
+
+    AddEditContractorLocationFormModel AddEditContractorLocationFormModel { get; set; } = new AddEditContractorLocationFormModel();
+    ModalSeetings ModalSeetings { get; set; } = new ModalSeetings() { ShowModal = false };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FillContractorAddresses();
+        SelectedPlan = InstantDatahandler.All_ContractorPlans.FirstOrDefault(q => q.Id == ContractorSvc._HHLQueryExecutionSvc._AccountSession.ContractorInfo.ContractorPlanId);
+    }
+
+
+    async Task FillContractorAddresses()
+    {
+        ContractorAddresses = (await ContractorSvc.SelectContracotrLocations()).ToList();
+    }
+
+
+    async void AddAddress(UIMouseEventArgs __e)
+    {
+        AddEditContractorLocationFormModel = new AddEditContractorLocationFormModel();
+        AddEditContractorLocationFormModel.EntityId = ContractorSvc._HHLQueryExecutionSvc._AccountSession.ContractorInfo.ContractorId;
+        AddEditContractorLocationFormModel.FieldNameId = 7;
+        AddEditContractorLocationFormModel.Name = $"Location {ContractorAddresses.Count() + 1}";
+        AddEditContractorLocationFormModel.AreaKm = InstantDatahandler.All_AreaKms.First().Value;
+        CountrySelectModels = _mapper.Map<IEnumerable<e_Country>, IEnumerable<CountrySelectModel>>(InstantDatahandler.All_Countries).OrderBy(q => q.Name != "United States");
+        ModalSeetings.ShowModal = true;
+    }
+
+    async void DeleteAddress(UIMouseEventArgs __e, Guid addressId)
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            if ((await AddressSvc.Delete(addressId)).Success)
+            {
+                var r = ContractorAddresses.First(q => q.Id == addressId);
+                ContractorAddresses.Remove(r);
+                StateHasChanged();
+            }
+        }
+
+    }
+
+
+    async void EditAddress(UIMouseEventArgs __e, Guid Id)
+    {
+
+        var r = ContractorAddresses.First(q => q.Id == Id);
+
+        AddEditContractorLocationFormModel = new AddEditContractorLocationFormModel();
+        AddEditContractorLocationFormModel.Id = r.Id;
+        AddEditContractorLocationFormModel.Name = r.Name;
+        AddEditContractorLocationFormModel.CountryId = r.CountryId;
+        AddEditContractorLocationFormModel.RegionId = r.RegionId;
+        AddEditContractorLocationFormModel.AreaKm = r.AreaKm;
+        AddEditContractorLocationFormModel.CityId = r.CityId;
+        AddEditContractorLocationFormModel.EntityId = ContractorSvc._HHLQueryExecutionSvc._AccountSession.ContractorInfo.ContractorId;
+        AddEditContractorLocationFormModel.FieldNameId = 7;
+
+        CountrySelectModels = _mapper.Map<IEnumerable<e_Country>, IEnumerable<CountrySelectModel>>(InstantDatahandler.All_Countries).OrderBy(q => q.Name != "United States");
+        if (AddEditContractorLocationFormModel.CountryId != null)
+        {
+            RegionSelectModels = _mapper.Map<IEnumerable<e_Region>, IEnumerable<RegionSelectModel>>(InstantDatahandler.All_Regions.Where(q => q.CountryId == AddEditContractorLocationFormModel.CountryId)).OrderBy(q => q.Name);
+            if (AddEditContractorLocationFormModel.RegionId != null)
+            {
+                CitySelectModels = _mapper.Map<IEnumerable<e_City>, IEnumerable<CitySelectModel>>(InstantDatahandler.All_Cities.Where(q => q.RegionId == AddEditContractorLocationFormModel.RegionId)).OrderBy(q => q.Name);
+            }
+        }
+
+
+
+        ModalSeetings.ShowModal = true;
+        StateHasChanged();
+    }
+
+
+    async void HandleAddEditContractorLocationFormModelSubmit()
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+
+            if ((await AddressSvc.Upsert(AddEditContractorLocationFormModel)).Success)
+            {
+                await FillContractorAddresses();
+
+                ModalSeetings.ShowModal = false;
+                StateHasChanged();
+            }
+
+
+        }
+
+    }
+
+    async void HandleCustomCountryChange(UIChangeEventArgs __e)
+    {
+        AddEditContractorLocationFormModel.CountryId = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? new Guid(__e.Value.ToString()) : (Guid?)default;
+
+        if (AddEditContractorLocationFormModel?.CountryId != null)
+        {
+            RegionSelectModels = _mapper.Map<IEnumerable<e_Region>, IEnumerable<RegionSelectModel>>(InstantDatahandler.All_Regions.Where(q => q.CountryId == AddEditContractorLocationFormModel.CountryId)).OrderBy(q => q.Name);
+            AddEditContractorLocationFormModel.CityId = null;
+        }
+        else
+        {
+            AddEditContractorLocationFormModel.RegionId = null;
+            AddEditContractorLocationFormModel.CityId = null;
+        }
+
+        StateHasChanged();
+    }
+
+    async void HandleCustomRegionChange(UIChangeEventArgs __e)
+    {
+        AddEditContractorLocationFormModel.RegionId = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? new Guid(__e.Value.ToString()) : (Guid?)default;
+
+        if (AddEditContractorLocationFormModel?.RegionId != null)
+        {
+            var existingCities = ContractorAddresses.Select(q => q.CityId);
+            CitySelectModels = _mapper.Map<IEnumerable<e_City>, IEnumerable<CitySelectModel>>(InstantDatahandler.All_Cities.Where(q => !existingCities.Contains(q.Id) &&  q.RegionId == AddEditContractorLocationFormModel.RegionId)).OrderBy(q => q.Name);
+        }
+        else
+        {
+            AddEditContractorLocationFormModel.CityId = null;
+        }
+
+        StateHasChanged();
+    }
+
+}

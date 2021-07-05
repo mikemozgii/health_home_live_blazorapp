@@ -1,0 +1,74 @@
+@inject Microsoft.AspNetCore.Components.IUriHelper UriHelper
+
+<uContainer>
+    <uCol>
+        @foreach (var navItem in NavPanelItems)
+        {
+            if (navItem.IsActive)
+            {
+                <uButton Title="@navItem.Name" isSoft="true" IsTransition="true" Color="green" CustomOnClickv2="@(e=>HandleNavChange(e, navItem.Href))" CustomClass="mx-15" />
+            }
+            else
+            {
+                <uButton Title="@navItem.Name" isSoft="true" IsTransition="true" CustomOnClickv2="@(e=>HandleNavChange(e, navItem.Href))" CustomClass="mx-15" />
+            }
+        }
+
+    </uCol>
+
+</uContainer>
+
+
+
+
+
+
+@functions {
+
+    List<NavPanelItem> NavPanelItems { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        LoadData();
+
+    }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        //LoadData();
+
+    }
+
+
+    //void HandleNavChange()
+    //{
+    //    LoadData();
+    //    StateHasChanged();
+    //}
+
+
+    async void HandleNavChange(UIMouseEventArgs e, string url)
+    {
+       UriHelper.NavigateTo(url, forceLoad: true);
+    }
+
+    void LoadData()
+    {
+        NavPanelItems = new List<NavPanelItem>()
+     {
+
+        new NavPanelItem(UriHelper, "Unpaid", UrlNameHdr.ClientProejctsUnpaid ),
+        new NavPanelItem(UriHelper, "Waiting for Confirmation", UrlNameHdr.ClientProejctsWaitingforConfirmation ),
+        new NavPanelItem(UriHelper, "In Progress", UrlNameHdr.ClientProejctsInProgress ),
+        new NavPanelItem(UriHelper, "Completed", UrlNameHdr.ClientProejctsCompleted),
+
+
+        
+        };
+    }
+
+
+
+}

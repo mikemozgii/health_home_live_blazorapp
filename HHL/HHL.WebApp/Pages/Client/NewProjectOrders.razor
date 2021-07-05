@@ -1,0 +1,309 @@
+@page "/client/new-project-orders/{projectid}";
+@page "/client/new-project-orders";
+@inject HHLAuthSessionSvc AuthSessionSvc;
+@inject AutoMapper.IMapper _mapper;
+@inject Microsoft.AspNetCore.Components.IUriHelper UriHelper;
+@inject ProjectSvc ProjectSvc;
+@inject TaskSvc TaskSvc;
+@inject IHHLQueryExecutionSvc _HHLQueryExecutionSvc;
+@inject UiJsHandler UiJsHandler;
+@inject InstantDatahandler InstantDatahandler;
+
+@if (ClientProjectModel != null)
+{
+
+    <uContainer AllignCols="center" IsDefault="true" IsFullHeight="true">
+
+        <uCol>
+            <uContainer AllignCols="center" CustomClassContainer="py-35" IsDefault="true" CustomStyleContainer="" CustomStyleRow="">
+
+                <uCol CustomClass="mb-15 mx-15">
+
+
+                    <h3 class="font-blue font-weight-normal mb-0">
+                        Review and <span class="font-weight-semi-bold">Checkout</span>
+                    </h3>
+
+
+
+                </uCol>
+
+                <uCol CustomClass="mb-35 mx-15">
+
+
+
+
+                    <uContainer>
+
+                        <uCol CustomClass="mb-5">
+                            <uContainer>
+
+                                <uCol Grow="1">
+                                    <div><h5><span class="font-silver">Project:</span> <span class="font-weight-normal">@ClientProjectModel.ProjectName</span> <span class="font-size-14 ml-5"><uPriorityView IconSize="14px" PriorityId="ClientProjectModel.ProjectPriorityId" /></span> </h5></div>
+                                </uCol>
+
+                                <uCol Grow="1" CustomStyle="text-align:right;">
+
+                                    <uButton Size="btn-xs" CustomOnClickv2="@(e=>EditProject(e, ClientProjectModel.ProjectId))" IsSoft="true" IsTransition="false" Color="grain">
+                                        <uFontAwesomeIcon Size="11px" Icon="pencil" CustomClass="mr-3" /> Edit Project
+                                    </uButton>
+
+                                    <uButton Size="btn-xs" Type="NavButton" Href="@($"/home/{BuldingType}/task/task-type-selection/project/{Projectid}")" IsSoft="true" IsTransition="false" Color="grain">
+                                        <uFontAwesomeIcon Size="11px" Icon="plus" CustomClass="mr-3" /> Add a Task
+                                    </uButton>
+                                </uCol>
+
+                            </uContainer>
+
+
+                        </uCol>
+
+                        <uCol>
+                            @foreach (var task in ClientTasksModels)
+                            {
+                                <CascadingValue Value="this">
+                                    <sClientNewProjectTaskListItem Task="@task" />
+                                </CascadingValue>
+                            }
+                        </uCol>
+
+                    </uContainer>
+
+
+                </uCol>
+
+
+
+                @if (ClientTasksModels.IsNullOrEmpty())
+                {
+
+                    <uCol CustomClass="mb-35 mx-15">
+                        <div style="text-align: center" class="mt-25">
+                            <h3> No Tasks found, Please Add a <span class="font-weight-semi-bold">Task</span> </h3>
+
+                            <uButton Type="NavButton" isSoft="true" Color="grain" Href="@($"/home/{BuldingType}/task/task-type-selection/project/{Projectid}")" CustomClass="mt-25" IsTransition="false">
+                                Add a Task
+                            </uButton>
+                        </div>
+                    </uCol>
+                }
+                else
+                {
+
+                    <uCol CustomClass="mb-35 mx-15">
+
+                        <uContainer>
+                            <uCol Grow="1">
+
+                            </uCol>
+
+                            <uCol Width="290px">
+                                <div class="font-size-20 font-weight-normal-bold">Total: $@ProjectTotalPrice.ToString("#.00")</div>
+                                <div class="small font-silver">Got a discount code? Add it in the next step.</div>
+                            </uCol>
+
+                            <uCol Width="150px" CustomStyle="text-align:right;">
+                                <uButton Color="green" CustomOnClickv2="@HandleCheckoutSubmit">
+                                    <uFontAwesomeIcon Icon="shopping-cart" CustomClass="mr-5" />
+                                    @*Proceed to Checkout $@AddNewHomeTaskModel.TotalPrice.ToString("#.00")*@
+                                    Checkout
+                                </uButton>
+                            </uCol>
+
+                        </uContainer>
+
+
+
+
+                    </uCol>
+                }
+
+
+            </uContainer>
+        </uCol>
+    </uContainer>
+
+
+
+    <CascadingValue Value="@ModalSeetings">
+        <uModal Id="AddUpdateProjectFormModelModal" Title="Edit Project" ContainerStyle="max-width:500px">
+
+            <EditForm Model="@AddUpdateProjectFormModel" OnValidSubmit="@HandleAddUpdateProjectFormModelSubmit">
+                <DataAnnotationsValidator />
+
+                <uContainer AllignCols="center">
+
+                    <uCol CustomClass="mx-15">
+                        <uFormInput IsGroup="true" Type="child" IsRequired="true" Label="Name" Id="Line1">
+                            <InputCustomText bind-Value="@AddUpdateProjectFormModel.Name" id="Line1" class="form-control" Placeholder="Project Name" />
+                        </uFormInput>
+                    </uCol>
+
+                    <uCol CustomClass="mx-15">
+                        <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Priority" Id="PriorityId">
+                            <InputCustomSelect bind-Value="@AddUpdateProjectFormModel.PriorityId" id="PriorityId" class="form-control custom-select">
+                                @foreach (var l in PrioritySelectModels.OrderBy(q => q.Id))
+                                {
+                                    <option value="@l.Id">@l.Name</option>
+                                }
+                            </InputCustomSelect>
+
+                        </uFormInput>
+                    </uCol>
+
+                    <uCol CustomClass="mx-15" CustomStyle="text-align:right">
+
+                        <uButton Type="Submbit" Title="Save" />
+
+                    </uCol>
+                </uContainer>
+
+
+            </EditForm>
+
+
+        </uModal>
+    </CascadingValue>
+
+}
+else
+{
+
+    <uContainer AllignCols="center" CustomClassContainer="py-120" IsDefault="true" CustomStyleContainer="" CustomStyleRow="">
+
+        <uCol CustomStyle="text-align:center;" CustomClass="mb-15">
+            <h2> Please Add a <span class="font-weight-semi-bold">Task</span> </h2>
+        </uCol>
+
+        <uCol CustomStyle="text-align:center;">
+            <uButton Type="NavButton" Href="/home/bulding-type-selection" IsTransition="false" Color="blue">
+                Get Started
+            </uButton>
+        </uCol>
+    </uContainer>
+}
+
+
+@functions {
+
+
+    string BuldingType;
+
+    ModalSeetings ModalSeetings { get; set; }
+
+    IEnumerable<PrioritySelectModel> PrioritySelectModels { get; set; } = Enumerable.Empty<PrioritySelectModel>();
+    AddUpdateProjectFormModel AddUpdateProjectFormModel { get; set; } = new AddUpdateProjectFormModel();
+
+    [Parameter] string Projectid { get; set; }
+
+    v_VmHomeProject ClientProjectModel = new v_VmHomeProject();
+
+
+    IEnumerable<v_VmHomeTask> ClientTasksModels = Enumerable.Empty<v_VmHomeTask>();
+
+    decimal ProjectTotalPrice { get; set; } = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var r = await LoadData();
+
+    }
+
+    public async Task<bool> LoadData()
+    {
+        ModalSeetings = new ModalSeetings() { ShowModal = false };
+        var projectId = new Guid(Projectid);
+        ClientProjectModel = await ProjectSvc.SELECTByProjectId(projectId);
+
+
+        ClientTasksModels = (await TaskSvc.SELECTActiveByProjectId(projectId)).Results.OrderBy(q => q.TaskName);
+        BuldingType = ClientProjectModel.ProjectHomeBuldingTypeId == 1 ? "residential" : "commercial";
+
+        PrioritySelectModels = _mapper.Map<IEnumerable<e_Priority>, IEnumerable<PrioritySelectModel>>(InstantDatahandler.All_Priorities);
+
+        ProjectTotalPrice = ClientTasksModels.Sum(q => q.TaskPriceTotal);
+
+
+
+
+
+
+        return true;
+    }
+
+
+    async void EditProject(UIMouseEventArgs __e, Guid projectId)
+    {
+        AddUpdateProjectFormModel = new AddUpdateProjectFormModel();
+        AddUpdateProjectFormModel.Id = projectId;
+        AddUpdateProjectFormModel.Name = ClientProjectModel.ProjectName;
+        AddUpdateProjectFormModel.PriorityId = ClientProjectModel.ProjectPriorityId;
+        ModalSeetings.ShowModal = true;
+    }
+
+
+    async void HandleAddUpdateProjectFormModelSubmit()
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+
+            if (await ProjectSvc.Update(AddUpdateProjectFormModel))
+            {
+                ClientProjectModel.ProjectName = AddUpdateProjectFormModel.Name;
+                ClientProjectModel.ProjectPriorityId = AddUpdateProjectFormModel.PriorityId;
+
+                ModalSeetings.ShowModal = false;
+                StateHasChanged();
+            }
+
+
+        }
+
+    }
+
+
+    async void HandleCheckoutSubmit()
+    {
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            var result = await ProjectSvc.CheckOutProjectTask(ClientProjectModel.ProjectId);
+            if (result)
+            {
+                UriHelper.NavigateTo(UrlNameHdr.ClientPaymentCompletion, forceLoad: true);
+            }
+        }
+
+
+    }
+
+
+    public async void DeleteTaskHandler(UIMouseEventArgs e, Guid taskId)
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            var isDeleted = await TaskSvc.DeleteTask(taskId);
+            if (isDeleted)
+            {
+                var r = await LoadData();
+                StateHasChanged();
+            }
+        }
+
+    }
+
+    public async void EditTaskHandler(UIMouseEventArgs e, Guid taskId)
+    {
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            var task = (await _HHLQueryExecutionSvc.SELECTbyIdAsync<e_HomeTask>(taskId)).FirstOrDefault;
+            var taskCategory = (await _HHLQueryExecutionSvc.SELECTbyIdAsync<v_VmHomeTaskCategory>(task.HomeTaskCategoryId)).FirstOrDefault;
+            UriHelper.NavigateTo($"/home/{BuldingType.ToUrl()}/task/{taskCategory.HomeTaskTypeName.ToUrl()}/{taskCategory.HomeTaskServiceTypeName.ToUrl()}/{taskId}", forceLoad: true);
+        }
+    }
+
+
+
+}

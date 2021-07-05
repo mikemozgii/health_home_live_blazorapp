@@ -1,0 +1,68 @@
+@using HHL.Core.DataAccess.Views
+<uContainer CustomClassRow="card px-15 py-10 mb-15">
+    <uCol>
+        <uContainer>
+
+            <uCol Grow="1">
+                @*icon as service*@
+                @*<uFontAwesomeIcon  Size="13px" CustomClass="font-silver mr-3" Icon="angle-double-right" />*@ <span class="font-weight-normal-bold font-size-16"> @Task.TaskName </span>
+            </uCol>
+
+            <uCol Grow="1" CustomStyle="text-align:right;">
+                <button class="btn  btn-xs btn-soft-silver btn-bg-transparent px-4" onclick=@(e => NewProjectOrders.EditTaskHandler(e, Task.TaskId))>
+                    <uFontAwesomeIcon Thickness="s" Size="11px" Icon="pencil" />
+                </button>
+
+                <button class="btn  btn-xs btn-soft-silver btn-bg-transparent px-4" onclick=@(e => NewProjectOrders.DeleteTaskHandler(e, Task.TaskId))>
+                    <uFontAwesomeIcon Thickness="s" Size="11px" Icon="trash" />
+                </button>
+
+            </uCol>
+        </uContainer>
+    </uCol>
+
+    <uCol>
+        <uContainer>
+
+
+            @*<uCol Grow="2">
+            <div class="font-weight-normal font-silver font-size-13">Task Name</div>
+            <div class="font-weight-normal-bold font-size-16">@task.TaskName</div>
+        </uCol>*@
+            <uCol Grow="1">
+                @{
+
+                    var HoursAndMin = TimeSpan.FromHours(Convert.ToDouble(Task.TaskEstimatedHours));
+                }
+                <div class="font-weight-normal font-silver font-size-13">Estimated Hours</div>
+                <div class="font-weight-normal font-size-16">@($"{HoursAndMin.Hours} hrs {HoursAndMin.Minutes} min")</div>
+            </uCol>
+            <uCol Grow="1">
+                <div class="font-weight-normal font-silver font-size-13">Start Date</div>
+                <div class="font-weight-normal font-size-16">@Task.TaskDateStart?.ToString("MMMM, dd yyyy HH:mm tt")</div>
+            </uCol>
+            <uCol Grow="1">
+                <div class="font-weight-normal font-silver font-size-13">Price</div>
+                <div class="font-weight-normal font-size-16">$@Task.TaskPriceTotal.ToString("#.00")</div>
+            </uCol>
+            <uCol Grow="1">
+                <div class="font-weight-normal font-silver font-size-13">Priority</div>
+                <uPriorityView PriorityId="Task.TaskPriorityId" />
+            </uCol>
+        </uContainer>
+    </uCol>
+</uContainer>
+
+
+
+
+
+@functions {
+
+
+    [CascadingParameter] HHL.WebApp.Pages.Client.NewProjectOrders NewProjectOrders { get; set; }
+
+    [Parameter]
+    private v_VmHomeTask Task { get; set; }
+
+}

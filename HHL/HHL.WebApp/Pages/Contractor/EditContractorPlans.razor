@@ -1,0 +1,124 @@
+@page "/contractor/edit-plan"
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+@inject InstantDatahandler InstantDatahandler;
+@inject ContractorSvc ContractorSvc;
+
+<uContainer AllignCols="center" IsDefault="true" IsFullHeight="true" >
+
+    <uCol>
+
+        <uContainer AllignCols="center">
+
+            <uCol CustomClass="pb-35 pt-35">
+
+                <sContracotEditInfoTopNavPanel />
+
+            </uCol>
+
+            <uCol>
+
+
+
+                <uContainer AllignCols="center">
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uPlanCard Title="@($"{BasicPlan.Name} Plan")" Price="@BasicPlan.PriceMontly" IsSelected="@(e_Contractor?.ContractorPlanId == BasicPlan.Id)" Color="silverish" PriceDiscounted="@BasicPlan.PriceMonthlyDiscounted" Items="@BasicPlanItems" CustomOnClickv2="@(e=> SelectPlan(e, BasicPlan))" />
+                    </uCol>
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uPlanCard Title="@($"{PremiumPlan.Name} Plan")" Price="@PremiumPlan.PriceMontly" IsSelected="@(e_Contractor?.ContractorPlanId == PremiumPlan.Id)" Color="blue" PriceDiscounted="@PremiumPlan.PriceMonthlyDiscounted" Items="@PremiumPlanItems" CustomOnClickv2="@(e=> SelectPlan(e, PremiumPlan))" />
+                    </uCol>
+                    <uCol Grow="1" CustomClass="mx-15">
+                        <uPlanCard Title="@($"{UnlimitedPlan.Name} Plan")" Price="@UnlimitedPlan.PriceMontly" IsSelected="@(e_Contractor?.ContractorPlanId == UnlimitedPlan.Id)" Color="green" PriceDiscounted="@UnlimitedPlan.PriceMonthlyDiscounted" Items="@UnlimitedPlanItems" CustomOnClickv2="@(e=> SelectPlan(e, UnlimitedPlan))" />
+                    </uCol>
+                </uContainer>
+
+
+
+
+
+            </uCol>
+
+
+        </uContainer>
+    </uCol>
+
+</uContainer>
+
+
+
+
+
+@functions {
+
+    e_ContractorPlan BasicPlan;
+    IEnumerable<string> BasicPlanItems;
+    e_ContractorPlan PremiumPlan;
+    IEnumerable<string> PremiumPlanItems;
+    e_ContractorPlan UnlimitedPlan;
+    IEnumerable<string> UnlimitedPlanItems;
+
+    e_Contractor  e_Contractor;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        BasicPlan = InstantDatahandler.All_ContractorPlans.First(q => q.Id == 1);
+        BasicPlanItems = new List<string>() {
+            $"For Casual, Part-Time, Seasonal work",
+            $"{BasicPlan.Commission.ToString("##")}% Commission",
+            $"{BasicPlan.ServiceCategoryCount} Category",
+            $"Limited to {BasicPlan.LocationLimitCount} Locations",
+            $"Limited to {BasicPlan.TaskLimitCount} Tasks or  ${BasicPlan.BudgetLimitation.ToString("##")} per Day",
+            "-No Review Verification",
+            "-Not available for Search",
+
+
+        };
+        PremiumPlan = InstantDatahandler.All_ContractorPlans.First(q => q.Id == 2);
+        PremiumPlanItems = new List<string>() {
+            $"For Full-Time day-to-day service",
+            $"{BasicPlan.Commission.ToString("##")}% Commission",
+            $"Limited to {PremiumPlan.ServiceCategoryCount} Categories",
+            $"Limited to {PremiumPlan.LocationLimitCount} Locations",
+            $"Limited to {PremiumPlan.TaskLimitCount} Tasks or ${PremiumPlan.BudgetLimitation.ToString("##")} per Day",
+            $"Limited Review Verification",
+            "-Not available For SEO (Google, Adwords)",
+
+
+        };
+        UnlimitedPlan = InstantDatahandler.All_ContractorPlans.First(q => q.Id == 3);
+        UnlimitedPlanItems = new List<string>() {
+            $"For Advanced Buisinesses",
+            $"{BasicPlan.Commission.ToString("##")}% Commission",
+            $"Unlimited Service Types and Categories",
+            $"Unlimited Locations",
+            $"Unlimited Tasks and Orders per Day",
+            "Full Review Verification",
+            "Full SEO (Google, Adword and etc.)",
+
+        };
+
+
+          e_Contractor = await ContractorSvc.SelectCurrent();
+    }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+    }
+
+
+    async void SelectPlan(UIMouseEventArgs __e, e_ContractorPlan plan)
+    {
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            if (await ContractorSvc.Update(plan))
+            {
+                e_Contractor.ContractorPlanId = plan.Id;
+                StateHasChanged();
+            }
+        }
+
+    }
+}

@@ -1,0 +1,148 @@
+@page "/client/edit-contacts-info"
+@inject AutoMapper.IMapper _mapper;
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+@inject ClientSvc ClientSvc;
+@inject InstantDatahandler InstantDatahandler;
+@inject PhoneSvc PhoneSvc;
+@inject EmailsSvc EmailsSvc;
+
+<EditForm Model="@Client_EditContactInfoFormModel" OnValidSubmit="@HandleClient_EditContactInfoFormModel">
+    <DataAnnotationsValidator />
+    <uContainer AllignCols="center" IsDefault="true" IsFullHeight="true">
+
+        <uCol>
+
+            <uContainer AllignCols="center">
+
+                <uCol CustomClass="pb-35 pt-35">
+
+                    <sClientEditInfoTopNavPanel />
+
+                </uCol>
+
+                <uCol>
+                    <uContainer AllignCols="center">
+
+                        @*<uCol CustomClass="mb-15">
+
+                            <h5 class="font-weight-normal-bold mx-15">Primary Phone Number</h5>
+
+                        </uCol>*@
+
+                        <uCol>
+
+                            <uContainer AllignCols="center" CustomClassContainer="">
+
+
+                                <uCol Width="200px" CustomClass="mx-15">
+                                    <uFormInput IsGroup="true" Type="child" Label="Country Code" Id="PrimaryPhoneCountryCodeId">
+                                        <InputCustomSelect bind-Value="@Client_EditContactInfoFormModel.PrimaryPhoneCountryCodeId" id="PrimaryPhoneCountryCodeId" class="form-control custom-select" Placeholder="+1">
+                                            <option>Select Code </option>
+                                            @foreach (var l in CountryCodeSelectModels)
+                                            {
+                                                <option value="@l.Id">+ @l.PhoneCode @l.Name</option>
+                                            }
+
+                                        </InputCustomSelect>
+
+                                    </uFormInput>
+
+                                </uCol>
+
+                                <uCol Grow="1" CustomClass="mx-15">
+                                    <uFormInput IsGroup="true" Type="child" Label="Primary Phone Number" Id="PrimaryPhoneNumber">
+                                        <InputCustomText bind-Value="@Client_EditContactInfoFormModel.PrimaryPhoneNumber" id="PrimaryPhoneNumber" class="form-control" />
+                                    </uFormInput>
+                                </uCol>
+
+                            </uContainer>
+
+                        </uCol>
+
+
+
+                    </uContainer>
+
+                </uCol>
+
+                <uCol>
+                    <uContainer AllignCols="center">
+
+                        @*<uCol CustomClass="mb-15 mt-15">
+
+                            <h5 class="font-weight-normal-bold mx-15">Primary Email</h5>
+
+                        </uCol>*@
+
+                        <uCol CustomClass="mt-15">
+
+                            <uFormInput IsGroup="true" Type="child" Label="Primary Email" Id="PrimaryEmailName" FormGroupClass="mx-15" >
+                                <InputCustomText bind-Value="@Client_EditContactInfoFormModel.PrimaryEmailName" id="PrimaryEmailName" class="form-control" Placeholder="example@gmail.com" />
+                                <ValidationMessage for="@(()=> Client_EditContactInfoFormModel.PrimaryEmailName)" />
+                            </uFormInput>
+
+                        </uCol>
+
+
+
+                    </uContainer>
+
+                </uCol>
+
+                <uCol>
+
+                    <uContainer AllignCols="center" CustomClassContainer="mt-15">
+
+
+                        <uCol Grow="1" CustomStyle="text-align:right" CustomClass="mx-15">
+
+                            <uButton Type="Submbit" Title="Save" />
+
+                        </uCol>
+
+                    </uContainer>
+
+                </uCol>
+
+            </uContainer>
+        </uCol>
+
+
+    </uContainer>
+
+</EditForm>
+
+
+
+
+@functions {
+
+    //Guid? ClientInfoPhoneId;
+    IEnumerable<CountryCodeSelectModel> CountryCodeSelectModels { get; set; } = Enumerable.Empty<CountryCodeSelectModel>();
+    Client_EditContactInfoFormModel Client_EditContactInfoFormModel { get; set; } = new Client_EditContactInfoFormModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        CountryCodeSelectModels = _mapper.Map<IEnumerable<e_Country>, IEnumerable<CountryCodeSelectModel>>(InstantDatahandler.All_Countries);
+        var r = await ClientSvc.SelectCurrent_EditClientInfo();
+        Client_EditContactInfoFormModel = _mapper.Map<Client_EditContactInfoFormModel>(r);
+        //ClientInfoPhoneId = r.PrimaryPhoneId;
+    }
+
+
+    async void HandleClient_EditContactInfoFormModel()
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            await PhoneSvc.Upsert(Client_EditContactInfoFormModel);
+            await EmailsSvc.Update(Client_EditContactInfoFormModel);
+        }
+
+    }
+
+
+
+}

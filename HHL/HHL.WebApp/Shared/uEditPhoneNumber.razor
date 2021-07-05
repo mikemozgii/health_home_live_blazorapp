@@ -1,0 +1,119 @@
+@inject AutoMapper.IMapper _mapper;
+@inject IHHLQueryExecutionSvc _HHLQueryExecutionSvc;
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+@inject InstantDatahandler InstantDatahandler;
+<EditForm Model="@EditPhoneNumber" OnValidSubmit="@HandleEditPhoneNumberSubmit">
+    <DataAnnotationsValidator />
+    <uContainer AllignCols="center" CustomClassContainer="">
+
+
+        <uCol Width="200px" CustomClass="mx-15">
+            <uFormInput IsGroup="true" Type="child" Label="Country Code" Id="PhoneCountryCodeId">
+                <InputCustomSelect bind-Value="@EditPhoneNumber.CountryCodeId" id="PhoneCountryCodeId" class="form-control custom-select" Placeholder="+1">
+                    <option>Select Code </option>
+                    @foreach (var l in CountryCodeSelectModels)
+                    {
+                        <option value="@l.Id">+ @l.PhoneCode @l.Name</option>
+                    }
+
+                </InputCustomSelect>
+
+
+                <ValidationMessage for="@(()=> EditPhoneNumber.CountryCodeId)" />
+
+            </uFormInput>
+
+        </uCol>
+
+        <uCol Grow="1" CustomClass="mx-15">
+            <uFormInput IsGroup="true" Type="child" Label="Phone Number" Id="PhoneNumber">
+                <InputCustomText bind-Value="@EditPhoneNumber.Number" id="PhoneNumber" class="form-control" />
+                <ValidationMessage for="@(()=> EditPhoneNumber.Number)" />
+
+            </uFormInput>
+        </uCol>
+
+    </uContainer>
+
+    <uContainer AllignCols="center" CustomClassContainer="mb-20">
+
+
+        <uCol Grow="1" CustomClass="mx-15" CustomStyle="text-align:right">
+
+            <uButton Type="Submbit" Title="Save Changes" />
+
+        </uCol>
+
+    </uContainer>
+
+</EditForm>
+
+@functions {
+
+    EditPhoneNumberModel EditPhoneNumber;
+    IEnumerable<CountryCodeSelectModel> CountryCodeSelectModels;
+
+    [Parameter]
+    Guid? PhoneId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        CountryCodeSelectModels = _mapper.Map<IEnumerable<e_Country>, IEnumerable<CountryCodeSelectModel>>(InstantDatahandler.All_Countries).OrderBy(q => q.Name != "United States");
+
+        if (PhoneId != null)
+        {
+
+            var r = await _HHLQueryExecutionSvc.SELECTbyIdAsync<e_Phone>(PhoneId);
+            EditPhoneNumber = _mapper.Map<EditPhoneNumberModel>(r.FirstOrDefault);
+        }
+        else
+        {
+            EditPhoneNumber = new EditPhoneNumberModel();
+        }
+    }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+    }
+
+
+    async void HandleEditPhoneNumberSubmit()
+    {
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            await UpdatePhoneNumber();
+
+        }
+    }
+
+
+    async Task UpdatePhoneNumber()
+    {
+
+        var r = new e_Phone();
+
+        if (EditPhoneNumber.Id != null)
+        {
+            r.Id = (Guid)EditPhoneNumber.Id;
+            await _HHLQueryExecutionSvc.UPDATEAsync<e_Phone>(r, Pairing.Of(nameof(e_Phone.Number), EditPhoneNumber.Number), Pairing.Of(nameof(e_Phone.CountryCodeId), EditPhoneNumber.CountryCodeId));
+        }
+        else
+        {
+            r.Number = EditPhoneNumber.Number;
+            r.CountryCodeId = EditPhoneNumber.CountryCodeId;
+            var response = await _HHLQueryExecutionSvc.INSERTAsync<e_Phone>(r);
+            if (response.Success)
+            {
+                var PrimaryPhoneId = response.Results.First().Id;
+                var d = await _HHLQueryExecutionSvc.UPDATEAsync<e_Client>(_HHLQueryExecutionSvc._AccountSession.ClientInfo.ClientId, Pairing.Of(nameof(e_Client.PrimaryPhoneId), PrimaryPhoneId));
+
+                EditPhoneNumber.Id = PrimaryPhoneId;
+            }
+        }
+
+    }
+
+}

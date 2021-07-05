@@ -1,0 +1,74 @@
+@page "/contractor/identity-verification";
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+@inject Microsoft.AspNetCore.Components.IUriHelper UriHelper
+@inject HHLAuthSessionSvc AuthSessionSvc;
+@inject ContractorApplicationSvc ContractorApplicationSvc;
+
+@if (!IsContractoInfoDelete)
+{
+    <uContainer AllignCols="center" IsDefault="true" IsFullHeight="true" IsVerticalCenter="true">
+
+        <uCol IsTextCenter="true" IsDefaultVerticalSize="true">
+            <h2 class="font-green"> Contractor Application has been  <span class="font-weight-semi-bold">Completed</span> </h2>
+            <div>Next Step: Please Schedule an appoitment to verify your identity.</div>
+            <div class="mt-25">
+
+                <uButton Type="NavButton" Href="/" Title="Schedule Now" Color="blue">
+
+                </uButton>
+
+
+                <span class="mx-15"> or </span>
+
+                <uButton Color="red" CustomOnClickv2="@DeleteContractorApplication" Title="Delete your Application">
+
+                </uButton>
+
+            </div>
+        </uCol>
+
+    </uContainer>
+
+}
+else
+{
+    <uContainer AllignCols="center" IsDefault="true" IsFullHeight="true" IsVerticalCenter="true">
+
+        <uCol IsTextCenter="true" IsDefaultVerticalSize="true">
+            <h2 class="font-green"> Contractor Profile is  successfully <span class="font-weight-semi-bold">Deleted</span> </h2>
+            <div class="mt-25">
+
+                <uButton Type="NavButton" Href="/contractor/application" Title="Start new Application" Color="blue">
+                    
+                </uButton>
+
+            </div>
+        </uCol>
+
+    </uContainer>
+
+}
+
+`
+
+@functions {
+
+
+    bool IsContractoInfoDelete;
+
+    async Task DeleteContractorApplication()
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            if (await ContractorApplicationSvc.DeleteContractor())
+            {
+                AuthSessionSvc.AccountSession.ContractorInfo = null;
+                UriHelper.NavigateTo($"/", forceLoad: true);
+            }
+        }
+
+    }
+
+
+}

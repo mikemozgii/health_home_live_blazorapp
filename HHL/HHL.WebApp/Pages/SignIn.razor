@@ -1,0 +1,160 @@
+@page "/signin"
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject HHL.WebApp.Handlers.UiJsHandler UiJsHandler;
+@inject Microsoft.AspNetCore.Components.IUriHelper UriHelper;
+@inject SessionSvc SessionSvc;
+@inject AccAuthSvc AccAuthSvc;
+@inject EmailNotifySvc EmailNotifySvc;
+
+@using HHL.Core.Models;
+@using HHL.Auth.Core.Models;
+@using HHL.Common
+
+<uContainer AllignCols="center" IsDefault="true" IsFullHeight="true" IsVerticalCenter="true">
+
+    <uCol Width="550px" CustomStyle="text-align: left" IsDefaultVerticalSize="true">
+
+        <div class="mb-45">
+
+            <h3 class="font-blue font-weight-normal mb-0">Welcome <span class="font-weight-bold">back</span></h3>
+            <p>Login to manage your account.</p>
+        </div>
+
+
+        <EditForm Model="@SignInModel" OnValidSubmit="@HandleSignInSubmit">
+            <DataAnnotationsValidator />
+
+
+            @if (!Errors.IsNullOrEmpty())
+            {
+
+                <div class="mb-20">
+
+                    @foreach (var error in Errors)
+                    {
+                        <div class="validation-message">
+                            @error.Message
+                        </div>
+                    }
+                </div>
+
+
+            }
+
+
+
+            <uFormInput IsGroup="true" Type="child" Label="Username or Email" Id="Username">
+
+                <InputCustomText bind-Value="@SignInModel.Username" Id="Username" class="form-control" Placeholder="Username or Email" />
+                <ValidationMessage for="@(()=> SignInModel.Username)" />
+
+
+            </uFormInput>
+
+            <uFormInput IsGroup="true" Type="child" Label="Password" Id="Password">
+
+                <InputPassword bind-Value="@SignInModel.Password" id="Password" class="form-control" Placeholder="********" />
+                <ValidationMessage for="@(()=> SignInModel.Password)" />
+
+
+            </uFormInput>
+
+
+            <div style="margin-left:-3px">
+
+                <small class="font-silver-light">
+                    <NavLink class="" href="terms">
+                        Forgot Password?
+                    </NavLink>
+
+                </small>
+            </div>
+
+
+
+
+
+            <uContainer>
+
+                <uCol Width="50%" AlignCol="center">
+
+                    <small class="font-silver-light">
+                        Don't have an account?
+                        <NavLink href="signup">
+                            Sign Up
+                        </NavLink>
+                    </small>
+
+                </uCol>
+
+
+                <uCol Width="50%" AlignCol="center" CustomStyle="text-align:right">
+
+                    <uButton Type="Submit" Title="Sign In" />
+
+                </uCol>
+
+            </uContainer>
+
+        </EditForm>
+
+
+    </uCol>
+
+
+
+</uContainer>
+
+
+@functions {
+
+    HHL.Core.Models.SignInModel SignInModel = new SignInModel()
+    {
+        Username = "dima32",
+        Password = "Mmermm32!"
+    };
+
+    IEnumerable<ErrorMdl> Errors;
+
+
+    async void HandleSignInSubmit()
+    {
+
+        //await EmailNotifySvc.SendHelloWorld();
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            var model = new SignInRequest()
+            {
+
+                Name = SignInModel.Username,
+                Password = SignInModel.Password,
+                IpAddress = HttpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString(),
+                UserAgent = HttpContextAccessor.HttpContext.Request.Headers["User-Agent"].ToString()
+
+
+            };
+
+            var response = await AccAuthSvc.SignIn(model);
+
+
+            if (response.Success)
+            {
+
+
+                var r = await SessionSvc.UpdateContractorSession(response.AccountSession);
+
+                await UiJsHandler.SetCookie(AuthConfigHdr.AuthCookieName, response.Token, 5);
+
+                UriHelper.NavigateTo($"/", forceLoad: true);
+            }
+            else
+            {
+                Errors = response.Errors;
+                StateHasChanged();
+            }
+        }
+
+
+    }
+}

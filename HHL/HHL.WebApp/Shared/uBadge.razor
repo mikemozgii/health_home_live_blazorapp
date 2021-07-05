@@ -1,0 +1,82 @@
+
+
+@if (CustomOnClick.HasDelegate)
+{
+    <span class="@FinalClass" onclick="@CustomOnClick" style="@CustomStyle" disabled="@isDisabled">@Title@ChildContent</span>
+}
+else
+{
+    <span class="@FinalClass" style="@CustomStyle" disabled="@isDisabled">@Title@ChildContent</span>
+}
+
+
+
+
+
+@functions {
+    [Parameter]
+    private string Title { get; set; }
+
+    [Parameter]
+    private bool isDisabled { get; set; }
+
+    [Parameter]
+    private bool isSoft { get; set; }
+
+
+    [Parameter]
+    private bool IsRoundedCircle { get; set; }
+
+    [Parameter]
+    private string Size { get; set; } = "sm";
+
+    [Parameter]
+    private string CustomStyle { get; set; }
+
+    [Parameter]
+    private string CustomClass { get; set; }
+
+    [Parameter]
+    private string Type { get; set; }
+
+    [Parameter]
+    private string Color { get; set; } = "primary";
+
+    [Parameter]
+    private string Href { get; set; }
+
+    [Parameter]
+    private EventCallback CustomOnClick { get; set; }
+
+    [Parameter]
+    private RenderFragment ChildContent { get; set; }
+
+    string FinalClass { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var tIsSoft = "";
+        if (isSoft)
+        {
+            tIsSoft = "-soft";
+        }
+
+        var tIsRoundedCircle = "";
+        if (IsRoundedCircle)
+        {
+            tIsRoundedCircle = "rounded-circle";
+        }
+
+
+        if (!string.IsNullOrWhiteSpace("Color"))
+        {
+            Color = $"-{Color}";
+        }
+
+        FinalClass = $"badge badge-{Size} badge{tIsSoft}{Color} {tIsRoundedCircle} {CustomClass}";
+
+    }
+
+
+}

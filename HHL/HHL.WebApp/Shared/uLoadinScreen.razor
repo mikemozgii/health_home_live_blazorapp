@@ -1,0 +1,32 @@
+
+
+
+
+
+    <div class="@CustomClass" id="loadingPanel">
+
+        <div style="margin:0 auto;max-width: 50px;position:relative;top: calc(40% - 10px);">
+            <i class="font-blue fal fa-spinner fa-spin" style="font-size: 46px;"></i>
+
+        </div>
+       
+    </div>
+
+
+
+@functions {
+
+    [Parameter]
+    private bool Show { get; set; }
+    private string CustomClass { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        CustomClass = "loading_screen display_none";
+        if(Show)
+        {
+            CustomClass = "loading_screen";
+        }
+    }
+
+}

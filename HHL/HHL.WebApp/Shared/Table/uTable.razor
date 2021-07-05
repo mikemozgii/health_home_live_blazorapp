@@ -1,0 +1,41 @@
+@typeparam TItem
+
+<table class="table table-borderless">
+    <thead>
+        <tr>@TableHeader</tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Items)
+        {
+            var index = Items.IndexOf(item);
+
+            if ((index + 1) % 2 == 0)
+            {
+                <tr>@RowTemplate(item)</tr>
+            }
+            else
+            {
+                 <tr class="odd">@RowTemplate(item)</tr>
+            }
+
+
+        }
+    </tbody>
+    <tfoot>
+        <tr>@TableFooter</tr>
+    </tfoot>
+</table>
+
+@functions {
+    [Parameter]
+    private RenderFragment TableHeader { get; set; }
+
+    [Parameter]
+    private RenderFragment<TItem> RowTemplate { get; set; }
+
+    [Parameter]
+    private RenderFragment TableFooter { get; set; }
+
+    [Parameter]
+    private List<TItem> Items { get; set; }
+}

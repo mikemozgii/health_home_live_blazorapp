@@ -1,0 +1,256 @@
+@inject AutoMapper.IMapper _mapper;
+
+@inject HHLAuthSessionSvc AuthSessionSvc;
+@inject InstantDatahandler InstantDatahandler;
+
+
+@foreach (var Location in Locations)
+{
+
+    var i = Locations.IndexOf(Location);
+
+    <uContainer AllignCols="center" CustomClassRow="mb-15 mx-15" CustomStyleRow="border-bottom: 1px solid #e7eaf3">
+        <uCol Grow="1">
+            <h6 class="font-weight-normal-bold">@($"Location {(i + 1)}")</h6>
+        </uCol>
+
+        <uCol Grow="1" CustomStyle="text-align:right;">
+            <uButton Size="btn-xs" IsSoft="true" Color="silver" CustomOnClickv2="@(e => DeleteLocationHandler(e, Location))" CustomClass="btn-bg-transparent">
+                <uFontAwesomeIcon Thickness="s" Size="11px" Icon="trash" CustomClass="mr-3" />
+            </uButton>
+        </uCol>
+
+
+
+    </uContainer>
+
+    <uContainer AllignCols="center" CustomClassContainer="">
+        <uCol Grow="1" IsDefaultSpaceBetween="true">
+
+            <uFormInput IsGroup="true" Type="child" Label="Name">
+                <input type="text" value="@Location.Name" disabled="disabled" class="form-control">
+            </uFormInput>
+        </uCol>
+        <uCol Grow="1" CustomClass="mx-15">
+
+            <uFormInput IsGroup="true" Type="child" Label="Country">
+                <input type="text" value="@(InstantDatahandler.All_Countries.First(q=>q.Id == Location.CountryId).Name)" disabled="disabled" class="form-control">
+            </uFormInput>
+        </uCol>
+
+        <uCol Grow="1" IsDefaultSpaceBetween="true">
+            <uFormInput IsGroup="true" Type="child" Label="State/Province/Region">
+                <input type="text" value="@(InstantDatahandler.All_Regions.First(q=>q.Id == Location.RegionId).Name)" disabled="disabled" class="form-control">
+            </uFormInput>
+        </uCol>
+    </uContainer>
+
+    <uContainer AllignCols="center" CustomClassContainer="mb-15">
+
+        @*<uCol Grow="1" IsDefaultSpaceBetween="true">
+
+            <uFormInput IsGroup="true" Type="child" Label="City">
+                <input type="text" value="@Location.City" disabled="disabled" class="form-control">
+            </uFormInput>
+        </uCol>*@
+
+        <uCol Grow="1" IsDefaultSpaceBetween="true">
+            <uFormInput IsGroup="true" Type="child" Label="PostalCode">
+                <input type="text" value="@Location.PostalCode" disabled="disabled" class="form-control">
+            </uFormInput>
+        </uCol>
+
+        <uCol Grow="1" IsDefaultSpaceBetween="true">
+            <uFormInput IsGroup="true" Type="child" Label="Area Covered">
+                <input type="text" value="@(InstantDatahandler.All_AreaKms.First(q=>q.Value == Location.AreaKm)?.Name)" disabled="disabled" class="form-control">
+            </uFormInput>
+        </uCol>
+
+    </uContainer>
+
+
+}
+
+@if (SelectPlan != null && Locations.Count() < SelectPlan.LocationLimitCount)
+{
+    <EditForm Model="@AddServiceLocationModel" OnValidSubmit="@AddServiceLocationModelSubmit">
+        <DataAnnotationsValidator />
+
+
+        <uContainer AllignCols="center" CustomClassRow="mb-15 mx-15" CustomStyleRow="border-bottom: 1px solid #e7eaf3">
+            <uCol Grow="1">
+                <h6 class="font-weight-normal-bold">@($"Location {Locations.Count() + 1}")</h6>
+            </uCol>
+        </uContainer>
+
+        <uContainer AllignCols="center" CustomClassContainer="">
+            <uCol Grow="1" IsDefaultSpaceBetween="true">
+
+                <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Name" Id="@($"Name")">
+                    <InputCustomText bind-Value="@AddServiceLocationModel.Name" id="@($"Name")" class="form-control" Placeholder="@($"Location {Locations.Count()}")" />
+                </uFormInput>
+            </uCol>
+            <uCol Grow="1" CustomClass="mx-15">
+
+                <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Country" Id="@($"CountryId")">
+                    <InputCustomSelect bind-Value="@AddServiceLocationModel.CountryId" id="@($"CountryId")" OnCustomChange="@(e=> HandleCustomCountryChange(e))" class="form-control custom-select" Placeholder="United States">
+                        @if (AddServiceLocationModel.CountryId == null)
+                        {
+                            <option value="">Select Code</option>
+                        }
+                        @foreach (var l in CountrySelectModels)
+                        {
+                            <option value="@l.Id">@l.Name</option>
+                        }
+
+                    </InputCustomSelect>
+                </uFormInput>
+            </uCol>
+
+            <uCol Grow="1" IsDefaultSpaceBetween="true">
+                <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="State/Province/Region" Id="@($"RegionId")">
+                    <InputCustomSelect bind-Value="@AddServiceLocationModel.RegionId" isDisabled="@(AddServiceLocationModel.CountryId == null)" id="@($"RegionId")" class="form-control custom-select" Placeholder="New York">
+                        @if (AddServiceLocationModel.CountryId == null)
+                        {
+                            <option value="">Select Code</option>
+                        }
+
+                        @foreach (var l in RegionSelectModels)
+                        {
+                            <option value="@l.Id">@l.Name</option>
+                        }
+
+                    </InputCustomSelect>
+
+                </uFormInput>
+            </uCol>
+        </uContainer>
+
+        <uContainer AllignCols="center" CustomClassContainer="mb-15">
+            @*<uCol Grow="1" IsDefaultSpaceBetween="true">
+
+                <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="City" Id="@($"City")">
+                    <InputCustomText bind-Value="@AddServiceLocationModel.City" id="@($"City")" class="form-control" Placeholder="Toronto" />
+
+                </uFormInput>
+            </uCol>*@
+            <uCol Grow="1" IsDefaultSpaceBetween="true">
+                <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="PostalCode" Id="@($"RegionId")">
+                    <InputCustomText bind-Value="@AddServiceLocationModel.PostalCode" id="@($"RegionId")" class="form-control" Placeholder="L3D 0K9" />
+                </uFormInput>
+            </uCol>
+
+            <uCol Grow="1" IsDefaultSpaceBetween="true">
+                <uFormInput IsGroup="true" IsRequired="true" Type="child" Label="Area Covered" Id="@($"AreaCovered")">
+                    <InputCustomSelect bind-Value="@AddServiceLocationModel.AreaKm" id="@($"AreaCovered")" class="form-control custom-select" Placeholder="100km">
+                        @foreach (var l in InstantDatahandler.All_AreaKms)
+                        {
+                            <option value="@l.Value">@l.Name</option>
+                        }
+
+                    </InputCustomSelect>
+                </uFormInput>
+            </uCol>
+        </uContainer>
+
+        <uContainer AllignCols="center" CustomClassContainer="">
+            <uCol Grow="1" IsDefaultSpaceBetween="true" IsTextCenter="true">
+
+                <uButton isSoft="true" Color="grain" Size="btn-sm" Type="Submit">Submit</uButton>
+            </uCol>
+
+        </uContainer>
+
+
+    </EditForm>
+}
+
+
+@*<uCol Grow="1" IsDefaultSpaceBetween="true" IsTextCenter="true">
+
+        <uButton isSoft="true" Color="grain" Size="btn-sm" Type="Submit">
+            <uFontAwesomeIcon Size="12px" Thickness="s" Icon="plus" CustomClass="mr-3" /> Submit
+        </uButton>
+    </uCol>*@
+
+@functions {
+
+
+    //[CascadingParameter] AddServiceLocationFormModel AddServiceLocationFormModel { get; set; }
+
+    [CascadingParameter] List<AddServiceLocationModel> Locations { get; set; }
+
+    [Parameter] e_ContractorPlan SelectPlan { get; set; }
+
+    AddServiceLocationModel AddServiceLocationModel;
+
+    IEnumerable<CountrySelectModel> CountrySelectModels;
+    IEnumerable<RegionSelectModel> RegionSelectModels;
+    //[Parameter] int Limit { get; set; }
+
+
+    async void HandleCustomCountryChange(UIChangeEventArgs __e)
+    {
+
+        AddServiceLocationModel.CountryId = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? new Guid(__e.Value.ToString()) : (Guid?)default;
+
+        if (AddServiceLocationModel?.CountryId != null)
+        {
+            //AddServiceLocationModel.RegionId = null;
+            RegionSelectModels = _mapper.Map<IEnumerable<e_Region>, IEnumerable<RegionSelectModel>>(InstantDatahandler.All_Regions.Where(q => q.CountryId == AddServiceLocationModel.CountryId)).OrderBy(q => q.Name);
+            AddServiceLocationModel.RegionId = RegionSelectModels.First().Id;
+            StateHasChanged();
+        }
+
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        CountrySelectModels = _mapper.Map<IEnumerable<e_Country>, IEnumerable<CountrySelectModel>>(InstantDatahandler.All_Countries).OrderBy(q => q.Name != "United States");
+        RegionSelectModels = new List<RegionSelectModel>();
+
+        //if (AddServiceLocationFormModel == null)
+        //{
+        //    AddServiceLocationFormModel = new AddServiceLocationFormModel();
+        //    AddServiceLocationFormModel.Locations = new List<AddServiceLocationModel>();
+        //    //AddServiceLocationFormModel.Locations.Add();
+        //}
+
+        AddNewServiceLocationModel();
+
+
+    }
+
+    void AddLocationHandler()
+    {
+
+    }
+
+    public async void DeleteLocationHandler(UIMouseEventArgs e, AddServiceLocationModel Location)
+    {
+        Locations.Remove(Location);
+
+        StateHasChanged();
+    }
+
+
+    void AddNewServiceLocationModel()
+    {
+        AddServiceLocationModel = new AddServiceLocationModel();
+        AddServiceLocationModel.Name = $"Location {Locations.Count() + 1}";
+        AddServiceLocationModel.AreaKm = InstantDatahandler.All_AreaKms.First().Value;
+    }
+
+    void AddServiceLocationModelSubmit()
+    {
+
+        Locations.Add(AddServiceLocationModel);
+
+        AddNewServiceLocationModel();
+
+        StateHasChanged();
+    }
+
+}
