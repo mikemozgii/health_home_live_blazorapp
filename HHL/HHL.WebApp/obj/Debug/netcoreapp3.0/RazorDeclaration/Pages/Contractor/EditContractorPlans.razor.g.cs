@@ -262,4 +262,30 @@ using HHL.Core.Helpers;
     }
 
 
-    pro
+    protected override async Task OnParametersSetAsync()
+    {
+
+    }
+
+
+    async void SelectPlan(UIMouseEventArgs __e, e_ContractorPlan plan)
+    {
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            if (await ContractorSvc.Update(plan))
+            {
+                e_Contractor.ContractorPlanId = plan.Id;
+                StateHasChanged();
+            }
+        }
+
+    }
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ContractorSvc ContractorSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHL.WebApp.Handlers.UiJsHandler UiJsHandler { get; set; }
+    }
+}
+#pragma warning restore 1591

@@ -228,4 +228,23 @@ using HHL.Core.Helpers;
 
         using (var ls = await new LoadingScreen(UiJsHandler).Load())
         {
-            await PhoneSvc.Upsert(Client_EditContactInfoFormMod
+            await PhoneSvc.Upsert(Client_EditContactInfoFormModel);
+            await EmailsSvc.Update(Client_EditContactInfoFormModel);
+        }
+
+    }
+
+
+
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private EmailsSvc EmailsSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private PhoneSvc PhoneSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ClientSvc ClientSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHL.WebApp.Handlers.UiJsHandler UiJsHandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AutoMapper.IMapper _mapper { get; set; }
+    }
+}
+#pragma warning restore 1591

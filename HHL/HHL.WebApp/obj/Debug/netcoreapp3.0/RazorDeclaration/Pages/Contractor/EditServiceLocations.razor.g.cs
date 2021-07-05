@@ -342,3 +342,21 @@ using System.Linq;
         }
         else
         {
+            AddEditContractorLocationFormModel.CityId = null;
+        }
+
+        StateHasChanged();
+    }
+
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ContractorSvc ContractorSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AddressSvc AddressSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ClientSvc ClientSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHL.WebApp.Handlers.UiJsHandler UiJsHandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AutoMapper.IMapper _mapper { get; set; }
+    }
+}
+#pragma warning restore 1591

@@ -230,4 +230,20 @@ using HHL.Core.Helpers;
 
                 using (var ls = await new LoadingScreen(UiJsHandler).Load())
                 {
-                    var r = await 
+                    var r = await ProjectSvc.Add(AddUpdateProjectFormModel);
+                    UriHelper.NavigateTo($"{UrlNameHdr.ClientNewProjectOrders}/{r}", forceLoad: true);
+                }
+
+            }
+        
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ProjectSvc ProjectSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private UiJsHandler UiJsHandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.AspNetCore.Components.IUriHelper UriHelper { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AutoMapper.IMapper _mapper { get; set; }
+    }
+}
+#pragma warning restore 1591

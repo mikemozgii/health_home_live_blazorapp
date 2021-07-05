@@ -210,4 +210,31 @@ using HHL.Core.Helpers;
             
 
     [Parameter]
-    private string TaskType { 
+    private string TaskType { get; set; }
+
+    [Parameter]
+    private string ProjectId { get; set; }
+
+    [Parameter]
+    private string BuldingType { get; set; }
+
+    IEnumerable<v_VmHomeTaskCategory> TaskServiceTypes;
+
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        var tempName = TaskType.FromUrl();
+        TaskServiceTypes = new List<v_VmHomeTaskCategory>();
+        var buldingType = new BuldingTypeHelper().GetId(BuldingType);
+        TaskServiceTypes = InstantDatahandler.All_VmHomeTaskCategories.Where(q => q.HomeBuldingTypeId == buldingType && q.IsActive && String.Equals(q.HomeTaskTypeName, tempName, StringComparison.OrdinalIgnoreCase));
+
+    }
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+    }
+}
+#pragma warning restore 1591

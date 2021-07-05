@@ -186,4 +186,26 @@ using HHL.Core.Models.Contractor;
 
 #line default
 #line hidden
-#line 36 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebA
+#line 36 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebApp\_Imports.razor"
+using Stripe;
+
+#line default
+#line hidden
+#line 37 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebApp\_Imports.razor"
+using HHL.Core.Helpers;
+
+#line default
+#line hidden
+    [Microsoft.AspNetCore.Components.LayoutAttribute(typeof(MainLayout))]
+    [Microsoft.AspNetCore.Components.RouteAttribute("/client/dashboard")]
+    public partial class Dashboard : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        #pragma warning disable 1998
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+        {
+        }
+        #pragma warning restore 1998
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHL.WebApp.Handlers.UiJsHandler UiJsHandler { get; set; }
+    }
+}
+#pragma warning restore 1591

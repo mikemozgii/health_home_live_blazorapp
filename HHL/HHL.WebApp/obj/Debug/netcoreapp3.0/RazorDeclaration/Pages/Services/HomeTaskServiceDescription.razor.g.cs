@@ -460,4 +460,13 @@ using HHL.Core.Helpers;
 #line hidden
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private IFileReaderService fileReaderService { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private AddressSvc AddressSvc { get; set; }
-        [gl
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ClientSvc ClientSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private IHHLQueryExecutionSvc _HHLQueryExecutionSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private TaskSvc TaskSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private UiJsHandler UiJsHandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.AspNetCore.Components.IUriHelper UriHelper { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AutoMapper.IMapper _mapper { get; set; }
+    }
+}
+#pragma warning restore 1591

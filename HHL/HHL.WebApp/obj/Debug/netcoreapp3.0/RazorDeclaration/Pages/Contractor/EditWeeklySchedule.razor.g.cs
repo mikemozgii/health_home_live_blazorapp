@@ -280,4 +280,21 @@ using HHL.Core.Helpers;
         using (var ls = await new LoadingScreen(UiJsHandler).Load())
         {
             if (await ContractorSvc.EditContractorSchedule(AddSheduleFormModel))
-     
+            {
+                //ContractorApplicationSvc._HHLQueryExecutionSvc._AccountSession.ContractorInfo = await SessionSvc.GetContractorSessionInfo();
+                //UriHelper.NavigateTo($"/contractor/identity-verification", forceLoad: true);
+            }
+        }
+    }
+
+
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ContractorApplicationSvc ContractorApplicationSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ContractorSvc ContractorSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHL.WebApp.Handlers.UiJsHandler UiJsHandler { get; set; }
+    }
+}
+#pragma warning restore 1591

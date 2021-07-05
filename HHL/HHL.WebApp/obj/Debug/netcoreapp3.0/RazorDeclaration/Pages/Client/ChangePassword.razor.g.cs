@@ -196,4 +196,18 @@ using HHL.Core.Helpers;
 
 #line default
 #line hidden
-    [Microsoft.AspNetCore.Compon
+    [Microsoft.AspNetCore.Components.LayoutAttribute(typeof(MainLayout))]
+    [Microsoft.AspNetCore.Components.RouteAttribute("/client/edit-client-info")]
+    public partial class ChangePassword : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        #pragma warning disable 1998
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+        {
+        }
+        #pragma warning restore 1998
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHL.WebApp.Handlers.UiJsHandler UiJsHandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AutoMapper.IMapper _mapper { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private v_EditClientInfo v_EditClientInfo { get; set; }
+    }
+}
+#pragma warning restore 1591

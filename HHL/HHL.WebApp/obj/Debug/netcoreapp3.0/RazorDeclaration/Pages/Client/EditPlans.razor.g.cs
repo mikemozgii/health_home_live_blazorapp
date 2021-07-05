@@ -259,3 +259,33 @@ using HHL.Core.Helpers;
 
 
           e_Client = await ClientSvc.SelectCurrent();
+    }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+    }
+
+
+    async void SelectClientPlan(UIMouseEventArgs __e, e_ClientPlan plan)
+    {
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            if (await ClientSvc.Update(plan))
+            {
+                e_Client.ClientPlanId = plan.Id;
+                StateHasChanged();
+            }
+        }
+
+    }
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ClientSvc ClientSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHL.WebApp.Handlers.UiJsHandler UiJsHandler { get; set; }
+    }
+}
+#pragma warning restore 1591

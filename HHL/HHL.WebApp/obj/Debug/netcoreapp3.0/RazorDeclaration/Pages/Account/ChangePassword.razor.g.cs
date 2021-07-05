@@ -196,4 +196,34 @@ using HHL.Core.Helpers;
 
 #line default
 #line hidden
-    [Microsoft.AspNetCore.Components.LayoutAttribute(typ
+    [Microsoft.AspNetCore.Components.LayoutAttribute(typeof(MainLayout))]
+    [Microsoft.AspNetCore.Components.RouteAttribute("/account/security/changepassword")]
+    public partial class ChangePassword : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        #pragma warning disable 1998
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+        {
+        }
+        #pragma warning restore 1998
+#line 95 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebApp\Pages\Account\ChangePassword.razor"
+            
+
+
+    ChangePasswordModel ChangePasswordModel = new ChangePasswordModel();
+
+    IEnumerable<ErrorMdl> Errors;
+
+    [Parameter]
+    private bool isLoading { get; set; } = false;
+
+
+    void HandleChangePasswordModelSubmit()
+    {
+
+    }
+
+#line default
+#line hidden
+    }
+}
+#pragma warning restore 1591

@@ -181,4 +181,30 @@ using Microsoft.AspNetCore.Components;
 
 #line default
 #line hidden
-#line 35 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebApp\_Imports.r
+#line 35 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebApp\_Imports.razor"
+using HHL.Core.Models.Contractor;
+
+#line default
+#line hidden
+#line 36 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebApp\_Imports.razor"
+using Stripe;
+
+#line default
+#line hidden
+#line 37 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebApp\_Imports.razor"
+using HHL.Core.Helpers;
+
+#line default
+#line hidden
+    [Microsoft.AspNetCore.Components.LayoutAttribute(typeof(MainLayout))]
+    [Microsoft.AspNetCore.Components.RouteAttribute("/live")]
+    public partial class Live : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        #pragma warning disable 1998
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+        {
+        }
+        #pragma warning restore 1998
+    }
+}
+#pragma warning restore 1591

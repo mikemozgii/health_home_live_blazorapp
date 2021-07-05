@@ -305,4 +305,22 @@ using HHL.Core.Helpers;
     //        if (response.Success)
     //        {
     //            var EmailId = response.Results.First().Id;
-    //            var d = await e_Contractor.UPDA
+    //            var d = await e_Contractor.UPDATEAsync(nameof(e_Contractor.SecondaryEmailId), EmailId, QuerySvc.SetAccountIdQueryFilter(AuthSessionSvc.AccountSession.AccountId));
+    //            EditContractorInfoModel.SecondaryEmailId = EmailId;
+    //        }
+    //    }
+
+    //    isLoading = false;
+    //    StateHasChanged();
+
+    //}
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private v_EditContractorInfo v_EditContractorInfo { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AutoMapper.IMapper _mapper { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHLAuthSessionSvc AuthSessionSvc { get; set; }
+    }
+}
+#pragma warning restore 1591

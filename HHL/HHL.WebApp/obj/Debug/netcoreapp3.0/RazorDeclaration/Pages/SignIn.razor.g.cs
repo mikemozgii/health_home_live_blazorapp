@@ -252,4 +252,20 @@ using HHL.Common;
             {
                 Errors = response.Errors;
                 StateHasChanged();
-      
+            }
+        }
+
+
+    }
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private EmailNotifySvc EmailNotifySvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AccAuthSvc AccAuthSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private SessionSvc SessionSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.AspNetCore.Components.IUriHelper UriHelper { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHL.WebApp.Handlers.UiJsHandler UiJsHandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor { get; set; }
+    }
+}
+#pragma warning restore 1591

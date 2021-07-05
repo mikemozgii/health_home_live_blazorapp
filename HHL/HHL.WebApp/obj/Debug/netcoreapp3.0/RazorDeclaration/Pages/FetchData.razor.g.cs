@@ -197,4 +197,26 @@ using HHL.WebApp.Services;
 #line default
 #line hidden
     [Microsoft.AspNetCore.Components.LayoutAttribute(typeof(MainLayout))]
- 
+    [Microsoft.AspNetCore.Components.RouteAttribute("/fetchdata")]
+    public partial class FetchData : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        #pragma warning disable 1998
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+        {
+        }
+        #pragma warning restore 1998
+#line 38 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebApp\Pages\FetchData.razor"
+            
+    WeatherForecast[] forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+    }
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private WeatherForecastService ForecastService { get; set; }
+    }
+}
+#pragma warning restore 1591

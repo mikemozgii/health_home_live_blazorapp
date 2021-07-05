@@ -205,4 +205,39 @@ using HHL.Core.Helpers;
         {
         }
         #pragma warning restore 1998
-#line 46 "c:\Users\mikek\source\repo
+#line 46 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebApp\Pages\Services\HomeProjectTypeSelection.razor"
+            
+
+    [Parameter]
+    private string Text { get; set; }
+
+    IEnumerable<e_HomeProjectType> ProjectTypes;
+
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+
+        ProjectTypes = new List<e_HomeProjectType>();
+        if (Text == "residential")
+        {
+            ProjectTypes = InstantDatahandler.All_HomeProjectTypes.Where(q => q.IsResidential);
+        }
+        else if (Text == "commercial")
+        {
+            ProjectTypes = InstantDatahandler.All_HomeProjectTypes.Where(q => q.IsCommercial);
+        }
+
+
+
+
+
+    }
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+    }
+}
+#pragma warning restore 1591

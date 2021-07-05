@@ -273,4 +273,24 @@ using HHL.Core.Helpers;
         if (ClientEditSettingsFormModel?.DefaultRegionId != null)
         {
             CitySelectModels = _mapper.Map<IEnumerable<e_City>, IEnumerable<CitySelectModel>>(InstantDatahandler.All_Cities.Where(q => q.RegionId == ClientEditSettingsFormModel.DefaultRegionId)).OrderBy(q => q.Name);
-            //ClientEditSettingsFormModel
+            //ClientEditSettingsFormModel.DefaultCityId = CitySelectModels.First().Id;
+
+        }
+        else
+        {
+            ClientEditSettingsFormModel.DefaultCityId = null;
+        }
+
+        StateHasChanged();
+    }
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ClientSvc ClientSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHL.WebApp.Handlers.UiJsHandler UiJsHandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AutoMapper.IMapper _mapper { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHLAuthSessionSvc AuthSessionSvc { get; set; }
+    }
+}
+#pragma warning restore 1591

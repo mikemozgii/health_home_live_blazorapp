@@ -215,3 +215,24 @@ using HHL.Core.Helpers;
     {
 
         using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            if (await ContractorApplicationSvc.DeleteContractor())
+            {
+                AuthSessionSvc.AccountSession.ContractorInfo = null;
+                UriHelper.NavigateTo($"/", forceLoad: true);
+            }
+        }
+
+    }
+
+
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ContractorApplicationSvc ContractorApplicationSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHLAuthSessionSvc AuthSessionSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.AspNetCore.Components.IUriHelper UriHelper { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHL.WebApp.Handlers.UiJsHandler UiJsHandler { get; set; }
+    }
+}
+#pragma warning restore 1591

@@ -191,4 +191,28 @@ using Stripe;
 
 #line default
 #line hidden
-#line 37 "c:\U
+#line 37 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebApp\_Imports.razor"
+using HHL.Core.Helpers;
+
+#line default
+#line hidden
+    [Microsoft.AspNetCore.Components.LayoutAttribute(typeof(MainLayout))]
+    [Microsoft.AspNetCore.Components.RouteAttribute("/home/{Text}/project")]
+    public partial class ResidentialProject : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        #pragma warning disable 1998
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+        {
+        }
+        #pragma warning restore 1998
+#line 7 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebApp\Pages\Services\ResidentialProject.razor"
+            
+
+    [Parameter]
+    private string Text { get; set; }
+
+#line default
+#line hidden
+    }
+}
+#pragma warning restore 1591

@@ -361,4 +361,24 @@ using System.Linq;
 
         if (AddEditAddressFormModel?.RegionId != null)
         {
-            CitySelectModels = _mapper.Map<IEnumerable<e_City>, IEnumerable<CitySelectModel>>(InstantDatahandler.Al
+            CitySelectModels = _mapper.Map<IEnumerable<e_City>, IEnumerable<CitySelectModel>>(InstantDatahandler.All_Cities.Where(q => q.RegionId == AddEditAddressFormModel.RegionId)).OrderBy(q => q.Name);
+        }
+        else
+        {
+            AddEditAddressFormModel.CityId = null;
+        }
+
+        StateHasChanged();
+    }
+
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AddressSvc AddressSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ClientSvc ClientSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHL.WebApp.Handlers.UiJsHandler UiJsHandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AutoMapper.IMapper _mapper { get; set; }
+    }
+}
+#pragma warning restore 1591

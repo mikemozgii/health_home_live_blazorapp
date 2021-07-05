@@ -219,4 +219,27 @@ using HHL.Core.Helpers;
 
         var r = await ClientSvc.SelectCurrent();
         EditClientInfoModel = _mapper.Map<Client_EditPersonaInfoFormModel>(r);
-        LanguageSelectModels = _mapper.Map<IEnumerable<e_Language>, IEnumerable<Langu
+        LanguageSelectModels = _mapper.Map<IEnumerable<e_Language>, IEnumerable<LanguageSelectModel>>(InstantDatahandler.All_Languages).OrderBy(q => q.Name != "English");
+
+    }
+
+    async void HandleEditClientInfoModelSubmit()
+    {
+
+        using (var ls = await new LoadingScreen(UiJsHandler).Load())
+        {
+            await ClientSvc.Update(EditClientInfoModel);
+
+        }
+
+    }
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ClientSvc ClientSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHL.WebApp.Handlers.UiJsHandler UiJsHandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AutoMapper.IMapper _mapper { get; set; }
+    }
+}
+#pragma warning restore 1591

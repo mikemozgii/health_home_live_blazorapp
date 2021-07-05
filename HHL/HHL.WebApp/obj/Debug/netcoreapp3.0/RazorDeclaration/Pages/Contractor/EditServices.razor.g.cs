@@ -342,4 +342,22 @@ using HHL.Core.Helpers;
 
         if (!EditContractorServiceFormModel.IsCustomPrice)
         {
-            var homeTaskCategory = Insta
+            var homeTaskCategory = InstantDatahandler.All_HomeTaskCategories.First(q => q.Id == EditContractorServiceFormModel.ServiceId);
+            EditContractorServiceFormModel.Price = Convert.ToDecimal((HHLConfigHdr.PricePerHourSell * homeTaskCategory.PriceMultiplier).ToString("#.00"));
+        }
+
+
+        StateHasChanged();
+    }
+
+
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AutoMapper.IMapper _mapper { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ContractorSvc ContractorSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHL.WebApp.Handlers.UiJsHandler UiJsHandler { get; set; }
+    }
+}
+#pragma warning restore 1591

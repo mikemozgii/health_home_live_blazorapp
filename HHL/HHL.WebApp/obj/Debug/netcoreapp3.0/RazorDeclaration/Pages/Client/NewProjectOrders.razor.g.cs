@@ -333,4 +333,13 @@ using HHL.Core.Helpers;
 #line default
 #line hidden
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
-        
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private UiJsHandler UiJsHandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private IHHLQueryExecutionSvc _HHLQueryExecutionSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private TaskSvc TaskSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ProjectSvc ProjectSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.AspNetCore.Components.IUriHelper UriHelper { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AutoMapper.IMapper _mapper { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHLAuthSessionSvc AuthSessionSvc { get; set; }
+    }
+}
+#pragma warning restore 1591

@@ -278,4 +278,23 @@ using HHL.Core.Helpers;
         {
 
             var countryId = CountrySelectModels.First(q => String.Equals(q.Name, AddPaymentMethodFormModel.Country, StringComparison.OrdinalIgnoreCase)).Id;
-            RegionSele
+            RegionSelectModels = _mapper.Map<IEnumerable<e_Region>, IEnumerable<RegionSelectModel>>(InstantDatahandler.All_Regions.Where(q => q.CountryId == countryId)).OrderBy(q => q.Name);
+        }
+        else
+        {
+            AddPaymentMethodFormModel.Region = null;
+        }
+
+        StateHasChanged();
+    }
+
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private HHL.WebApp.Handlers.UiJsHandler UiJsHandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ContractorSvc ContractorSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AutoMapper.IMapper _mapper { get; set; }
+    }
+}
+#pragma warning restore 1591

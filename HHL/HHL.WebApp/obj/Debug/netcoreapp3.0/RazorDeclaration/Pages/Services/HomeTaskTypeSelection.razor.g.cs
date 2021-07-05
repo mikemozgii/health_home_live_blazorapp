@@ -206,4 +206,31 @@ using HHL.Core.Helpers;
         {
         }
         #pragma warning restore 1998
-#line 39 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.Web
+#line 39 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebApp\Pages\Services\HomeTaskTypeSelection.razor"
+            
+
+    [Parameter]
+    private string BuldingType { get; set; }
+
+    IEnumerable<v_VmHomeTaskCategory> TaskTypes;
+
+    [Parameter]
+    private string ProjectId { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+
+        TaskTypes = new List<v_VmHomeTaskCategory>();
+        var buldingType = String.Equals(BuldingType, "residential", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
+        TaskTypes = InstantDatahandler.All_VmHomeTaskCategories.Where(q => q.HomeBuldingTypeId == buldingType && q.IsActive).DistinctBy(q => q.HomeTaskTypeId).OrderBy(q => q.Name);
+
+
+    }
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+    }
+}
+#pragma warning restore 1591

@@ -307,4 +307,33 @@ using HHL.Core.Models;
 
         var model = new EmailVerificationRequest()
         {
-    
+            Code = EmailVerificaitonModel.Code,
+            Email = SignUpModel.Email
+        };
+
+        var response = await EmailSvc.VerifyEmail(model);
+
+
+        if (response.Success)
+        {
+            UriHelper.NavigateTo("/signin", forceLoad: true);
+        }
+        else
+        {
+            Errors = response.Errors;
+            isLoading = false;
+            StateHasChanged();
+        }
+
+
+    }
+
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private EmailSvc EmailSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ClientRegistrySvc ClientRegistrySvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.AspNetCore.Components.IUriHelper UriHelper { get; set; }
+    }
+}
+#pragma warning restore 1591

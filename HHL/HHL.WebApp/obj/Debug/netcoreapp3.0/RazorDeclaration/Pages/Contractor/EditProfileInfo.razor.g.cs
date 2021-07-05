@@ -235,4 +235,25 @@ using HHL.Core.Helpers;
             if (await ContractorSvc.Update(EditContractorProfileFormModel))
             {
                 //e_Contractor.ContractorPlanId = plan.Id;
-                //StateHasCh
+                //StateHasChanged();
+            }
+        }
+    }
+
+    async void HandleShareProfileWithPublicChange(UIChangeEventArgs __e)
+    {
+        EditContractorProfileFormModel.ShareProfileWithPublic = !string.IsNullOrWhiteSpace(__e.Value.ToString()) ? Convert.ToBoolean(__e.Value.ToString()) : false;
+        StateHasChanged();
+    }
+
+
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private UiJsHandler UiJsHandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ContractorSvc ContractorSvc { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AutoMapper.IMapper _mapper { get; set; }
+    }
+}
+#pragma warning restore 1591

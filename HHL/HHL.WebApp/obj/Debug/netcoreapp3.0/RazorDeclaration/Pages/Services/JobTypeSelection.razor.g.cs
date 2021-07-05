@@ -196,3 +196,25 @@ using HHL.Core.Helpers;
 
 #line default
 #line hidden
+    [Microsoft.AspNetCore.Components.LayoutAttribute(typeof(MainLayout))]
+    [Microsoft.AspNetCore.Components.RouteAttribute("/home/{text}/job-type-selection")]
+    public partial class JobTypeSelection : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        #pragma warning disable 1998
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+        {
+        }
+        #pragma warning restore 1998
+#line 79 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebApp\Pages\Services\JobTypeSelection.razor"
+            
+
+    [Parameter]
+    private string Text { get; set; }
+
+
+#line default
+#line hidden
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private InstantDatahandler InstantDatahandler { get; set; }
+    }
+}
+#pragma warning restore 1591

@@ -195,4 +195,36 @@ using HHL.Core.Helpers;
 using HHL.Core.Models;
 
 #line default
-#line hidde
+#line hidden
+    [Microsoft.AspNetCore.Components.LayoutAttribute(typeof(MainLayout))]
+    [Microsoft.AspNetCore.Components.RouteAttribute("/contacts")]
+    public partial class Contact : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        #pragma warning disable 1998
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+        {
+        }
+        #pragma warning restore 1998
+#line 451 "c:\Users\mikek\source\repos\health_home_live_blazorapp\HHL\HHL.WebApp\Pages\Contact.razor"
+            
+
+    ContactFormModel ContactFormModel = new ContactFormModel();
+
+    bool IsMessageSent = false;
+
+
+    void HandleValidSubmit()
+    {
+
+
+        IsMessageSent = true;
+
+        Console.WriteLine("OnValidSubmit");
+    }
+
+
+#line default
+#line hidden
+    }
+}
+#pragma warning restore 1591
